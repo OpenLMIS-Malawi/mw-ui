@@ -198,7 +198,7 @@
             var notYetAddedItems = _.chain(draft.lineItems)
                 .difference(_.flatten(vm.displayLineItemsGroup))
                 .value();
-            // MALAWISUP-2794: added orderables without available lots to add product modal
+            // MALAWISUP-2974: added orderables without available lots to add product modal
             // passed draft lineItems to add product modal
             var orderablesWithoutAvailableLots = draft.lineItems.map(function(item) {
                     return item.orderable;
@@ -227,7 +227,7 @@
             });
 
             addProductsModalService.show(notYetAddedItems, draft.lineItems).then(function() {
-                // MALAWISUP-2794: ends here
+                // MALAWISUP-2974: ends here
                 $stateParams.program = vm.program;
                 $stateParams.facility = vm.facility;
                 $stateParams.noReload = true;
@@ -242,7 +242,7 @@
             });
         };
 
-        // MALAWISUP-2794: Added ability to edit lots and remove specified row
+        // MALAWISUP-2974: Added ability to edit lots and remove specified row
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
@@ -259,7 +259,7 @@
                 $stateParams.draft = draft;
             });
         };
-        // MALAWISUP-2794: ends here
+        // MALAWISUP-2974: ends here
 
         /**
          * @ngdoc method
@@ -331,13 +331,13 @@
 
                     $stateParams.program = vm.program;
                     $stateParams.facility = vm.facility;
-                    // MALAWISUP-2794: Added ability to edit lots and remove specified row
+                    // MALAWISUP-2974: Added ability to edit lots and remove specified row
                     draft.lineItems.forEach(function(lineItem) {
                         if (lineItem.$isNewItem) {
                             lineItem.$isNewItem = false;
                         }
                     });
-                    // MALAWISUP-2794: ends here
+                    // MALAWISUP-2974: ends here
                     $stateParams.noReload = true;
 
                     $state.go($state.current.name, $stateParams, {
@@ -350,7 +350,7 @@
             });
         };
 
-        // MALAWISUP-2794: Added ability to edit lots and remove specified row
+        // MALAWISUP-2974: Added ability to edit lots and remove specified row
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
@@ -403,7 +403,7 @@
         vm.canEditLot = function(lineItem) {
             return lineItem.lot && lineItem.$isNewItem;
         };
-        // MALAWISUP-2794: ends here
+        // MALAWISUP-2974: ends here
 
         /**
          * @ngdoc method
@@ -463,9 +463,9 @@
                     draft.occurredDate = resolvedData.occurredDate;
                     draft.signature = resolvedData.signature;
 
-                    // MALAWISUP-2794: called saving new lots
+                    // MALAWISUP-2974: called saving new lots
                     return saveLots(draft, function() {
-                    // MALAWISUP-2794: ends here
+                    // MALAWISUP-2974: ends here
                         physicalInventoryService.submitPhysicalInventory(draft).then(function() {
                             notificationService.success('stockPhysicalInventoryDraft.submitted');
                             confirmService.confirm('stockPhysicalInventoryDraft.printModal.label',
@@ -521,7 +521,7 @@
             return containsCode;
         }
 
-        // MALAWISUP-2794: method that saves new lots separately, after calls physical inventory endpoint
+        // MALAWISUP-2974: method that saves new lots separately, after calls physical inventory endpoint
         function saveLots(draft, submitMethod) {
             var lotPromises = [],
                 lotResource = new LotResource(),
@@ -577,7 +577,7 @@
                     alertService.error(errorResponse.data.message);
                 });
         }
-        // MALAWISUP-2794: ends here
+        // MALAWISUP-2974: ends here
 
         function isEmpty(value) {
             return value === '' || value === undefined || value === null;

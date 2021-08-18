@@ -48,9 +48,9 @@ describe('PhysicalInventoryDraftController', function() {
             this.physicalInventoryDraftCacheService = $injector.get('physicalInventoryDraftCacheService');
             this.alertService = $injector.get('alertService');
             this.LotResource = $injector.get('LotResource');
-            // MALAWISUP-2794: Added ability to edit lots and remove specified row
+            // MALAWISUP-2974: Added ability to edit lots and remove specified row
             this.editLotModalService = $injector.get('editLotModalService');
-            // MALAWISUP-2794: ends here
+            // MALAWISUP-2974: ends here
         });
 
         spyOn(this.physicalInventoryService, 'submitPhysicalInventory');
@@ -62,9 +62,9 @@ describe('PhysicalInventoryDraftController', function() {
         spyOn(this.draftFactory, 'saveDraft');
         spyOn(this.physicalInventoryDraftCacheService, 'cacheDraft');
         spyOn(this.alertService, 'error');
-        // MALAWISUP-2794: Added ability to edit lots and remove specified row
+        // MALAWISUP-2974: Added ability to edit lots and remove specified row
         spyOn(this.editLotModalService, 'show');
-        // MALAWISUP-2794: ends here
+        // MALAWISUP-2974: ends here
 
         this.program = new this.ProgramDataBuilder()
             .withId('1')
@@ -159,9 +159,9 @@ describe('PhysicalInventoryDraftController', function() {
             ],
             draft: this.draft,
             addProductsModalService: this.addProductsModalService,
-            // MALAWISUP-2794: Added ability to edit lots and remove specified row
+            // MALAWISUP-2974: Added ability to edit lots and remove specified row
             editLotModalService: this.editLotModalService,
-            // MALAWISUP-2794: ends here
+            // MALAWISUP-2974: ends here
             chooseDateModalService: chooseDateModalService,
             reasons: this.reasons,
             physicalInventoryService: this.physicalInventoryService,
