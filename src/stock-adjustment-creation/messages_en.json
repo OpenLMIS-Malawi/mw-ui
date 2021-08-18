@@ -1,3 +1,4 @@
 {
-    "stockAdjustmentCreation.reasonComments": "Remarks"
+    "stockAdjustmentCreation.reasonComments": "Remarks",
+    "stockAdjustmentCreation.lotCode": "Batch Number"
 }

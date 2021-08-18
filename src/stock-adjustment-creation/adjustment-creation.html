@@ -24,10 +24,27 @@
                 </div>
                 <div ng-if="vm.selectedOrderableHasLots">
                     <label for="lotSelect">{{'stockAddProductsModal.lotCode' | message}}</label>
+                    <!-- MALAWISUP-2974: added ng-change -->
                     <select id="lotSelect" ng-model="vm.selectedLot"
-                        ng-options="lot.lotCode for lot in vm.lots" required>
+                        ng-options="lot.lotCode for lot in vm.lots"
+                        ng-change="vm.lotChanged()"
+                        required>
+                    <!-- MALAWISUP-2974: ends here -->
                     </select>
                 </div>
+                <!-- MALAWISUP-2974: added form for new lot -->
+                <div ng-if="vm.hasPermissionToAddNewLot && vm.canAddNewLot">
+                    <label for="lotCode">{{'stockAddProductsModal.newLotCode' | message}}</label>
+                    <input id="lotCode" type="text" ng-model="vm.newLot.lotCode"
+                    ng-change="vm.newLotCodeChanged()"
+                    openlmis-invalid="{{vm.newLot.lotCodeInvalid | message}}"
+                    required>
+                    <label for="expirationDate">{{'stockAddProductsModal.newNotExpirationDate' | message}}</label>
+                    <input id="expirationDate" type="date" ng-model="vm.newLot.expirationDate"
+                    ng-change="vm.expirationDateChanged()" 
+                    openlmis-invalid="{{vm.newLot.expirationDateInvalid | message}}"/>
+                </div>
+                <!-- MALAWISUP-2974: added form for new lot -->
                 <button type="submit" class="add">{{vm.key('add') | message}}</button>
             </form>
         </section>
@@ -58,7 +75,16 @@
                 <tr ng-repeat="lineItem in vm.items">
                     <td>{{lineItem.orderable.productCode}}</td>
                     <td>{{lineItem.orderable | productName}}</td>
-                    <td ng-show="vm.hasLot">{{lineItem.displayLotMessage}}</td>
+                    <!-- MALAWISUP-2974: Added ability to edit lots and remove specified row -->
+                    <td ng-show="vm.hasLot && vm.canEditLot(lineItem)">
+                        <button class="edit" ng-click="vm.editLot(lineItem)">
+                            {{lineItem.displayLotMessage}}
+                        </button>
+                    </td>
+                    <td ng-show="vm.hasLot && !vm.canEditLot(lineItem)">
+                        {{lineItem.displayLotMessage}}
+                    </td>
+                    <!-- MALAWISUP-2974: ends here -->
                     <td ng-show="vm.hasLot">{{lineItem.lot.expirationDate | openlmisDate}}</td>
                     <td align="right">{{lineItem.$previewSOH}}</td>
                     <!-- MALAWISUP-2701 -->

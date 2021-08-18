@@ -33,16 +33,27 @@
         'orderableGroups', 'reasons', 'confirmService', 'messageService', 'user', 'adjustmentType',
         'srcDstAssignments', 'stockAdjustmentCreationService', 'notificationService', 'offlineService',
         'orderableGroupService', 'MAX_INTEGER_VALUE', 'VVM_STATUS', 'loadingModalService', 'alertService',
-        'dateUtils', 'displayItems', 'ADJUSTMENT_TYPE', 'UNPACK_REASONS', 'REASON_TYPES'
+        'dateUtils', 'displayItems', 'ADJUSTMENT_TYPE', 'UNPACK_REASONS', 'REASON_TYPES',
+        'hasPermissionToAddNewLot', 'LotResource', '$q', 'editLotModalService', 'moment'
     ];
 
     function controller($scope, $state, $stateParams, $filter, confirmDiscardService, program,
                         facility, orderableGroups, reasons, confirmService, messageService, user,
                         adjustmentType, srcDstAssignments, stockAdjustmentCreationService, notificationService,
                         offlineService, orderableGroupService, MAX_INTEGER_VALUE, VVM_STATUS, loadingModalService,
-                        alertService, dateUtils, displayItems, ADJUSTMENT_TYPE, UNPACK_REASONS, REASON_TYPES) {
+                        alertService, dateUtils, displayItems, ADJUSTMENT_TYPE, UNPACK_REASONS, REASON_TYPES,
+                        hasPermissionToAddNewLot, LotResource, $q, editLotModalService, moment) {
         var vm = this,
             previousAdded = {};
+
+        // MALAWISUP-2974: Added ability to edit lots and remove specified row
+        vm.expirationDateChanged = expirationDateChanged;
+        vm.newLotCodeChanged = newLotCodeChanged;
+        vm.validateExpirationDate = validateExpirationDate;
+        vm.lotChanged = lotChanged;
+        vm.addProduct = addProduct;
+        vm.hasPermissionToAddNewLot = hasPermissionToAddNewLot;
+        // MALAWISUP-2974: ends here
 
         /**
          * @ngdoc property
@@ -111,6 +122,19 @@
             return adjustmentType.prefix + 'Creation.' + secondaryKey;
         };
 
+        // MALAWISUP-2974: added newLot that holds new lot info
+        /**
+         * @ngdoc property
+         * @propertyOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name newLot
+         * @type {Object}
+         *
+         * @description
+         * Holds new lot object.
+         */
+        vm.newLot = undefined;
+        // MALAWISUP-2974: ends here
+
         /**
          * @ngdoc method
          * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
@@ -141,20 +165,49 @@
          * @description
          * Add a product for stock adjustment.
          */
-        vm.addProduct = function() {
-            var selectedItem = orderableGroupService
-                .findByLotInOrderableGroup(vm.selectedOrderableGroup, vm.selectedLot);
+        function addProduct() {
 
-            vm.addedLineItems.unshift(_.extend({
-                $errors: {},
-                $previewSOH: selectedItem.stockOnHand
-            },
-            selectedItem, copyDefaultValue()));
+            var selectedItem;
 
-            previousAdded = vm.addedLineItems[0];
+            // MALAWISUP-2974: added creating new lot on adding product
+            if (vm.selectedOrderableGroup && vm.selectedOrderableGroup.length) {
+                vm.newLot.tradeItemId = vm.selectedOrderableGroup[0].orderable.identifiers.tradeItem;
+            }
 
-            vm.search();
-        };
+            if (vm.newLot.lotCode) {
+                // MALAWISUP-2974: Added ability to edit lots and remove specified row
+                var createdLot = angular.copy(vm.newLot);
+                selectedItem = orderableGroupService
+                    .findByLotInOrderableGroup(vm.selectedOrderableGroup, createdLot, true);
+                selectedItem.$isNewItem = true;
+                // MALAWISUP-2974: ends here
+            } else {
+            // MALAWISUP-2974: ends here
+                selectedItem = orderableGroupService
+                    .findByLotInOrderableGroup(vm.selectedOrderableGroup, vm.selectedLot);
+            }
+
+            // MALAWISUP-2974: Added ability to edit lots and remove specified row
+            vm.newLot.expirationDateInvalid = undefined;
+            vm.newLot.lotCodeInvalid = undefined;
+            validateExpirationDate();
+            validateLotCode(vm.addedLineItems, selectedItem);
+            validateLotCode(vm.allItems, selectedItem);
+            var noErrors = !vm.newLot.expirationDateInvalid && !vm.newLot.lotCodeInvalid;
+
+            if (noErrors) {
+                vm.addedLineItems.unshift(_.extend({
+                    $errors: {},
+                    $previewSOH: selectedItem.stockOnHand
+                },
+                selectedItem, copyDefaultValue()));
+
+                previousAdded = vm.addedLineItems[0];
+
+                vm.search();
+            }
+            // MALAWISUP-2974: ends here
+        }
 
         function copyDefaultValue() {
             var defaultDate;
@@ -220,10 +273,12 @@
          * @param {Object} lineItem line item to be validated.
          */
         vm.validateQuantity = function(lineItem) {
+            // MALAWISUP-2974: Added quantity validation for DEBIT reason type
             if (lineItem.quantity > lineItem.$previewSOH && lineItem.reason
-                    && lineItem.reason.reasonType === REASON_TYPES.DEBIT) {
+                && lineItem.reason.reasonType === REASON_TYPES.DEBIT) {
                 lineItem.$errors.quantityInvalid = messageService
                     .get('stockAdjustmentCreation.quantityGreaterThanStockOnHand');
+            // MALAWISUP-2974: ends here
             } else if (lineItem.quantity > MAX_INTEGER_VALUE) {
                 lineItem.$errors.quantityInvalid = messageService.get('stockmanagement.numberTooLarge');
             } else if (lineItem.quantity >= 1) {
@@ -233,6 +288,22 @@
             }
             return lineItem;
         };
+
+        // MALAWISUP-2974: when lot selection is changed
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name lotChanged
+         *
+         * @description
+         * Allows inputs to add missing lot to be displayed.
+         */
+         function lotChanged() {
+            vm.canAddNewLot = vm.selectedLot
+                && vm.selectedLot.lotCode === messageService.get('orderableGroupService.addMissingLot');
+            initiateNewLotObject();
+        }
+        // MALAWISUP-2974: ends here
 
         /**
          * @ngdoc method
@@ -353,13 +424,20 @@
             //reset selected lot, so that lot field has no default value
             vm.selectedLot = null;
 
+            // MALAWISUP-2974: cleared new lot object and disabled adding new lot
+            initiateNewLotObject();
+            vm.canAddNewLot = false;
+            // MALAWISUP-2974: ends here
+
             //same as above
             $scope.productForm.$setUntouched();
 
             //make form good as new, so errors won't persist
             $scope.productForm.$setPristine();
 
-            vm.lots = orderableGroupService.lotsOf(vm.selectedOrderableGroup);
+            // MALAWISUP-2974: added newLot that holds new lot info
+            vm.lots = orderableGroupService.lotsOf(vm.selectedOrderableGroup, vm.hasPermissionToAddNewLot);
+            // MALAWISUP-2974: ends here
             vm.selectedOrderableHasLots = vm.lots.length > 0;
         };
 
@@ -429,22 +507,114 @@
 
             generateKitConstituentLineItem(addedLineItems);
 
-            stockAdjustmentCreationService.submitAdjustments(program.id, facility.id, addedLineItems, adjustmentType)
-                .then(function() {
-                    if (offlineService.isOffline()) {
-                        notificationService.offline(vm.key('submittedOffline'));
-                    } else {
-                        notificationService.success(vm.key('submitted'));
+            // MALAWISUP-2974: Added error message when created lot already exists in database
+            // and avoiding sending lots duplicates
+            var lotPromises = [],
+                errorLots = [];
+            var distinctLots = [];
+            var lotResource = new LotResource();
+            addedLineItems.forEach(function(lineItem) {
+                if (lineItem.lot && lineItem.$isNewItem && _.isUndefined(lineItem.lot.id) &&
+                !listContainsTheSameLot(distinctLots, lineItem.lot)) {
+                    distinctLots.push(lineItem.lot);
+                }
+            });
+            distinctLots.forEach(function(lot) {
+                lotPromises.push(lotResource.query({
+                    lotCode: lot.lotCode
+                })
+                    .then(function(queryResponse) {
+                        if (queryResponse.numberOfElements > 0 && containsLotCode(queryResponse.content, lot.lotCode)) {
+                            errorLots.push(lot.lotCode);
+                            return queryResponse;
+                        }
+                        return lotResource.create(lot)
+                            .then(function(createResponse) {
+                                vm.addedLineItems.forEach(function(item) {
+                                    if (item.lot.lotCode === lot.lotCode) {
+                                        item.$isNewItem = false;
+                                        addItemToOrderableGroups(item);
+                                    }
+                                });
+                                return createResponse;
+                            })
+                            .catch(function(response) {
+                                if (response.data.messageKey ===
+                                    'referenceData.error.lot.lotCode.mustBeUnique') {
+                                    errorLots.push(lot.lotCode);
+                                }
+                            });
+                    }));
+            });
+
+            return $q.all(lotPromises)
+                .then(function(responses) {
+                    if (errorLots !== undefined && errorLots.length > 0) {
+                        return $q.reject();
                     }
-                    $state.go('openlmis.stockmanagement.stockCardSummaries', {
-                        facility: facility.id,
-                        program: program.id
+                    responses.forEach(function(lot) {
+                        addedLineItems.forEach(function(lineItem) {
+                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode) {
+                                lineItem.lot = lot;
+                            }
+                        });
+                        return addedLineItems;
                     });
-                }, function(errorResponse) {
+                    stockAdjustmentCreationService.submitAdjustments(
+                        program.id, facility.id, addedLineItems, adjustmentType
+                    )
+                        .then(function() {
+                            if (offlineService.isOffline()) {
+                                notificationService.offline(vm.key('submittedOffline'));
+                            } else {
+                                notificationService.success(vm.key('submitted'));
+                            }
+                            $state.go('openlmis.stockmanagement.stockCardSummaries', {
+                                facility: facility.id,
+                                program: program.id
+                            });
+                        }, function(errorResponse) {
+                            loadingModalService.close();
+                            alertService.error(errorResponse.data.message);
+                        });
+                })
+                .catch(function(errorResponse) {
                     loadingModalService.close();
+                    if (errorLots) {
+                        alertService.error('stockPhysicalInventoryDraft.lotCodeMustBeUnique',
+                            errorLots.join(', '));
+                        vm.selectedOrderableGroup = undefined;
+                        vm.selectedLot = undefined;
+                        vm.lotChanged();
+                        return $q.reject(errorResponse.data.message);
+                    }
                     alertService.error(errorResponse.data.message);
                 });
+            // MALAWISUP-2974: ends here
         }
+
+        // MALAWISUP-2974: Added error message when created lot already exists in database
+        function addItemToOrderableGroups(item) {
+            vm.orderableGroups.forEach(function(array) {
+                if (array[0].orderable.id === item.orderable.id) {
+                    array.push(angular.copy(item));
+                }
+            });
+        }
+        // MALAWISUP-2974: ends here
+
+        // MALAWISUP-2974: Avoiding sending lots duplicates
+        function listContainsTheSameLot(list, lot) {
+            var itemExistsOnList = false;
+            list.forEach(function(item) {
+                if (item.lotCode === lot.lotCode &&
+                    item.tradeItemId === lot.tradeItemId) {
+                    itemExistsOnList = true;
+                }
+            });
+            return itemExistsOnList;
+        }
+        // MALAWISUP-2974: ends here
 
         function generateKitConstituentLineItem(addedLineItems) {
             if (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state) {
@@ -471,6 +641,11 @@
         }
 
         function onInit() {
+            // MALAWISUP-2974: Extra validation for lots
+            var copiedOrderableGroups = angular.copy(orderableGroups);
+            vm.allItems = _.flatten(copiedOrderableGroups);
+            // MALAWISUP-2974: ends here
+
             $state.current.label = messageService.get(vm.key('title'), {
                 facilityCode: facility.code,
                 facilityName: facility.name,
@@ -513,10 +688,24 @@
             vm.orderableGroups = orderableGroups;
             vm.hasLot = false;
             vm.orderableGroups.forEach(function(group) {
-                vm.hasLot = vm.hasLot || orderableGroupService.lotsOf(group).length > 0;
+                // MALAWISUP-2974: added hasPermissionToAddNewLot to lotsOf method 
+                vm.hasLot = vm.hasLot || orderableGroupService.lotsOf(group, hasPermissionToAddNewLot).length > 0;
+                // MALAWISUP-2974: ends here
             });
             vm.showVVMStatusColumn = orderableGroupService.areOrderablesUseVvm(vm.orderableGroups);
+            // MALAWISUP-2974: added newLot that holds new lot info
+            vm.hasPermissionToAddNewLot = hasPermissionToAddNewLot;
+            vm.canAddNewLot = false;
+            initiateNewLotObject();
         }
+
+        function initiateNewLotObject() {
+            vm.newLot = {
+                active: true
+            };
+        }
+        // MALAWISUP-2974: ends here
+
         function initStateParams() {
             $stateParams.page = getPageNumber();
             $stateParams.program = program;
@@ -534,6 +723,111 @@
             }
             return pageNumber;
         }
+
+        // MALAWISUP-2974: Added ability to edit lots and remove specified row
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name editLot
+         *
+         * @description
+         * Pops up a modal for users to edit lot for selected line item.
+         *
+         * @param {Object} lineItem line items to be edited.
+         */
+         vm.editLot = function(lineItem) {
+            var oldLotCode = lineItem.lot.lotCode;
+            var oldLotExpirationDate = lineItem.lot.expirationDate;
+            editLotModalService.show(lineItem, vm.allItems, vm.addedLineItems).then(function() {
+                $stateParams.displayItems = vm.displayItems;
+                if (oldLotCode === lineItem.lot.lotCode
+                    && oldLotExpirationDate !== lineItem.lot.expirationDate) {
+                    vm.addedLineItems.forEach(function(item) {
+                        if (item.lot && item.lot.lotCode === oldLotCode &&
+                            oldLotExpirationDate === item.lot.expirationDate) {
+                            item.lot.expirationDate = lineItem.lot.expirationDate;
+                        }
+                    });
+                }
+            });
+        };
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name canEditLot
+         *
+         * @description
+         * Checks if user can edit lot.
+         *
+         * @param {Object} lineItem line item to edit
+         */
+        vm.canEditLot = function(lineItem) {
+            return vm.hasPermissionToAddNewLot && lineItem.lot && lineItem.$isNewItem;
+        };
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name validateExpirationDate
+         *
+         * @description
+         * Validate if expirationDate is a future date.
+         */
+        function validateExpirationDate() {
+            var currentDate = moment(new Date()).format('YYYY-MM-DD');
+
+            if (vm.newLot.expirationDate && vm.newLot.expirationDate < currentDate) {
+                vm.newLot.expirationDateInvalid = messageService.get('stockEditLotModal.expirationDateInvalid');
+            }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name expirationDateChanged
+         *
+         * @description
+         * Hides the error message if exists after changed expiration date.
+         */
+        function expirationDateChanged() {
+            vm.newLot.expirationDateInvalid = undefined;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name newLotCodeChanged
+         *
+         * @description
+         * Hides the error message if exists after changed new lot code.
+         */
+        function newLotCodeChanged() {
+            vm.newLot.lotCodeInvalid = undefined;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name validateLotCode
+         *
+         * @description
+         * Validate if on line item list exists the same orderable with the same lot code
+         */
+        function validateLotCode(listItems, selectedItem) {
+            if (selectedItem && selectedItem.$isNewItem) {
+                listItems.forEach(function(lineItem) {
+                    if (lineItem.orderable && lineItem.lot && selectedItem.lot &&
+                        lineItem.orderable.productCode === selectedItem.orderable.productCode &&
+                        selectedItem.lot.lotCode === lineItem.lot.lotCode &&
+                        ((!lineItem.$isNewItem) || (lineItem.$isNewItem &&
+                        selectedItem.lot.expirationDate !== lineItem.lot.expirationDate))) {
+                        vm.newLot.lotCodeInvalid = messageService.get('stockEditLotModal.lotCodeInvalid');
+                    }
+                });
+            }
+        }
+        // MALAWISUP-2974: ends here
 
         onInit();
     }
