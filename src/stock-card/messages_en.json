@@ -12,7 +12,7 @@
   "stockCard.productCode": "Product code",
   "stockCard.facilityName": "Facility name",
   "stockCard.program": "Program",
-  "stockCard.lot": "Lot number",
+  "stockCard.lot": "Batch number",
   "stockCard.expiryDate": "Expiry date",
   "stockCard.physicalInventory": "Physical Inventory",
   "stockCard.print": "Print",
