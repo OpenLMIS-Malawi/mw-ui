@@ -39,7 +39,9 @@
                 stockCardSummaries: undefined,
                 reasons: undefined,
                 displayItems: undefined,
-                addedLineItems: undefined
+                addedLineItems: undefined,
+                orderableGroups: undefined,
+                srcDstAssignments: undefined
             },
             resolve: {
                 program: function($stateParams, programService) {
@@ -59,7 +61,7 @@
                 },
                 orderableGroups: function($stateParams, program, facility, orderableGroupService) {
                     if (!$stateParams.orderableGroups) {
-                        return orderableGroupService.findAvailableProductsAndCreateOrderableGroups(
+                        $stateParams.orderableGroups = orderableGroupService.findAvailableProductsAndCreateOrderableGroups(
                             program.id, facility.id, true
                         );
                     }
@@ -78,12 +80,12 @@
                     return ADJUSTMENT_TYPE.RECEIVE;
                 },
                 srcDstAssignments: function($stateParams, facility, sourceDestinationService) {
-                    if (_.isUndefined($stateParams.srcDstAssignments)) {
-                        return sourceDestinationService.getSourceAssignments($stateParams.programId, facility.id);
+                    if (!$stateParams.srcDstAssignments) {
+                        $stateParams.srcDstAssignments = sourceDestinationService.getSourceAssignments($stateParams.programId, facility.id);
                     }
                     return $stateParams.srcDstAssignments;
-                // MALAWISUP-2974: added checking user rights
                 },
+                // MALAWISUP-2974: added checking user rights
                 hasPermissionToAddNewLot: function(permissionService, ADMINISTRATION_RIGHTS, user) {
                     return permissionService.hasPermissionWithAnyProgramAndAnyFacility(user.user_id, {
                         right: ADMINISTRATION_RIGHTS.LOTS_MANAGE
