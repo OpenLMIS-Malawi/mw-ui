@@ -1,5 +1,5 @@
 {
     "stockPhysicalInventoryDraft.lotCode": "Batch Number",
-    "stockPhysicalInventoryDraft.lotCodeMustBeUnique": "The lot code has to be unique, please change the one(s) listed below:"
+    "stockPhysicalInventoryDraft.lotCodeMustBeUnique": "The batch number has to be unique, please change the one(s) listed below:"
 
 }
