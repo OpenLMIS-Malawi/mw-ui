@@ -73,6 +73,15 @@
          * @type {boolean}
          */
         vm.showReasonDropdown = true;
+
+        //MW-1045
+        /**
+         * @ngdoc property
+         * @propertyOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name showdate
+         * @type {boolean}
+         */
+         vm.showDate = false;
     
         //MALAWISUP-2703
         /**
@@ -679,6 +688,8 @@
             vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state && adjustmentType.state !== ADJUSTMENT_TYPE.RECEIVE.state);
             // MALAWISUP-2703: Allow displaying reason free text on the Adjustments screen
             vm.showReasonRemarks = (adjustmentType.state === ADJUSTMENT_TYPE.ADJUSTMENT.state);
+            // MW-1045: Allow display expiry date in dropdown on the Issue screen
+            vm.showDate = (adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state);
             vm.srcDstAssignments = srcDstAssignments;
             vm.addedLineItems = $stateParams.addedLineItems || [];
             $stateParams.displayItems = displayItems;
@@ -735,7 +746,7 @@
          *
          * @param {Object} lineItem line items to be edited.
          */
-         vm.editLot = function(lineItem) {
+        vm.editLot = function(lineItem) {
             var oldLotCode = lineItem.lot.lotCode;
             var oldLotExpirationDate = lineItem.lot.expirationDate;
             editLotModalService.show(lineItem, vm.allItems, vm.addedLineItems).then(function() {

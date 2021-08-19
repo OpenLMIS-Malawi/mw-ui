@@ -25,10 +25,15 @@
                 <div ng-if="vm.selectedOrderableHasLots">
                     <label for="lotSelect">{{'stockAddProductsModal.lotCode' | message}}</label>
                     <!-- MALAWISUP-2974: added ng-change -->
-                    <select id="lotSelect" ng-model="vm.selectedLot"
-                        ng-options="lot.lotCode for lot in vm.lots"
+                    <!-- MW-1045: add date to lot dropdown on Issue screen-->
+                    <select ng-if="vm.showDate" id="lotSelect" ng-model="vm.selectedLot"
+                        ng-options="lot.lotCode + ' ' + (lot.expirationDate | openlmisDate) for lot in vm.lots"
                         ng-change="vm.lotChanged()"
                         required>
+                        <!-- MW-1045: ends here -->
+                    </select>
+                    <select ng-if="!vm.showDate" id="lotSelect" ng-model="vm.selectedLot"
+                    ng-options="lot.lotCode for lot in vm.lots" ng-change="vm.lotChanged()" required>
                     <!-- MALAWISUP-2974: ends here -->
                     </select>
                 </div>
