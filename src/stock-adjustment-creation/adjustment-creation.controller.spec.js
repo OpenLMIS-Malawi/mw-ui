@@ -251,7 +251,9 @@ describe('StockAdjustmentCreationController', function() {
         };
         vm.addedLineItems = [lineItem1, lineItem2];
         vm.displayItems = [lineItem1];
+        // MALAWISUP-2861: fix missing data while changing page 
         vm.keyword = '1';
+        //  MALAWISUP-2861: ends here
         spyOn(confirmService, 'confirmDestroy');
         var deferred = q.defer();
         deferred.resolve();
@@ -413,8 +415,12 @@ describe('StockAdjustmentCreationController', function() {
 
             vm.submit();
             rootScope.$apply();
-
-            expect(state.go).not.toHaveBeenCalled();
+            // MALAWISUP-2861: fix missing data while changing page 
+            expect(state.go).toHaveBeenCalledWith(state.current.name, stateParams, {
+                reload: false,
+                notify: false
+            });
+            // MALAWISUP-2861: ends here
             expect(alertService.error).toHaveBeenCalledWith('error occurred');
             expect(notificationService.success).not.toHaveBeenCalled();
         });
@@ -428,8 +434,12 @@ describe('StockAdjustmentCreationController', function() {
 
             vm.submit();
             rootScope.$apply();
-
-            expect(state.go).not.toHaveBeenCalled();
+            // MALAWISUP-2861: fix missing data while changing page 
+            expect(state.go).toHaveBeenCalledWith(state.current.name, stateParams, {
+                reload: false,
+                notify: false
+            });
+            // MALAWISUP-2861: ends here
             expect(notificationService.success).not.toHaveBeenCalled();
         });
         // MALAWISUP-2974: ends here
