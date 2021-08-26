@@ -37,6 +37,11 @@
                     <!-- MALAWISUP-2974: ends here -->
                     </select>
                 </div>
+                <div ng-if="!vm.selectedOrderableHasLots">
+                    <label for="lotSelect">{{'stockAddProductsModal.lotCode' | message}}</label>
+                    <!-- MW-1061: Always show batch field on Adjustments screen-->
+                    <input disabled="true" type="text" placeholder="Product has no batches">
+                </div>
                 <!-- MALAWISUP-2974: added form for new lot -->
                 <div ng-if="vm.hasPermissionToAddNewLot && vm.canAddNewLot">
                     <label for="lotCode">{{'stockAddProductsModal.newLotCode' | message}}</label>
