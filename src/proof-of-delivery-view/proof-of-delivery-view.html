@@ -1,0 +1,164 @@
+<header>
+    <h2>{{'proofOfDeliveryView.podFor' | message}} {{vm.order.program.name}}</h2>
+    <button class="primary" ng-click="vm.printProofOfDelivery()">
+        {{'proofOfDeliveryView.print'|message}}
+    </button>
+</header>
+<aside class="pod-info">
+    <div ng-class="{'pod-emergency': vm.order.emergency, 'pod-regular': !vm.order.emergency}">
+        <span>{{vm.typeMessage() | message}}</span>
+    </div>
+
+    <ul>
+        <li>
+            <strong>{{'proofOfDeliveryView.orderNumber' | message}}</strong>
+            {{vm.order.orderCode}}
+        </li>
+        <li>
+            <strong>{{'proofOfDeliveryView.orderStatus' | message}}</strong>
+            {{vm.order.status}}
+        </li>
+        <li>
+            <strong>{{'proofOfDeliveryView.orderingFacility' | message}}</strong>
+            {{vm.order.facility.code}} - {{vm.order.facility.name}}
+        </li>
+        <li>
+            <strong>{{'proofOfDeliveryView.orderDate' | message}}</strong>
+            {{vm.order.createdDate | openlmisDatetime}}
+        </li>
+        <li>
+            <strong>{{'proofOfDeliveryView.reportingPeriod' | message}}</strong>
+            {{vm.order.processingPeriod | period}}
+        </li>
+        <li>
+            <strong>{{'proofOfDeliveryView.supplyingFacility' | message}}</strong>
+            {{vm.order.supplyingFacility.name}}
+        </li>
+    </ul>
+</aside>
+
+<form id="proof-of-delivery-form" ng-submit="vm.proofOfDelivery.confirm()">
+    <div class="openlmis-table-container">
+        <table class="openlmis-table">
+            <thead>
+                <tr>
+                    <th>{{'proofOfDeliveryView.productName' | message}}</th>
+                    <th>{{'proofOfDeliveryView.productUnit' | message}}</th>
+                    <th>{{'proofOfDeliveryView.quantityOrdered' | message}}</th>
+                    <th>{{'proofOfDeliveryView.quantityShipped' | message}}</th>
+                    <th>{{'proofOfDeliveryView.lotCode' | message}}</th>
+                    <th>{{'proofOfDeliveryView.quantityAccepted' | message}}</th>
+                    <th ng-if="vm.showVvmColumn">{{'proofOfDeliveryView.vvmStatus' | message}}</th>
+                    <th>{{'proofOfDeliveryView.quantityReturned' | message}}</th>
+                    <th>{{'proofOfDeliveryView.rejectionReason' | message}}</th>
+                    <th>{{'proofOfDeliveryView.notes' | message}}</th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="orderLineItem in vm.orderLineItems | orderBy : 'orderable.fullProductName'">
+                <tr class="is-secondary">
+                    <td>{{orderLineItem.orderable.fullProductName}}</td>
+                    <td>{{orderLineItem.orderable.dispensable.displayUnit}}</td>
+                    <td>{{orderLineItem.orderedQuantity}}</td>
+                    <td></td>
+                    <td></td>
+                    <td ng-if="vm.showVvmColumn"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr ng-repeat-start="groupOfFulfillingLineItems in orderLineItem.groupedLineItems | orderBy: '[0].orderable.fullProductName'">
+                    <td>{{groupOfFulfillingLineItems[0].orderable.fullProductName}}</td>
+                    <td>{{groupOfFulfillingLineItems[0].orderable.dispensable.displayUnit}}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td ng-if="vm.showVvmColumn"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr ng-repeat-end ng-repeat="fulfillingLineItem in groupOfFulfillingLineItems">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{fulfillingLineItem.quantityShipped}}</td>
+                    <td>{{"fulfillingLineItem.lot | lotCode)"}}</td>
+                    <td ng-if="vm.canEdit">
+                        <input positive-integer
+                            ng-model="fulfillingLineItem.quantityAccepted"
+                            ng-change="fulfillingLineItem.updateQuantityRejected()"
+                            openlmis-invalid="{{fulfillingLineItem.validate().quantityAccepted | message}}"/>
+                    </td>
+                    <td ng-if="!vm.canEdit">
+                        {{fulfillingLineItem.quantityAccepted}}
+                    </td>
+                    <td ng-if="vm.showVvmColumn">
+                        <div ng-if="fulfillingLineItem.useVvm && vm.canEdit">
+                            <select
+                                ng-model="fulfillingLineItem.vvmStatus"
+                                ng-options="status as vm.getStatusDisplayName(status) for status in vm.vvmStatuses"
+                                placeholder="{{'proofOfDeliveryView.selectStatus' | message}}"
+                                openlmis-invalid="{{fulfillingLineItem.validate().vvmStatus | message}}">
+                            </select>
+                        </div>
+                        <div ng-if="fulfillingLineItem.useVvm && !vm.canEdit">
+                            {{fulfillingLineItem.vvmStatus}}
+                        </div>
+                    </td>
+                    <td>{{fulfillingLineItem.quantityRejected}}</td>
+                    <td ng-if="vm.canEdit">
+                        <select ng-model="fulfillingLineItem.rejectionReasonId"
+                            ng-options="reason.id as reason.name for reason in vm.reasons"
+                            openlmis-invalid="{{fulfillingLineItem.validate().rejectionReasonId | message}}">
+                        </select>
+                    </td>
+                    <td ng-if="!vm.canEdit">
+                        {{vm.getReasonName(fulfillingLineItem.rejectionReasonId)}}
+                    </td>
+                    <td ng-if="vm.canEdit">
+                        <input type="text" ng-model="fulfillingLineItem.notes"/>
+                    </td>
+                    <td ng-if="!vm.canEdit">
+                        {{fulfillingLineItem.notes}}
+                    </td>
+                </tr>
+            </tbody>            
+        </table>
+    </div>
+    <aside class="pod-footer">
+        <dl>
+            <dt>{{'proofOfDeliveryView.deliveredBy' | message}}</dt>
+            <dd>
+                <div ng-if="vm.canEdit">
+                    <input type="text" ng-model="vm.proofOfDelivery.deliveredBy"
+                        openlmis-invalid="{{vm.proofOfDelivery.validate().deliveredBy | message}}"/>
+                </div>
+                <div ng-if="!vm.canEdit">{{vm.proofOfDelivery.deliveredBy}}</div>
+            </dd>
+            <dt>{{'proofOfDeliveryView.receivedBy' | message}}</dt>
+            <dd>
+                <div ng-if="vm.canEdit">
+                    <input type="text" ng-model="vm.proofOfDelivery.receivedBy"
+                        openlmis-invalid="{{vm.proofOfDelivery.validate().receivedBy | message}}"/>
+                </div>
+                <div ng-if="!vm.canEdit">{{vm.proofOfDelivery.receivedBy}}</div>
+            </dd>
+            <dt>{{'proofOfDeliveryView.receivedDate' | message}}</dt>
+            <dd>
+                <div ng-if="vm.canEdit">
+                    <input id="receivedDate" type="date" ng-model="vm.proofOfDelivery.receivedDate" required/>
+                </div>
+                <div ng-if="!vm.canEdit">
+                    {{vm.proofOfDelivery.receivedDate | openlmisDate}}
+                </div>
+            </dd>
+        </dl>
+    </aside>
+
+</form>
+<div class="openlmis-toolbar button-group" ng-show="vm.canEdit">
+    <button ng-click="vm.proofOfDelivery.save()">{{'proofOfDeliveryView.save' | message}}</button>
+    <button type="submit" class="primary" form="proof-of-delivery-form">{{'proofOfDeliveryView.confirm.label' | message}}</button>
+</div>
