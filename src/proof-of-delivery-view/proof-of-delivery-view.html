@@ -84,7 +84,7 @@
                     <td></td>
                     <td></td>
                     <td>{{fulfillingLineItem.quantityShipped}}</td>
-                    <td>{{'fulfillingLineItem.lot' || 'No batch defined'}}</td>
+                    <td>{{(fulfillingLineItem.lot) || ('No batch defined')}}</td>
                     <td ng-if="vm.canEdit">
                         <input positive-integer
                             ng-model="fulfillingLineItem.quantityAccepted"
