@@ -670,7 +670,7 @@
          * @return {String} the prepared URL
          */
         function getPrintUrl(id) {
-            return stockmanagementUrlFactory('/api/physicalInventories/' + id + '?format=pdf');
+            return stockmanagementUrlFactory('/api/reports/templates/malawi/6bf325d4-0755-453c-b606-573dd455ab09/pdf?id=' + id);
         }
 
         /**
