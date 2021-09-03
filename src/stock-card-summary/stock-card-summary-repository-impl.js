@@ -69,8 +69,10 @@
          * @param {string} facility the facility UUID the stock cards will be retrieved
          */
         function print(program, facility) {
+            // MW-1060: Customized report due to lot -> batch name change
             var sohPrintUrl = '/api/reports/stockCardSummaries/print',
                 params = 'program=' + program + '&' + 'facility=' + facility;
+            // MW-1060: ends here
             $window.open(accessTokenFactory.addAccessToken(
                 stockmanagementUrlFactory(sohPrintUrl + '?' + params)
             ), '_blank');

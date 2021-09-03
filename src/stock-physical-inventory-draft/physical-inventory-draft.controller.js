@@ -670,7 +670,9 @@
          * @return {String} the prepared URL
          */
         function getPrintUrl(id) {
+            // MW-1060: Customized report due to lot -> batch name change
             return stockmanagementUrlFactory('/api/reports/physicalInventories/' + id + '?format=pdf');
+            // MW-1060: ends here
         }
 
         /**
