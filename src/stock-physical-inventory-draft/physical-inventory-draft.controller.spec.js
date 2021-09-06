@@ -343,9 +343,7 @@ describe('PhysicalInventoryDraftController', function() {
             this.vm.submit();
             this.$rootScope.$apply();
             
-            // MW-1060: Customized report due to lot -> batch name change
-            expect(this.$window.open).toHaveBeenCalledWith('/api/reports/physicalInventories/1?format=pdf', '_blank');
-            // MW-1060: ends here
+            expect(this.$window.open).toHaveBeenCalledWith('/api/reports/templates/malawi/6bf325d4-0755-453c-b606-573dd455ab09/pdf?id=1', '_blank');
             expect(this.accessTokenFactory.addAccessToken).toHaveBeenCalled();
 
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries',

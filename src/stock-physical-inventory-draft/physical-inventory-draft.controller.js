@@ -670,9 +670,7 @@
          * @return {String} the prepared URL
          */
         function getPrintUrl(id) {
-            // MW-1060: Customized report due to lot -> batch name change
-            return stockmanagementUrlFactory('/api/reports/physicalInventories/' + id + '?format=pdf');
-            // MW-1060: ends here
+            return stockmanagementUrlFactory('/api/reports/templates/malawi/6bf325d4-0755-453c-b606-573dd455ab09/pdf?id=' + id);
         }
 
         /**
