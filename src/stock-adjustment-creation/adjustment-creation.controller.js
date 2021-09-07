@@ -82,6 +82,16 @@
          * @type {boolean}
          */
          vm.showDate = false;
+
+        // MW-1061: Always show batch field on Adjustments screen
+        /**
+         * @ngdoc property
+         * @propertyOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name showdate
+         * @type {boolean}
+         */
+        vm.showBatchField = false;
+        // MW-1061: ends here
     
         //MALAWISUP-2703
         /**
@@ -702,6 +712,8 @@
             vm.showReasonRemarks = (adjustmentType.state === ADJUSTMENT_TYPE.ADJUSTMENT.state);
             // MW-1045: Allow display expiry date in dropdown on the Issue screen
             vm.showDate = (adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state);
+            // MW-1061: Always show batch field on Adjustments screen
+            vm.showBatchField = (adjustmentType.state === ADJUSTMENT_TYPE.ADJUSTMENT.state);
             vm.srcDstAssignments = srcDstAssignments;
             vm.addedLineItems = $stateParams.addedLineItems || [];
             $stateParams.displayItems = displayItems;

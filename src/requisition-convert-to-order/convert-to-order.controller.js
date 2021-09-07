@@ -31,7 +31,10 @@
 
     ConvertToOrderController.$inject = [
         '$stateParams', 'requisitionService', 'notificationService', 'facilities', 'programs',
-        'confirmService', 'loadingModalService', 'requisitions', '$state', 'UuidGenerator', '$window'
+        'confirmService', 'loadingModalService', 'requisitions', '$state', 'UuidGenerator',
+        // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
+        '$window'
+        // MALAWISUP-2963: ends here
     ];
 
     function ConvertToOrderController($stateParams, requisitionService, notificationService, facilities, programs,
@@ -42,6 +45,7 @@
             uuidGenerator = new UuidGenerator(),
             key = uuidGenerator.generate();
 
+        // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
         vm.$onInit = function() {
             if ($stateParams.storageKey === undefined) {
                 $stateParams.storageKey = uuidGenerator.generate();
@@ -56,7 +60,7 @@
 
             loadPreviouslySelectedRequisitions();
         };
-
+        // MALAWISUP-2963: ends here
         vm.convertToOrder = convertToOrder;
         vm.releaseWithoutOrder = releaseWithoutOrder;
         vm.getSelected = getSelected;
@@ -70,8 +74,9 @@
          * @ngdoc property
          * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
          * @name requisitions
+         * MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
          * @type {Array}
-         *
+         * MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
          * @description
          * Holds requisitions that will be displayed on screen.
          */
@@ -166,20 +171,26 @@
          * @return {Array} list of selected requisitions
          */
         function getSelected() {
+            // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
             var storageSelected = $window.sessionStorage.getItem(vm.selectedRequisitionsStorageKey);
 
             storageSelected = storageSelected ? JSON.parse(storageSelected) : {};
+            // MALAWISUP-2963 ends here
 
             var selected = [];
 
+            // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
             for (var requisitionId in storageSelected) {
                 if (storageSelected.hasOwnProperty(requisitionId)) {
                     selected.push(storageSelected[requisitionId]);
                 }
             }
+            // MALAWISUP-2963 ends here
 
             angular.forEach(vm.requisitions, function(requisition) {
+                // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
                 if (requisition.$selected && storageSelected[requisition.requisition.id] === undefined) {
+                // MALAWISUP-2963 ends here
                     selected.push(requisition);
                 }
             });
@@ -200,7 +211,9 @@
         function toggleSelectAll(selectAll) {
             angular.forEach(vm.requisitions, function(requisition) {
                 requisition.$selected = selectAll;
+                // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
                 vm.onRequisitionSelect(requisition);
+                // MALAWISUP-2963 ends here
             });
         }
 
@@ -221,6 +234,7 @@
             vm.selectAll = value;
         }
 
+        // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
         /**
          * @ngdoc method
          * @methodOf requisition-convert-to-order.controller:ConvertToOrderController
@@ -271,6 +285,7 @@
 
             setSelectAll();
         }
+        // MALAWISUP-2963 ends here
 
         /**
          * @ngdoc method

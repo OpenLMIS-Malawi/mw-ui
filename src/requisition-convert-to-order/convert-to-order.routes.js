@@ -28,7 +28,9 @@
         $stateProvider.state('openlmis.requisitions.convertToOrder', {
             showInNavigation: true,
             label: 'requisitionConvertToOrder.convertToOrder.label',
+            // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
             url: '/convertToOrder?programId&facilityId&sort&page&size&storageKey',
+            // MALAWISUP-2963 ends here
             controller: 'ConvertToOrderController',
             controllerAs: 'vm',
             templateUrl: 'requisition-convert-to-order/convert-to-order.html',

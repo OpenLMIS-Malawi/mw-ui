@@ -342,8 +342,8 @@ describe('PhysicalInventoryDraftController', function() {
             this.draft.id = 1;
             this.vm.submit();
             this.$rootScope.$apply();
-
-            expect(this.$window.open).toHaveBeenCalledWith('/api/reports/physicalInventories/1?format=pdf', '_blank');
+            
+            expect(this.$window.open).toHaveBeenCalledWith('/api/physicalInventories/1?format=pdf', '_blank');
             expect(this.accessTokenFactory.addAccessToken).toHaveBeenCalled();
 
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries',

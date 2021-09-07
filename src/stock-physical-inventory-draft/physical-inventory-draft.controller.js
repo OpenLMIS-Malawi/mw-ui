@@ -670,7 +670,7 @@
          * @return {String} the prepared URL
          */
         function getPrintUrl(id) {
-            return stockmanagementUrlFactory('/api/reports/physicalInventories/' + id + '?format=pdf');
+            return stockmanagementUrlFactory('/api/physicalInventories/' + id + '?format=pdf');
         }
 
         /**
