@@ -75,7 +75,8 @@
 
                     return paginationService.registerList(validator, $stateParams, function() {
                         var searchResult = physicalInventoryService.search($stateParams.keyword, draft.lineItems);
-                        var lineItems = $filter('orderBy')(searchResult, 'orderable.productCode');
+                        // MALAWISUP-3076: Products ordered alphabetically
+                        var lineItems = $filter('orderBy')(searchResult, 'orderable.fullProductName');
 
                         var groups = _.chain(lineItems).filter(function(item) {
                             var hasQuantity = !(_.isNull(item.quantity) || _.isUndefined(item.quantity));
