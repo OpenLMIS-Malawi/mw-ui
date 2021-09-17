@@ -1,0 +1,75 @@
+<h2>{{'shipmentView.title' | message:{orderCode:vm.order.orderCode} }}</h2>
+<aside class="requisition-info">
+    <div ng-if="vm.order.emergency" class="requisition-type emergency">
+        {{'shipmentView.emergency' | message}}
+    </div>
+    <ul>
+        <li>
+            <strong>{{'shipmentView.status' | message}}</strong>
+            {{vm.order.status}}
+        </li>
+        <li>
+            <strong>{{'shipmentView.dateCreated' | message}}</strong>
+            {{vm.order.createdDate | openlmisDate}}
+        </li>
+        <li>
+            <strong>{{'shipmentView.program' | message}}</strong>
+            {{vm.order.program.name}}
+        </li>
+        <li>
+            <strong>{{'shipmentView.facility' | message}}</strong>
+            {{vm.order.requestingFacility.name}}
+        </li>
+        <li>
+            <strong>{{'shipmentView.facilityCceStatus' | message}}</strong>
+            <facility-cce-status facility="vm.order.requestingFacility"></facility-cce-status>
+        </li>
+    </ul>
+</aside>
+<form class="openlmis-table-container" id="shipmentForm" ng-submit="vm.shipment.confirm()">
+    <quantity-unit-toggle class="is-primary" quantity-unit="vm.quantityUnit"></quantity-unit-toggle>
+    <table>
+        <thead>
+            <tr>
+                <th>{{'shipmentView.productCode' | message}}</th>
+                <th>{{'shipmentView.product' | message}}</th>
+                <th>{{'shipmentView.lotCode' | message}}</th>
+                <th>{{'shipmentView.vvmStatus' | message}}</th>
+                <th>{{'shipmentView.expiryDate' | message}}</th>
+                <th popover="{{'shipmentView.quantitiesProvidedIn' | message}} {{vm.getSelectedQuantityUnitKey() | message}}">{{'shipmentView.orderQuantity' | message}}</th>
+                <th>{{'shipmentView.fillQuantityInPack' | message}}</th>
+                <th popover="{{'shipmentView.quantitiesProvidedIn' | message}} {{vm.getSelectedQuantityUnitKey() | message}}">{{'shipmentView.availableSoh' | message}}</th>
+                <th popover="{{'shipmentView.quantitiesProvidedIn' | message}} {{vm.getSelectedQuantityUnitKey() | message}}">{{'shipmentView.remainingSoh' | message}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="tableLineItem in vm.tableLineItems" ng-class="{'is-secondary': tableLineItem.isMainGroup}" empty-row="tableLineItem.noStockAvailable" empty-row-message="{{'shipmentView.noStockAvailable' | message}}" empty-row-col-span="9">
+                <td>{{tableLineItem.productCode}}</td>
+                <td>{{tableLineItem.productName}}</td>
+                <!-- MW-1046: Add No batch defined message -->
+                <td>{{tableLineItem.lot ? tableLineItem.lot.lotCode : ('stockCardSummaryList.noLotDefined' | message)}}</td>
+                <!-- MW-1046: ends here -->
+                <td>{{vm.getVvmStatusLabel(tableLineItem.vvmStatus) | message}}</td>
+                <td>{{tableLineItem.lot.expirationDate | openlmisDate}}</td>
+                <td>{{tableLineItem.getOrderQuantity(vm.showInDoses())}}</td>
+                <td ng-if="!tableLineItem.shipmentLineItem">{{tableLineItem.getFillQuantity()}}</td>
+                <td ng-if="tableLineItem.shipmentLineItem">
+                    <input ng-show="vm.shipment.isEditable()" positive-integer ng-model="tableLineItem.shipmentLineItem.quantityShipped"
+                        ng-class="{'is-invalid': tableLineItem.shipmentLineItem.isInvalid().quantityShipped}"
+                        openlmis-invalid="{{tableLineItem.shipmentLineItem.isInvalid().quantityShipped | message}}"/>
+                    <div ng-show="!vm.shipment.isEditable()">{{tableLineItem.shipmentLineItem.quantityShipped}}</div>
+                </td>
+                <td>{{tableLineItem.getAvailableSoh(vm.showInDoses())}}</td>
+                <td>{{tableLineItem.getRemainingSoh(vm.showInDoses())}}</td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+<div ng-show="vm.shipment.isEditable()" class="openlmis-toolbar">
+    <div class="button-group primary">
+        <button ng-show="vm.shipment.canBeConfirmed()" form="shipmentForm" class="primary">{{'shipmentView.confirmShipment' | message}}</button>
+        <button ng-show="vm.shipment.id" class="danger" ng-click="vm.shipment.delete()">{{'shipmentView.deleteDraft' | message}}</button>
+    </div>
+    <button ng-click="vm.shipment.save()">{{'shipmentView.saveDelete' | message}}</button>
+    <button ng-show="vm.shipment.isEditable()" ng-click="vm.printShipment()">{{'shipmentView.generatePickPackList' | message}}</button>
+</div>

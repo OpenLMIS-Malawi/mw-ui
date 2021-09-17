@@ -38,5 +38,7 @@
     "shipmentView.quantitiesProvidedIn": "Quantities are provided in",
     "shipmentView.fillQuantityInPack": "Fill Quantity (in Packs)",
     "shipmentView.remainingSoh": "Remaining SOH",
-    "shipmentView.noStockAvailable": "No stock available"
+    "shipmentView.noStockAvailable": "No stock available",
+    "shipmentView.productHasNoLots": "No batch defined",
+    "shipmentView.noLotDefined": "No batch defined"
 }
