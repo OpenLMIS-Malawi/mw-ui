@@ -15,7 +15,7 @@
     "shipmentView.lastUpdated": "Last Updated",
     "shipmentView.lastUpdatedBy": "Last Updated By",
     "shipmentView.facilityCceStatus": "Facility CCE Status",
-    "shipmentView.lotCode": "Batch Code",
+    "shipmentView.lotCode": "Batch Number",
     "shipmentView.vvmStatus": "VVM Status",
     "shipmentView.expiryDate": "Expiry Date",
     "shipmentView.availableSoh": "Available SOH",
