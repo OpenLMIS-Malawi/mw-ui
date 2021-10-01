@@ -706,8 +706,10 @@
             vm.program = program;
             vm.facility = facility;
             vm.reasons = reasons;
-            // MALAWISUP-2702: Remove the "Reasons" field under "Receive"
-            vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state && adjustmentType.state !== ADJUSTMENT_TYPE.RECEIVE.state);
+            // MALAWISUP-3141: Revert MALAWISUP-2702 'Remove the "Reasons" field under "Receive"'
+            // vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state && adjustmentType.state !== ADJUSTMENT_TYPE.RECEIVE.state);
+            vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state);
+            // MALAWISUP-3141: ends here
             // MALAWISUP-2703: Allow displaying reason free text on the Adjustments screen
             vm.showReasonRemarks = (adjustmentType.state === ADJUSTMENT_TYPE.ADJUSTMENT.state);
             // MW-1045: Allow display expiry date in dropdown on the Issue screen
