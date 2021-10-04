@@ -74,6 +74,16 @@
          */
         vm.showReasonDropdown = true;
 
+        // MALAWISUP-3141: Select default reason in Reason screen
+        /**
+         * @ngdoc property
+         * @propertyOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name selectDefaultReason
+         * @type {boolean}
+         */
+        vm.selectDefaultReason = false;
+        // MALAWISUP-3141: ends here
+
         //MW-1045
         /**
          * @ngdoc property
@@ -706,9 +716,10 @@
             vm.program = program;
             vm.facility = facility;
             vm.reasons = reasons;
-            // MALAWISUP-3141: Revert MALAWISUP-2702 'Remove the "Reasons" field under "Receive"'
+            // MALAWISUP-3141: Revert MALAWISUP-2702 'Remove the "Reasons" field under "Receive"' and select default reason in Reason screen
             // vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state && adjustmentType.state !== ADJUSTMENT_TYPE.RECEIVE.state);
             vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state);
+            vm.selectDefaultReason = (adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state);
             // MALAWISUP-3141: ends here
             // MALAWISUP-2703: Allow displaying reason free text on the Adjustments screen
             vm.showReasonRemarks = (adjustmentType.state === ADJUSTMENT_TYPE.ADJUSTMENT.state);

@@ -113,9 +113,15 @@
                     <!-- /MALAWISUP-2701 -->
                     <td ng-if="vm.showReasonDropdown" openlmis-invalid="{{lineItem.$errors.reasonInvalid ? 'openlmisForm.required' : '' | message}}" class="digit-cell">
                         <!-- MALAWISUP-2861: fix missing data while changing page -->
-                        <select ng-model="lineItem.reason"
+                        <!-- MALAWISUP-3141: Select default reason in Reason screen -->
+                        <select ng-if="!vm.selectDefaultReason" ng-init="lineItem.reason" ng-model="lineItem.reason"
                             ng-change="vm.validateReason(lineItem);vm.clearFreeText(lineItem, 'reasonFreeText')"
-                            ng-options="reason as reason.name for reason in vm.reasons  track by reason.id" autofocus>
+                            ng-options="reason as reason.name for reason in vm.reasons track by reason.id" autofocus>
+                        </select>
+                        <select ng-if="vm.selectDefaultReason" ng-init="lineItem.reason = vm.reasons[0]" ng-model="lineItem.reason"
+                            ng-change="vm.validateReason(lineItem);vm.clearFreeText(lineItem, 'reasonFreeText')"
+                            ng-options="reason as reason.name for reason in vm.reasons track by reason.id" ng-disabled="vm.selectDefaultReason" autofocus>
+                            <!-- MALAWISUP-3141: ends here -->
                             <!-- MALAWISUP-2861: ends here -->
                         </select>
                     </td>
