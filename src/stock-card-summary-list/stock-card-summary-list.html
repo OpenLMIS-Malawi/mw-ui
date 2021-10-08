@@ -1,0 +1,83 @@
+<h2 ng-if="vm.facility && vm.program">
+    {{'stockCardSummaryList.title' | message: { 'facility': vm.facility.name, 'program': vm.program.name} }}
+</h2>
+<h2 ng-hide="vm.facility && vm.program">{{'stockCardSummaryList.stockOnHand' | message}}</h2>
+<p class="alert is-offline" ng-if="vm.offline()">
+    {{ 'stockCardSummaryList.offline1' | message}}
+    <b>{{ 'stockCardSummaryList.offline2' | message}}</b>
+    {{ 'stockCardSummaryList.offline3' | message}}<br>
+    <a ng-click="vm.goToPendingOfflineEventsPage()">{{ 'stockCardSummaryList.pendingOfflineEvents' | message}}</a>
+    {{ 'stockCardSummaryList.offline4' | message}}
+</p>
+
+<form ng-submit="vm.loadStockCardSummaries()" class="sidebar">
+    <openlmis-facility-program-select
+        is-supervised="vm.isSupervised"
+        facility="vm.facility"
+        program="vm.program"
+        module="'stock-card-summary-list'">
+    </openlmis-facility-program-select>
+    <input type="submit" value="{{'stockCardSummaryList.search'|message}}"/>
+</form>
+<section class="openlmis-table-container">
+    <!-- MALAWISUP-3068: Add filter in SOH -->
+    <form ng-submit="vm.search()">
+        <fieldset>
+            <label for="search">{{'stockCardSummaryList.keyword'|message}}</label>
+            <input id="search" type="text" ng-model="vm.keyword" maxlength="50"/>
+        </fieldset>
+        <input type="submit" value="{{'stockCardSummaryList.search'|message}}"/>
+    </form>
+    <!-- MALAWISUP-3068: ends here -->
+    <button class="primary" ng-disabled="!vm.displayStockCardSummaries.length" ng-click="vm.print()">{{'stockCardSummaryList.print' | message}}</button>
+    <table>
+        <!-- MALAWISUP-3068: Add filter in SOH -->
+        <caption ng-if="!vm.displayStockCardSummaries.length && !vm.stateParams.keyword">
+            <!-- MALAWISUP-3068: ends here -->
+            {{'stockCardSummaryList.noProducts' | message}}
+        </caption>
+        <!-- MALAWISUP-3068: Add filter in SOH -->
+        <caption ng-if="!vm.displayStockCardSummaries.length && vm.stateParams.keyword">
+            {{'stockCardSummaryList.noSearchResults' | message}}
+        </caption>
+        <!-- MALAWISUP-3068: ends here -->
+        <thead>
+            <tr>
+                <th>{{'stockCardSummaryList.productCode' | message}}</th>
+                <th>{{'stockCardSummaryList.product' | message}}</th>
+                <th>{{'stockCardSummaryList.lotCode' | message}}</th>
+                <th>{{'stockCardSummaryList.expiryDate' | message}}</th>
+                <th>{{'stockCardSummaryList.lastUpdate' | message}}</th>
+                <th>{{'stockCardSummaryList.stockOnHand' | message}}</th>
+                <th>{{'stockCardSummaryList.actions' | message}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="is-secondary" ng-if="vm.displayStockCardSummaries.length > 1" ng-repeat-start="summary in vm.displayStockCardSummaries">
+                <td>{{summary.orderable.productCode}}</td>
+                <td>{{summary.orderable.fullProductName}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{summary.stockOnHand}}</td>
+                <td></td>
+            </tr>
+            <tr ng-repeat="fulfills in summary.canFulfillForMe | orderBy:'lot?lot.lotCode:\'\''" ng-repeat-end>
+                <td>{{fulfills.orderable.productCode}}</td>
+                <td>{{fulfills.orderable.fullProductName}}</td>
+                <td>{{fulfills.lot ? fulfills.lot.lotCode : ('stockCardSummaryList.noLotDefined' | message)}}</td>
+                <td>{{fulfills.lot ? (fulfills.lot.expirationDate | openlmisDate) : ''}}</td>
+                <td>{{fulfills.occurredDate | openlmisDate}}</td>
+                <td>{{fulfills.stockOnHand}}</td>
+                <td>
+                    <button ng-if="fulfills.stockCard" type="button" ng-click="vm.viewSingleCard(fulfills.stockCard.id)" class="primary">
+                        {{'stockCardSummaryList.view'| message}}
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- MALAWISUP-3068: Add filter in SOH -->
+    <openlmis-pagination list="displayStockCardSummaries" paged-list="vm.pagedList" pagination-id="'stockCardList'"/>
+    <!-- MALAWISUP-3068: ends here -->
+</section>
