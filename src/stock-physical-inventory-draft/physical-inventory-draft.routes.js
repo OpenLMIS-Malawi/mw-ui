@@ -75,7 +75,12 @@
 
                     return paginationService.registerList(validator, $stateParams, function() {
                         var searchResult = physicalInventoryService.search($stateParams.keyword, draft.lineItems);
-                        var lineItems = $filter('orderBy')(searchResult, 'orderable.productCode');
+                        // MALAWISUP-3076: Modified sorting in physical inventory
+                        var lineItems = $filter('orderBy')(searchResult, [
+                            'orderable.programs[0].orderableCategoryDisplayOrder',
+                            'orderable.fullProductName'
+                        ]);
+                        // MALAWISUP-3076: ends here
 
                         var groups = _.chain(lineItems).filter(function(item) {
                             var hasQuantity = !(_.isNull(item.quantity) || _.isUndefined(item.quantity));
