@@ -35,10 +35,8 @@
 		<tbody>
 			<tr ng-repeat="item in vm.requisitions">
 				<td>
-					<!-- MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders -->
 					<input type="checkbox" ng-model="item.$selected"
 						   ng-change="vm.onRequisitionSelect(item)">
-					<!-- MALAWISUP-2963 ends here -->
 				</td>
 				<td>{{item.requisition.program.name}}</td>
 				<td>{{item.requisition.facility.code}} - {{item.requisition.facility.name}}</td>

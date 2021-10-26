@@ -75,18 +75,14 @@ describe('ConvertToOrderController', function() {
                 }
             ];
 
-            // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
             var window = $injector.get('$window');
-            // MALAWISUP-2963 ends here
 
             this.vm = $injector.get('$controller')('ConvertToOrderController', {
                 requisitions: this.requisitions,
                 $stateParams: this.stateParams,
                 facilities: this.facilities,
-                // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
                 programs: this.programs,
                 $window: window
-                // MALAWISUP-2963 ends here
             });
         });
     });
@@ -448,14 +444,12 @@ describe('ConvertToOrderController', function() {
 
     it('should not set "select all" option when not all requisitions are selected by user', function() {
         this.vm.requisitions[0].$selected = true;
-        // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
         this.vm.onRequisitionSelect(this.vm.requisitions[0]);
 
         for (var i = 1; i < this.vm.requisitions.length; i++) {
             this.vm.requisitions[i].$selected = false;
             this.vm.onRequisitionSelect(this.vm.requisitions[i]);
         }
-        // MALAWISUP-2963 ends here
 
         this.vm.setSelectAll();
 
@@ -497,7 +491,6 @@ describe('ConvertToOrderController', function() {
         });
     });
 
-    // MALAWISUP-2963 Allow requisitions spanning multiple pages to be simultaneously converted to orders
     describe('load selection from other pages', function() {
         beforeEach(function() {
             inject(function($injector) {
@@ -597,5 +590,4 @@ describe('ConvertToOrderController', function() {
             expect(numberOfSelectedOnOtherPages).toBeGreaterThan(0);
         });
     });
-    // MALAWISUP-2963 ends here
 });
