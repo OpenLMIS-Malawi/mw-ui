@@ -61,8 +61,10 @@
                     }
                     return $stateParams.facility;
                 },
+                // MALAWISUP-3076: Modified sorting in physical inventory
                 displayLineItemsGroup: function(paginationService, physicalInventoryService, $stateParams, $filter,
-                    draft, orderableGroupService) {
+                    draft, orderableGroupService, program) {
+                // MALAWISUP-3076: ends here
                     $stateParams.size = '@@STOCKMANAGEMENT_PAGE_SIZE';
 
                     var validator = function(items) {
@@ -75,11 +77,29 @@
 
                     return paginationService.registerList(validator, $stateParams, function() {
                         var searchResult = physicalInventoryService.search($stateParams.keyword, draft.lineItems);
+
                         // MALAWISUP-3076: Modified sorting in physical inventory
-                        var lineItems = $filter('orderBy')(searchResult, [
-                            'orderable.programs[0].orderableCategoryDisplayOrder',
-                            'orderable.fullProductName'
-                        ]);
+                        var lineItems = searchResult.sort(function (first, second) {
+                            var firstDisplayOrder = first.orderable.programs.find(function (p) {
+                                return p.programId === program.id
+                            });
+
+                            // Orderable without program are invalid and should be on the top
+                            firstDisplayOrder = firstDisplayOrder.hasOwnProperty('displayOrder')
+                                ? firstDisplayOrder.displayOrder
+                                : -1;
+
+                            var secondDisplayOrder = second.orderable.programs.find(function (p) {
+                                return p.programId === program.id
+                            });
+
+                            // Orderable without program are invalid and should be on the top
+                            secondDisplayOrder = secondDisplayOrder.hasOwnProperty('displayOrder')
+                                ? secondDisplayOrder.displayOrder
+                                : -1;
+
+                            return firstDisplayOrder <= secondDisplayOrder ? -1 : 1;
+                        });
                         // MALAWISUP-3076: ends here
 
                         var groups = _.chain(lineItems).filter(function(item) {
