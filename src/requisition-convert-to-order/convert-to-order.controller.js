@@ -357,17 +357,19 @@
                                     notificationService.success(withOrder ?
                                         'requisitionConvertToOrder.convertToOrder.success' :
                                         'requisitionConvertToOrder.releaseWithoutOrder.success');
-                                    //MALAWISUP-3379: Remove requisition from session storage after releasing them
-                                    $window.sessionStorage.removeItem('requisition-convert-to-order/selected-requisitions/' + $stateParams.storageKey);
-                                    $state.go($state.current.name, $stateParams, {
-                                        reload: true
-                                    });
-                                    //MALAWISUP-3379: ends here
-                                })
-                                .catch(function() {
-                                    loadingModalService.close();
-                                    notificationService.error('requisitionConvertToOrder.errorOccurred');
-                                    key = uuidGenerator.generate();
+                                    })
+                                    .catch(function() {
+                                        loadingModalService.close();
+                                        notificationService.error('requisitionConvertToOrder.errorOccurred');
+                                        key = uuidGenerator.generate();
+                                    })
+                                    .finally(function() {
+                                        //MALAWISUP-3379: Remove requisition from session storage after releasing them
+                                        $window.sessionStorage.removeItem('requisition-convert-to-order/selected-requisitions/' + $stateParams.storageKey);
+                                        $state.go($state.current.name, $stateParams, {
+                                            reload: true
+                                        });
+                                        //MALAWISUP-3379: ends here                                        
                                 });
                         });
                     }
