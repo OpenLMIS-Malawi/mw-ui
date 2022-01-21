@@ -1,0 +1,89 @@
+<div class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1>{{'adminValidSourceAdd.addValidSource' | message}}</h1>
+            </div>
+            <div class="modal-body">
+                <form id="add-valid-source-form" ng-submit="vm.submit()">
+                    <label for="program">
+                        {{'adminValidSourceAdd.selectProgram' | message}}
+                    </label>
+                    <select id="program"
+                            ng-model="vm.program"
+                            ng-options="p.name for p in vm.programs track by p.id" required>
+                    </select>
+
+                    <label for="facilityType">
+                        {{'adminValidSourceAdd.facilityType' | message}}
+                    </label>
+
+                    <select id="facilityType"
+                            ng-model="vm.facilityType"
+                            ng-options="f.name for f in vm.facilityTypes track by f.id" required>
+                    </select>
+
+                    <label for="facilityUnitType">
+                        <input
+                                id="facilityUnitType"
+                                type="radio"
+                                ng-model="vm.unitType"
+                                value="facility"
+                                required>
+                        {{'adminValidSourceAdd.isFacility' | message}}
+                    </label>
+
+                    <label for="organizationUnitType">
+                        <input
+                                id="organizationUnitType"
+                                type="radio"
+                                ng-model="vm.unitType"
+                                value="organization"
+                                required>
+                        {{'adminValidSourceAdd.isOrganization' | message}}
+                    </label>
+
+                    <div ng-if="vm.unitType === 'organization'">
+                        <label for="organization">
+                            {{'adminValidSourceAdd.organization' | message}}
+                        </label>
+
+                        <select id="organization"
+                                ng-model="vm.organization"
+                                ng-options="o.name for o in vm.organizations track by o.id" required>
+                        </select>
+                    </div>
+
+                    <div ng-if="vm.unitType === 'facility'">
+                        <label for="facility">
+                            {{'adminValidSourceAdd.facility' | message}}
+                        </label>
+
+                        <select id="facility"
+                                ng-model="vm.facility"
+                                ng-options="f.name for f in vm.facilities track by f.id" required>
+                        </select>
+                    </div>
+
+                    <label for="geoLevelAffinity">
+                        {{'adminValidSourceAdd.geoLevelAffinity' | message}}
+                    </label>
+
+                    <select id="geoLevelAffinity"
+                            ng-model="vm.geoLevel"
+                            ng-options="g.name for g in vm.geoLevels track by g.id">
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel" ng-click="vm.goToPreviousState()">
+                    {{'adminValidSourceAdd.cancel' | message}}
+                </button>
+                <button class="primary" form="add-valid-source-form">
+                    {{'adminValidSourceAdd.add' | message}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

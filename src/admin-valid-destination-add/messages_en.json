@@ -1,0 +1,15 @@
+{
+    "adminValidDestinationAdd.add": "Add",
+    "adminValidDestinationAdd.cancel": "Cancel",
+    "adminValidDestinationAdd.facility": "Facility",
+    "adminValidDestinationAdd.facilityType": "Facility Type",
+    "adminValidDestinationAdd.geoLevelAffinity": "Geo Level Affinity",
+    "adminValidDestinationAdd.organization": "Organization",
+    "adminValidDestinationAdd.isOrganization": "Is Organization",
+    "adminValidDestinationAdd.isFacility": "Is Facility",
+    "adminValidDestinationAdd.selectProgram": "Select program",
+    "adminValidDestinationAdd.addValidDestination": "Add Valid Destination",
+    "adminValidDestinationAdd.validDestinationAddedSuccessfully": "Valid Destination has been saved successfully.",
+    "adminValidDestinationAdd.failure": "Failed to save the Valid Destination."
+}
+

@@ -1,0 +1,15 @@
+{
+    "adminValidSourceAdd.add": "Add",
+    "adminValidSourceAdd.cancel": "Cancel",
+    "adminValidSourceAdd.facility": "Facility",
+    "adminValidSourceAdd.facilityType": "Facility Type",
+    "adminValidSourceAdd.geoLevelAffinity": "Geo Level Affinity",
+    "adminValidSourceAdd.organization": "Organization",
+    "adminValidSourceAdd.isOrganization": "Is Organization",
+    "adminValidSourceAdd.isFacility": "Is Facility",
+    "adminValidSourceAdd.selectProgram": "Select program",
+    "adminValidSourceAdd.addValidSource": "Add Valid Source",
+    "adminValidSourceAdd.validSourceAddedSuccessfully": "Valid Source has been saved successfully.",
+    "adminValidSourceAdd.failure": "Failed to save the Valid Source."
+}
+
