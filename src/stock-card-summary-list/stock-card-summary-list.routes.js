@@ -27,7 +27,7 @@
         $stateProvider.state('openlmis.stockmanagement.stockCardSummaries', {
             isOffline: true,
             // MALAWISUP-3068: Add filter in SOH
-            url: '/stockCardSummaries?facility&program&supervised&page&size&keyword',
+            url: '/stockCardSummaries?facility&program&supervised&page&size&includeInactive&keyword',
             // MALAWISUP-3068: ends here
             label: 'stockCardSummaryList.stockOnHand',
             priority: 1,
@@ -53,6 +53,7 @@
 
                     paramsCopy.facilityId = $stateParams.facility;
                     paramsCopy.programId = $stateParams.program;
+                    paramsCopy.includeInactive = $stateParams.includeInactive;
                     paramsCopy.nonEmptyOnly = true;
 
                     delete paramsCopy.facility;

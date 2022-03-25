@@ -44,13 +44,12 @@
             SYSTEM_NOTIFICATIONS_MANAGE: 'SYSTEM_NOTIFICATIONS_MANAGE',
             FACILITY_APPROVED_ORDERABLES_MANAGE: 'FACILITY_APPROVED_ORDERABLES_MANAGE',
             DHIS2_MANAGEMENT: 'DHIS2_MANAGEMENT',
-            // MALAWISUP-2974: Added ability to manage lots
             LOTS_MANAGE: 'LOTS_MANAGE',
-            // MALAWISUP-2974: ends here
             // MW-1098: Add possibility to add valid sources and destinations
             STOCK_SOURCES_MANAGE: 'STOCK_SOURCES_MANAGE',
-            STOCK_DESTINATIONS_MANAGE: 'STOCK_DESTINATIONS_MANAGE'
+            STOCK_DESTINATIONS_MANAGE: 'STOCK_DESTINATIONS_MANAGE',
             // MW-1098: Ends here
+            ORDER_CREATE: 'ORDER_CREATE'
         };
     }
 

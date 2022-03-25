@@ -139,7 +139,10 @@
          * @param {Array}  lineItems all line items
          * @return {Array} result    search result
          */
-        function search(keyword, lineItems) {
+        function search(keyword, lineItems, includeInactive) {
+            // Workaround for eslint unexpected token on default param
+            includeInactive = typeof includeInactive === 'boolean' ? includeInactive : false;
+
             var result = lineItems;
             var hasLot = _.any(lineItems, function(item) {
                 return item.lot;
@@ -167,6 +170,12 @@
                         // MALAWISUP-3188: ends here
                         return field.toLowerCase().contains(keyword.toLowerCase());
                     });
+                });
+            }
+
+            if (!includeInactive) {
+                result = _.filter(result, function(item) {
+                    return item.active;
                 });
             }
 
@@ -222,7 +231,11 @@
          * @return {Promise}                  Submitted Physical Inventory
          */
         function submit(physicalInventory) {
-            var event = stockEventFactory.createFromPhysicalInventory(physicalInventory);
+            try {
+                var event = stockEventFactory.createFromPhysicalInventory(physicalInventory);
+            } catch (error) {
+                return getDraft(physicalInventory.programId, physicalInventory.facilityId);
+            }
             return resource.submitPhysicalInventory(event).$promise
                 .then(function() {
                     removeDraftFromCache(physicalInventory.id);

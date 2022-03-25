@@ -1,5 +1,5 @@
 {
     "stockAddProductsModal.lotCode": "Batch Number",
     "stockAddProductsModal.newLotCode": "New Batch Number",
-    "stockAddProductsModal.newNotExpirationDate": "Expiry Date"
+    "stockAddProductsModal.newLotExpirationDate": "Expiry Date"
 }

@@ -51,11 +51,9 @@
                 adjustmentType: function() {
                     return ADJUSTMENT_TYPE.KIT_UNPACK;
                 },
-                // MALAWISUP-2974: Added lot-management feature
                 hasPermissionToAddNewLot: function() {
                     return false;
                 }
-                // MALAWISUP-2974: ends here
             }
         });
     }

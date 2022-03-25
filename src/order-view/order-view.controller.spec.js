@@ -438,6 +438,20 @@ describe('OrderViewController', function() {
         });
     });
 
+    describe('redirectToOrderEdit', function() {
+        beforeEach(function() {
+            this.initController();
+            spyOn(this.$state, 'go').andReturn();
+        });
+        it('should redirect to order edit', function() {
+            var orderId = '19121381-9f3d-4e77-b9e5-d3f59fc1639e';
+            this.vm.redirectToOrderEdit(orderId);
+            expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.orderCreate.table', {
+                orderId: orderId
+            });
+        });
+    });
+
     function initController() {
         this.vm = this.$controller('OrderViewController', {
             supplyingFacilities: this.supplyingFacilities,

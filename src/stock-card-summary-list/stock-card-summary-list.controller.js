@@ -32,24 +32,23 @@
         'loadingModalService', '$state', '$stateParams', 'StockCardSummaryRepositoryImpl', 'stockCardSummaries',
         'offlineService', '$scope',
         // MALAWISUP-3068: Add filter in SOH
-        'displayStockCardSummaries'
+        'displayStockCardSummaries',
         // MALAWISUP-3068: ends here
+        'STOCKCARD_STATUS', 'messageService', 'paginationService'
     ];
 
     function controller(loadingModalService, $state, $stateParams, StockCardSummaryRepositoryImpl, stockCardSummaries,
                         offlineService, $scope,
                         // MALAWISUP-3068: Add filter in SOH
-                        displayStockCardSummaries) {
+                        displayStockCardSummaries, STOCKCARD_STATUS, messageService, paginationService) {
                             // MALAWISUP-3068: ends here
         var vm = this;
 
         vm.$onInit = onInit;
         vm.loadStockCardSummaries = loadStockCardSummaries;
-        // MALAWISUP-3068: Add filter in SOH
-        vm.search = search;
-        // MALAWISUP-3068: ends here
         vm.viewSingleCard = viewSingleCard;
         vm.print = print;
+        vm.search = search;
         vm.offline = offlineService.isOffline;
         vm.goToPendingOfflineEventsPage = goToPendingOfflineEventsPage;
 
@@ -61,7 +60,7 @@
          * @type {String}
          *
          * @description
-         * Holds keywords for searching.
+         * Holds keywords for filtering.
          */
         vm.keyword = undefined;
         // MALAWISUP-3068: ends here
@@ -88,25 +87,16 @@
          */
         vm.displayStockCardSummaries = undefined;
 
-        // MALAWISUP-3068: Add filter in SOH
         /**
-         * @ngdoc method
-         * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
-         * @name search
+         * @ngdoc property
+         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name includeInactive
+         * @type {Boolean}
          *
          * @description
-         * It searches from the total Stock Card Summaries with given keyword. If keyword is empty then all
-         * Stock Card Summaries will be shown.
+         * When true shows inactive items
          */
-        function search() {
-            
-            $stateParams.keyword = vm.keyword;
-
-            $state.go('openlmis.stockmanagement.stockCardSummaries', $stateParams, {
-                reload: true
-            });
-        };
-        // MALAWISUP-3068: ends here
+        vm.includeInactive = $stateParams.includeInactive;
 
         /**
          * @ngdoc method
@@ -121,6 +111,12 @@
             // MALAWISUP-3068: Add filter in SOH
             vm.displayStockCardSummaries = displayStockCardSummaries;
             // MALAWISUP-3068: ends here
+            checkCanFulFillIsEmpty();
+            paginationService.registerList(null, $stateParams, function() {
+                return vm.displayStockCardSummaries;
+            }, {
+                paginationId: 'stockCardSummaries'
+            });
 
             $stateParams.keyword = vm.keyword;
 
@@ -149,6 +145,7 @@
             // MALAWISUP-3068: ends here
             stateParams.facility = vm.facility.id;
             stateParams.program = vm.program.id;
+            stateParams.active = STOCKCARD_STATUS.ACTIVE;
             stateParams.supervised = vm.isSupervised;
 
             $state.go('openlmis.stockmanagement.stockCardSummaries', stateParams, {
@@ -187,6 +184,25 @@
         /**
          * @ngdoc method
          * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name search
+         */
+         function search() {
+            var stateParams = angular.copy($stateParams);
+            // MALAWISUP-3068: Add filter in SOH
+            $stateParams.keyword = vm.keyword;
+            // MALAWISUP-3068: ends here
+            stateParams.facility = vm.facility.id;
+            stateParams.program = vm.program.id;
+            stateParams.supervised = vm.isSupervised;
+            stateParams.includeInactive = vm.includeInactive;
+            $state.go('openlmis.stockmanagement.stockCardSummaries', stateParams, {
+                reload: true
+            });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
          * @name goToPendingOfflineEventsPage
          *
          * @description
@@ -194,6 +210,22 @@
          */
         function goToPendingOfflineEventsPage() {
             $state.go('openlmis.pendingOfflineEvents');
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name checkCanFulFillIsEmpty
+         *
+         * @description
+         * Filters only not empty displayStockCardSummaries.
+         */
+         function checkCanFulFillIsEmpty() {
+            vm.displayStockCardSummaries = vm.displayStockCardSummaries.filter(function(summary) {
+                if (summary.canFulfillForMe.length !== 0) {
+                    return summary;
+                }
+            });
         }
     }
 })();

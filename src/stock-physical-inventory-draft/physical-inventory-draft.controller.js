@@ -34,7 +34,7 @@
         'displayLineItemsGroup', 'confirmService', 'physicalInventoryService', 'MAX_INTEGER_VALUE',
         'VVM_STATUS', 'reasons', 'stockReasonsCalculations', 'loadingModalService', '$window',
         'stockmanagementUrlFactory', 'accessTokenFactory', 'orderableGroupService', '$filter', '$q',
-        'offlineService', 'localStorageFactory', 'physicalInventoryDraftCacheService',
+        'offlineService', 'physicalInventoryDraftCacheService', 'stockCardService',
         'LotResource', 'editLotModalService'];
 
     function controller($scope, $state, $stateParams, addProductsModalService, messageService,
@@ -43,8 +43,8 @@
                         confirmService, physicalInventoryService, MAX_INTEGER_VALUE, VVM_STATUS,
                         reasons, stockReasonsCalculations, loadingModalService, $window,
                         stockmanagementUrlFactory, accessTokenFactory, orderableGroupService, $filter, $q,
-                        offlineService, localStorageFactory,
-                        physicalInventoryDraftCacheService, LotResource, editLotModalService) {
+                        offlineService, physicalInventoryDraftCacheService, stockCardService,
+                        LotResource, editLotModalService) {
 
         var vm = this;
 
@@ -108,6 +108,17 @@
         /**
          * @ngdoc property
          * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name includeInactive
+         * @type {Boolean}
+         *
+         * @description
+         * When true shows inactive items
+         */
+        vm.includeInactive = $stateParams.includeInactive;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
          * @name vvmStatuses
          * @type {Object}
          *
@@ -137,6 +148,17 @@
          * Indicates if VVM Status column should be visible.
          */
         vm.showVVMStatusColumn = false;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name showVVMStatusColumn
+         * @type {boolean}
+         *
+         * @description
+         * Indicates if Hide buttons column should be visible.
+         */
+        vm.showHideButtonColumn = false;
 
         /**
          * @ngdoc property
@@ -197,9 +219,14 @@
         vm.addProducts = function() {
             var notYetAddedItems = _.chain(draft.lineItems)
                 .difference(_.flatten(vm.displayLineItemsGroup))
+                .map(
+                    function(item) {
+                        item.active = true;
+                        return item;
+                    }
+                )
                 .value();
-            // MALAWISUP-2974: added orderables without available lots to add product modal
-            // passed draft lineItems to add product modal
+
             var orderablesWithoutAvailableLots = draft.lineItems.map(function(item) {
                     return item.orderable;
                 }).filter(function(orderable) {
@@ -227,7 +254,6 @@
             });
 
             addProductsModalService.show(notYetAddedItems, draft.lineItems).then(function() {
-                // MALAWISUP-2974: ends here
                 $stateParams.program = vm.program;
                 $stateParams.facility = vm.facility;
                 $stateParams.noReload = true;
@@ -242,7 +268,6 @@
             });
         };
 
-        // MALAWISUP-2974: Added ability to edit lots and remove specified row
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
@@ -253,13 +278,12 @@
          *
          * @param {Object} lineItem line items to be edited.
          */
-         vm.editLot = function(lineItem) {
+        vm.editLot = function(lineItem) {
             var addedLineItems = _.flatten(draft.lineItems);
             editLotModalService.show(lineItem, addedLineItems).then(function() {
                 $stateParams.draft = draft;
             });
         };
-        // MALAWISUP-2974: ends here
 
         /**
          * @ngdoc method
@@ -293,15 +317,55 @@
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name getStatusDisplay
+         *
+         * @description
+         * Pops up a modal for users to hide product for physical inventory.
+         *
+         * @param  {Object} lineItem line items to be hidded.
+         */
+        vm.hideLineItem = function(lineItem) {
+            var itemToHide = lineItem;
+            confirmService.confirm(
+                messageService.get('stockPhysicalInventoryDraft.deactivateItem', {
+                    product: lineItem.orderable.fullProductName,
+                    lot: lineItem.displayLotMessage
+                }),
+                'stockPhysicalInventoryDraft.deactivate'
+            ).then(function() {
+                loadingModalService.open();
+                stockCardService.deactivateStockCard(lineItem.stockCardId).then(function() {
+                    draft.lineItems.find(function(item) {
+                        if (item.stockCardId === itemToHide.stockCardId) {
+                            return item;
+                        }
+                    }).active = false;
+                    vm.draft = draft;
+                    vm.saveDraft(true);
+                    $state.go($state.current.name, $stateParams, {
+                        reload: $state.current.name
+                    });
+                    notificationService.success('stockPhysicalInventoryDraft.deactivated');
+                })
+                    .catch(function() {
+                        loadingModalService.close();
+                    });
+            });
+        };
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
          * @name search
          *
          * @description
-         * It searches from the total line items with given keyword. If keyword is empty then all line
-         * items will be shown.
+         * It searches from the total line items with given keyword and/or includeInactive.
+         * If keyword and includeInactive are empty then all line items will be shown.
          */
         vm.search = function() {
             $stateParams.page = 0;
             $stateParams.keyword = vm.keyword;
+            $stateParams.includeInactive = vm.includeInactive;
             $stateParams.program = vm.program;
             $stateParams.facility = vm.facility;
             $stateParams.noReload = true;
@@ -320,24 +384,23 @@
          * @description
          * Save physical inventory draft.
          */
-        vm.saveDraft = function() {
+        vm.saveDraft = function(withNotification) {
             loadingModalService.open();
             return saveLots(draft, function() {
                 return physicalInventoryFactory.saveDraft(draft).then(function() {
-                    notificationService.success('stockPhysicalInventoryDraft.saved');
-
+                    if (!withNotification) {
+                        notificationService.success('stockPhysicalInventoryDraft.saved');
+                    }
                     draft.$modified = undefined;
-                    vm.cacheDraft();
+                    vm.cacheDraft();    
 
                     $stateParams.program = vm.program;
                     $stateParams.facility = vm.facility;
-                    // MALAWISUP-2974: Added ability to edit lots and remove specified row
                     draft.lineItems.forEach(function(lineItem) {
                         if (lineItem.$isNewItem) {
                             lineItem.$isNewItem = false;
                         }
                     });
-                    // MALAWISUP-2974: ends here
                     $stateParams.noReload = true;
 
                     $state.go($state.current.name, $stateParams, {
@@ -361,7 +424,7 @@
          *
          * @param {Object} lineItem line item to remove
          */
-         vm.removeLineItem = function(lineItem) {
+        vm.removeLineItem = function(lineItem) {
             confirmService.confirmDestroy(
                 'stockPhysicalInventoryDraft.deleteItem',
                 'stockPhysicalInventoryDraft.yes'
@@ -453,7 +516,7 @@
          * Submit physical inventory.
          */
         vm.submit = function() {
-            if (validate()) {
+            if (validate(displayLineItemsGroup)) {
                 $scope.$broadcast('openlmis-form-submit');
                 alertService.error('stockPhysicalInventoryDraft.submitInvalid');
             } else {
@@ -463,23 +526,29 @@
                     draft.occurredDate = resolvedData.occurredDate;
                     draft.signature = resolvedData.signature;
 
-                    // MALAWISUP-2974: called saving new lots
                     return saveLots(draft, function() {
-                    // MALAWISUP-2974: ends here
                         physicalInventoryService.submitPhysicalInventory(draft).then(function() {
-                            notificationService.success('stockPhysicalInventoryDraft.submitted');
-                            confirmService.confirm('stockPhysicalInventoryDraft.printModal.label',
-                                'stockPhysicalInventoryDraft.printModal.yes',
-                                'stockPhysicalInventoryDraft.printModal.no')
-                                .then(function() {
-                                    $window.open(accessTokenFactory.addAccessToken(getPrintUrl(draft.id)), '_blank');
-                                })
-                                .finally(function() {
-                                    $state.go('openlmis.stockmanagement.stockCardSummaries', {
-                                        program: program.id,
-                                        facility: facility.id
-                                    });
+                            if (validate(draft.lineItems)) {
+                                loadingModalService.close();
+                                $scope.$broadcast('openlmis-form-submit');
+                                alertService.error('stockPhysicalInventoryDraft.submitInvalidActive');
+                            } else {
+                                notificationService.success('stockPhysicalInventoryDraft.submitted');
+                                confirmService.confirm('stockPhysicalInventoryDraft.printModal.label',
+                                    'stockPhysicalInventoryDraft.printModal.yes',
+                                    'stockPhysicalInventoryDraft.printModal.no')
+                                    .then(function() {
+                                        $window.open(accessTokenFactory.addAccessToken(getPrintUrl(draft.id)),
+                                            '_blank');
+                                    })
+                                    .finally(function() {
+                                        $state.go('openlmis.stockmanagement.stockCardSummaries', {
+                                            program: program.id,
+                                            facility: facility.id,
+                                            includeInactive: false
+                                        });
                                 });
+                            }
                         }, function(errorResponse) {
                             loadingModalService.close();
                             alertService.error(errorResponse.data.message);
@@ -583,12 +652,14 @@
             return value === '' || value === undefined || value === null;
         }
 
-        function validate() {
+        function validate(displayLineItemsGroup) {
             var anyError = false;
 
             _.chain(displayLineItemsGroup).flatten()
                 .each(function(item) {
-                    anyError = vm.validateQuantity(item) || anyError;
+                    if (item.active) {
+                        anyError = vm.validateQuantity(item) || anyError;
+                    }
                 });
             return anyError;
         }
@@ -613,6 +684,7 @@
 
             var orderableGroups = orderableGroupService.groupByOrderableId(draft.lineItems);
             vm.showVVMStatusColumn = orderableGroupService.areOrderablesUseVvm(orderableGroups);
+            shouldDisplayHideButtonColumn(draft.lineItems);
 
             $scope.$watchCollection(function() {
                 return vm.pagedLineItems;
@@ -685,6 +757,22 @@
          */
         function cacheDraft() {
             physicalInventoryDraftCacheService.cacheDraft(draft);
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name shouldDisplayHideButtonColumn
+         *
+         * @description
+         * Check if column with hide buttons should be displayed.
+         */
+        function shouldDisplayHideButtonColumn(lineItems) {
+            lineItems.forEach(function(item) {
+                if (item.active && item.stockOnHand === 0) {
+                    vm.showHideButtonColumn = true;
+                }
+            });
         }
     }
 })();

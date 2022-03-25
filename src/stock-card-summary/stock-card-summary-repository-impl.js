@@ -122,13 +122,13 @@
                                         lotPage = responses[1];
 
                                     return combineResponses(stockCardSummariesPage, orderablePage.content,
-                                        lotPage.content);
+                                        lotPage.content, params);
                                 });
                         });
                 });
         }
 
-        function combineResponses(stockCardSummariesPage, orderables, lots) {
+        function combineResponses(stockCardSummariesPage, orderables, lots, params) {
             stockCardSummariesPage.content.forEach(function(summary) {
                 summary.orderable = getObjectForReference(orderables, summary.orderable);
 
@@ -142,6 +142,12 @@
                     }
                 });
             });
+            if (params.includeInactive) {
+                stockCardSummariesPage.content = filterStockCardSummariesByActiveParam(
+                    stockCardSummariesPage.content,
+                    params.includeInactive === 'true'
+                );
+            }
 
             return stockCardSummariesPage;
         }
@@ -190,6 +196,23 @@
                     items.push(summary);
                 }
                 return items;
+            }, []);
+        }
+
+        /**
+         * @param {StockCardSummary[]} stockCardSummariesPage
+         * @param {Boolean} includeInactive
+         * @return {StockCardSummary[]}
+         */
+         function filterStockCardSummariesByActiveParam(stockCardSummariesPage, includeInactive) {
+            if (includeInactive) {
+                return stockCardSummariesPage;
+            }
+            return _.filter(stockCardSummariesPage, function(summary) {
+                summary.canFulfillForMe = _.filter(summary.canFulfillForMe, function(item) {
+                    return item.active === true;
+                });
+                return summary;
             }, []);
         }
     }

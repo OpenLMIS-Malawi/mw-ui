@@ -47,10 +47,10 @@ describe('PhysicalInventoryDraftController', function() {
             this.confirmService = $injector.get('confirmService');
             this.physicalInventoryDraftCacheService = $injector.get('physicalInventoryDraftCacheService');
             this.alertService = $injector.get('alertService');
+            this.stockCardService = $injector.get('stockCardService');
+            this.loadingModalService = $injector.get('loadingModalService');
             this.LotResource = $injector.get('LotResource');
-            // MALAWISUP-2974: Added ability to edit lots and remove specified row
             this.editLotModalService = $injector.get('editLotModalService');
-            // MALAWISUP-2974: ends here
         });
 
         spyOn(this.physicalInventoryService, 'submitPhysicalInventory');
@@ -62,9 +62,8 @@ describe('PhysicalInventoryDraftController', function() {
         spyOn(this.draftFactory, 'saveDraft');
         spyOn(this.physicalInventoryDraftCacheService, 'cacheDraft');
         spyOn(this.alertService, 'error');
-        // MALAWISUP-2974: Added ability to edit lots and remove specified row
+        spyOn(this.stockCardService, 'deactivateStockCard');
         spyOn(this.editLotModalService, 'show');
-        // MALAWISUP-2974: ends here
 
         this.program = new this.ProgramDataBuilder()
             .withId('1')
@@ -78,6 +77,7 @@ describe('PhysicalInventoryDraftController', function() {
 
         this.lineItem1 = new this.PhysicalInventoryLineItemDataBuilder()
             .withQuantity(1)
+            .withActive(true)
             .withOrderable(new this.OrderableDataBuilder()
                 .withProductCode('C100')
                 .withFullProductName('a')
@@ -91,6 +91,7 @@ describe('PhysicalInventoryDraftController', function() {
 
         this.lineItem2 = new this.PhysicalInventoryLineItemDataBuilder()
             .withQuantity(null)
+            .withActive(true)
             .withOrderable(new this.OrderableDataBuilder()
                 .withProductCode('C300')
                 .withFullProductName('b')
@@ -105,6 +106,7 @@ describe('PhysicalInventoryDraftController', function() {
                 .build())
             .withLot(new this.LotDataBuilder()
                 .build())
+            .withActive(true)
             .buildAsAdded();
 
         this.lineItem4 = new this.PhysicalInventoryLineItemDataBuilder()
@@ -159,15 +161,14 @@ describe('PhysicalInventoryDraftController', function() {
             ],
             draft: this.draft,
             addProductsModalService: this.addProductsModalService,
-            // MALAWISUP-2974: Added ability to edit lots and remove specified row
             editLotModalService: this.editLotModalService,
-            // MALAWISUP-2974: ends here
             chooseDateModalService: chooseDateModalService,
             reasons: this.reasons,
             physicalInventoryService: this.physicalInventoryService,
             stockmanagementUrlFactory: this.stockmanagementUrlFactory,
             accessTokenFactory: this.accessTokenFactory,
-            confirmService: this.confirmService
+            confirmService: this.confirmService,
+            stockCardService: this.stockCardService
         });
 
         this.vm.$onInit();
@@ -238,7 +239,7 @@ describe('PhysicalInventoryDraftController', function() {
     });
 
     it('should only pass items not added yet to add products modal', function() {
-        var deferred = $q.defer();
+        var deferred = this.$q.defer();
         deferred.resolve();
         this.addProductsModalService.show.andReturn(deferred.promise);
 
@@ -267,8 +268,8 @@ describe('PhysicalInventoryDraftController', function() {
     describe('saveDraft', function() {
 
         it('should save draft', function() {
-            this.confirmService.confirmDestroy.andReturn($q.resolve());
-            this.draftFactory.saveDraft.andReturn($q.resolve());
+            this.draftFactory.saveDraft.andReturn(this.$q.defer().promise);
+            this.draftFactory.saveDraft.andReturn(this.$q.resolve());
 
             this.vm.saveDraft();
             this.$rootScope.$apply();
@@ -289,6 +290,8 @@ describe('PhysicalInventoryDraftController', function() {
     describe('submit', function() {
 
         it('should highlight empty quantities before submit', function() {
+            this.lineItem1.active = true;
+            this.lineItem3.active = true;
             this.vm.submit();
 
             expect(this.lineItem1.quantityInvalid).toBeFalsy();
@@ -296,6 +299,8 @@ describe('PhysicalInventoryDraftController', function() {
         });
 
         it('should not show modal for occurred date if any quantity missing', function() {
+            this.lineItem1.active = true;
+            this.lineItem3.active = true;
             this.vm.submit();
 
             expect(chooseDateModalService.show).not.toHaveBeenCalled();
@@ -318,6 +323,26 @@ describe('PhysicalInventoryDraftController', function() {
             expect(chooseDateModalService.show).toHaveBeenCalled();
         });
 
+    });
+
+    describe('hideLineItem', function() {
+        it('should hide item', function() {
+            this.draft.lineItems[0] = {
+                displayLotMessage: 'product',
+                orderable: {
+                    fullProductName: 'product'
+                }
+            };
+            this.confirmDeferred = this.$q.defer();
+            this.deactivateStockCardDeferred = this.$q.defer();
+            this.confirmService.confirm.andReturn(this.confirmDeferred.promise);
+            this.stockCardService.deactivateStockCard.andReturn(this.deactivateStockCardDeferred.promise);
+            this.vm.hideLineItem(this.draft.lineItems[0]);
+            this.confirmDeferred.resolve();
+            this.deactivateStockCardDeferred.resolve();
+            this.$rootScope.$apply();
+            expect(this.draftFactory.saveDraft).toHaveBeenCalled();
+        });
     });
 
     describe('when submit pass validations', function() {
@@ -351,7 +376,8 @@ describe('PhysicalInventoryDraftController', function() {
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries',
                 {
                     program: this.program.id,
-                    facility: this.facility.id
+                    facility: this.facility.id,
+                    includeInactive: false
                 });
         });
 
@@ -369,7 +395,8 @@ describe('PhysicalInventoryDraftController', function() {
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries',
                 {
                     program: this.program.id,
-                    facility: this.facility.id
+                    facility: this.facility.id,
+                    includeInactive: false
                 });
         });
 

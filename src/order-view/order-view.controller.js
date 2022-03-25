@@ -46,6 +46,7 @@
         vm.getPrintUrl = getPrintUrl;
         vm.getDownloadUrl = getDownloadUrl;
         vm.retryTransfer = retryTransfer;
+        vm.redirectToOrderEdit = redirectToOrderEdit;
 
         /**
          * @ngdoc property
@@ -297,6 +298,25 @@
             return newValue.id !== $stateParams.supplyingFacilityId
                 || (newValue.id === $stateParams.supplyingFacilityId &&
                     oldValue && oldValue.id !== $stateParams.supplyingFacilityId);
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf order-view.controller:OrderViewController
+         * @name redirectToOrderEdit
+         *
+         * @description
+         * Redirects to page with order edit
+         *
+         * @param  {String} orderId
+         */
+         function redirectToOrderEdit(orderId) {
+            $state.go(
+                'openlmis.requisitions.orderCreate.table',
+                {
+                    orderId: orderId
+                }
+            );
         }
 
     }

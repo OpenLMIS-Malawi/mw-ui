@@ -69,6 +69,7 @@ describe('StockCardSummaryListController', function() {
             id: 'program'
         };
         this.vm.isSupervised = true;
+        this.vm.includeInactive = false;
 
         spyOn(this.$state, 'go').andReturn(true);
     });
@@ -97,7 +98,10 @@ describe('StockCardSummaryListController', function() {
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', {
                 param: 'param',
                 facility: 'facility',
+                stockCardSummariesPage: 0,
+                stockCardSummariesSize: 10,
                 program: 'program',
+                active: 'ACTIVE',
                 supervised: true
             }, {
                 reload: true
@@ -134,19 +138,27 @@ describe('StockCardSummaryListController', function() {
         });
     });
 
-    // MALAWISUP-3068: Add search functionality
-    it('should reload with page and keyword when search', function() {
-        this.vm.keyword = '200';
-        this.vm.search();
-
-        var params = {
-            param: 'param',
-            keyword: '200'
-        };
-
-        expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', params, {
-            reload: true
+    describe('search', function() {
+        it('should search with set params', function() {
+            this.vm.search();
+            expect(this.$state.go).toHaveBeenCalledWith(
+                'openlmis.stockmanagement.stockCardSummaries',
+                {
+                    param: 'param',
+                    stockCardSummariesPage: 0,
+                    stockCardSummariesSize: 10,
+                    facility: 'facility',
+                    program: 'program',
+                    // MALAWISUP-3068: Add filter in SOH
+                    keyword: undefined,
+                    // MALAWISUP-3068: ends here
+                    supervised: true,
+                    includeInactive: false
+                },
+                {
+                    reload: true
+                }
+            );
         });
     });
-    // MALAWISUP-3068: ends here
 });
