@@ -75,14 +75,26 @@
                     };
 
                     return paginationService.registerList(validator, $stateParams, function() {
-                        var searchResult = physicalInventoryService.search($stateParams.keyword, draft.lineItems);
+                        var searchResult = physicalInventoryService.search($stateParams.keyword,
+                            draft.lineItems, $stateParams.includeInactive === 'true');
+
+                        // MALAWISUP-3606: Fix alphabetical sorting
+                        searchResult.forEach(function(item) {
+                            item.orderable.programs.forEach(function(program) {
+                                var index = item.orderable.programs.indexOf(program);
+                                if (program.programId !== draft.programId){
+                                    item.orderable.programs.splice(index, 1);
+                                }
+                            });
+                        });
 
                         // MALAWISUP-3076: Modified sorting in physical inventory
                         var lineItems = $filter('orderBy')(searchResult, [
                             'orderable.programs[0].orderableCategoryDisplayOrder',
-                            'orderable.programs[0].displayOrder'
+                            'orderable.fullProductName'
                         ]);
                         // MALAWISUP-3076: ends here
+                        // MALAWISUP-3606: ends here
 
                         var groups = _.chain(lineItems).filter(function(item) {
                             var hasQuantity = !(_.isNull(item.quantity) || _.isUndefined(item.quantity));
