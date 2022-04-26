@@ -189,7 +189,7 @@
          function search() {
             var stateParams = angular.copy($stateParams);
             // MALAWISUP-3068: Add filter in SOH
-            $stateParams.keyword = vm.keyword;
+            stateParams.keyword = vm.keyword;
             // MALAWISUP-3068: ends here
             stateParams.facility = vm.facility.id;
             stateParams.program = vm.program.id;
