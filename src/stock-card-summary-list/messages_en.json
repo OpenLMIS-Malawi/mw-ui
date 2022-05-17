@@ -2,5 +2,6 @@
     "stockCardSummaryList.lotCode": "Batch Number",
     "stockCardSummaryList.noLotDefined": "No batch defined",
     "stockCardSummaryList.keyword": "Keywords",
-    "stockCardSummaryList.noSearchResults": "No search results"
+    "stockCardSummaryList.noSearchResults": "No search results",
+    "stockCardSummaryList.productName": "Product Name"
 }

@@ -65,6 +65,35 @@
         vm.keyword = undefined;
         // MALAWISUP-3068: ends here
 
+        // MALAWISUP-3550
+        /**
+         * @ngdoc property
+         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name productCode
+         * @type {String}
+         *
+         */
+        vm.productCode = $stateParams.productCode;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name productName
+         * @type {String}
+         *
+         */
+        vm.productName = $stateParams.productName;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name lotCode
+         * @type {String}
+         *
+         */
+        vm.lotCode = $stateParams.lotCode;
+        // MALAWISUP-3550: Ends here
+
         /**
          * @ngdoc property
          * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
@@ -120,13 +149,6 @@
 
             $stateParams.keyword = vm.keyword;
 
-            $scope.$watchCollection(function() {
-                return vm.pagedList;
-            }, function(newList) {
-                if (vm.offline()) {
-                    vm.displayStockCardSummaries = newList;
-                }
-            }, true);
         }
 
         /**
@@ -147,6 +169,11 @@
             stateParams.program = vm.program.id;
             stateParams.active = STOCKCARD_STATUS.ACTIVE;
             stateParams.supervised = vm.isSupervised;
+            // MALAWISUP-3550
+            stateParams.productName = vm.productName;
+            stateParams.productCode = vm.productCode;
+            stateParams.lotCode = vm.lotCode;
+            // MALAWISUP-3550: Ends here
 
             $state.go('openlmis.stockmanagement.stockCardSummaries', stateParams, {
                 reload: true
@@ -195,6 +222,13 @@
             stateParams.program = vm.program.id;
             stateParams.supervised = vm.isSupervised;
             stateParams.includeInactive = vm.includeInactive;
+
+            // MALAWISUP-3550
+            stateParams.productCode = vm.productCode;
+            stateParams.productName = vm.productName;
+            stateParams.lotCode = vm.lotCode;
+            // MALAWISUP-3550: Ends here
+
             $state.go('openlmis.stockmanagement.stockCardSummaries', stateParams, {
                 reload: true
             });

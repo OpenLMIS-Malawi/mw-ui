@@ -35,6 +35,17 @@
             <label for="search">{{'stockCardSummaryList.keyword'|message}}</label>	
             <input id="search" type="text" ng-model="vm.keyword" maxlength="50"/>
             <!-- MALAWISUP-3068: ends here -->
+
+            <!-- MALAWISUP-3550 -->
+            <label for="productCode">{{'stockCardSummaryList.productCode' | message}}</label>
+            <input id="productCode" type="text" ng-model="vm.productCode"/>
+
+            <label for="productName">{{'stockCardSummaryList.productName' | message}}</label>
+            <input id="productName" type="text" ng-model="vm.productName"/>
+
+            <label for="lotCode">{{'stockCardSummaryList.lotCode' | message}}</label>
+            <input id="lotCode" type="text" ng-model="vm.lotCode"/>
+            <!-- MALAWISUP-3550: Ends here -->
             <input type="submit" value="{{'stockCardSummaryList.search' | message}}"/>
         </fieldset>
     </form>
@@ -87,6 +98,8 @@
         </tbody>
     </table>
     <!-- MALAWISUP-3068: Add filter in SOH -->
-    <openlmis-pagination list="displayStockCardSummaries" paged-list="vm.pagedList" pagination-id="'stockCardList'"/>
+    <!--    MALAWISUP-3550-->
+    <openlmis-pagination list="displayStockCardSummaries" pagination-id="'stockCardList'"/>
+    <!--    MALAWISUP-3550: Ends here-->
     <!-- MALAWISUP-3068: ends here -->
 </section>
