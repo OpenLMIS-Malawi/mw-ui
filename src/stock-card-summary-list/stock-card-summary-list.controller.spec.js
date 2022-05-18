@@ -80,14 +80,6 @@ describe('StockCardSummaryListController', function() {
             expect(this.vm.stockCardSummaries).toEqual(this.stockCardSummaries);
         });
 
-        it('should watch stockCardSummaries when offline', function() {
-            this.vm.displayStockCardSummaries = undefined;
-            this.vm.pagedList = this.stockCardSummaries2;
-
-            this.$rootScope.$apply();
-
-            expect(this.vm.displayStockCardSummaries).toEqual(this.stockCardSummaries2);
-        });
     });
 
     describe('loadStockCardSummaries', function() {

@@ -28,7 +28,7 @@
             isOffline: true,
             // MALAWISUP-3068: Add filter in SOH
             // MALAWISUP-3550
-            url: '/stockCardSummaries?facility&program&supervised&page&size&includeInactive&keyword&productCode&productName&lotCode&isLotCodeNull',
+            url: '/stockCardSummaries?facility&program&supervised&page&size&includeInactive&keyword&productCode&productName&lotCode',
             // MALAWISUP-3550: Ends here
             // MALAWISUP-3068: ends here
             label: 'stockCardSummaryList.stockOnHand',

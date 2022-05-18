@@ -53,8 +53,8 @@ describe('openlmis.stockmanagement.stockCardSummaries state', function() {
         expect(getResolvedValue('displayStockCardSummaries')).toEqual(displayStockCardSummaries);
         // MALAWISUP-3068: ends here
         expect(stockCardRepositoryMock.query).toHaveBeenCalledWith({
-            page: '0',
-            size: '10',
+            page: 0,
+            size: 2147483647,
             facilityId: 'facility-id',
             programId: 'program-id',
             // MALAWISUP-3068: Add filter in SOH
@@ -73,8 +73,8 @@ describe('openlmis.stockmanagement.stockCardSummaries state', function() {
         expect(getResolvedValue('displayStockCardSummaries')).toEqual(displayStockCardSummaries);
         // MALAWISUP-3068: ends here
         expect(stockCardRepositoryMock.query).toHaveBeenCalledWith({
-            page: '0',
-            size: '10',
+            page: 0,
+            size: 2147483647,
             facilityId: undefined,
             programId: 'program-id',
             // MALAWISUP-3068: Add filter in SOH
