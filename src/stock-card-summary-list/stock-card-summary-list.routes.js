@@ -72,8 +72,8 @@
                 stockCardSummaries: function(paginationService, StockCardSummaryRepository,
                     StockCardSummaryRepositoryImpl, $stateParams, offlineService, params) {
                     // MALAWISUP-3550
-                    var originalPage  = parseInt(params.page);
-                    var originalPageSize  = parseInt(params.size);
+                    var originalPage = parseInt(params.page);
+                    var originalPageSize = parseInt(params.size);
 
                     params.page = 0;
                     params.size = 2147483647;
@@ -98,22 +98,22 @@
                         return true;
                     };
 
-                    var filterOutItemsByFilter = function(itemsPageSpec) {
+                    var filterOutItemsByUserParamsFilter = function(itemsPageSpec, targetPage, targetPageSize) {
                         var itemsPageContent = itemsPageSpec.content.filter(itemFilterPredicateFromFilterParams);
 
-                        var start = originalPage * originalPageSize;
-                        var end = Math.min(itemsPageContent.length, start + originalPageSize);
+                        var start = targetPage * targetPageSize;
+                        var end = Math.min(itemsPageContent.length, start + targetPageSize);
 
                         var actualContent = start < end ? itemsPageContent.slice(start, end) : [];
 
-                        var totalPages = Math.ceil(itemsPageContent.length / originalPageSize);
+                        var totalPages = Math.ceil(itemsPageContent.length / targetPageSize);
 
                         return new Page(
-                            originalPage !== totalPages,
-                            originalPage === totalPages,
-                            originalPage,
+                            targetPage !== totalPages,
+                            targetPage === totalPages,
+                            targetPage,
                             actualContent.length,
-                            originalPageSize,
+                            targetPageSize,
                             itemsPageSpec.sort,
                             itemsPageContent.length,
                             totalPages,
@@ -125,10 +125,12 @@
                         return paginationService.registerList(null, $stateParams, function() {
                             return new StockCardSummaryRepository(new StockCardSummaryRepositoryImpl())
                                 .query(params)
-                                .then(filterOutItemsByFilter)
-                                // .then(function(itemsPage) {
-                                //     return itemsPage.content;
-                                // });
+                                .then(function(itemsPage) {
+                                    return filterOutItemsByUserParamsFilter(itemsPage, params.page, params.size)
+                                })
+                                .then(function(itemsPage) {
+                                    return itemsPage.content;
+                                });
                         }, {
                             customPageParamName: 'page',
                             customSizeParamName: 'size',
@@ -140,7 +142,9 @@
                         if (stateParams.program) {
                             return new StockCardSummaryRepository(new StockCardSummaryRepositoryImpl())
                                 .query(params)
-                                .then(filterOutItemsByFilter)
+                                .then(function(itemsPage) {
+                                    return filterOutItemsByUserParamsFilter(itemsPage, originalPage, originalPageSize);
+                                });
                         }
                         return undefined;
                     }, {
