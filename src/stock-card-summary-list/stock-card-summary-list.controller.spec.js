@@ -145,7 +145,11 @@ describe('StockCardSummaryListController', function() {
                     keyword: undefined,
                     // MALAWISUP-3068: ends here
                     supervised: true,
-                    includeInactive: false
+                    includeInactive: false,
+                    // MALAWISUP-3550: Starts here
+                    page: 0,
+                    size: 10
+                    // MALAWISUP-3550: Ends here
                 },
                 {
                     reload: true
