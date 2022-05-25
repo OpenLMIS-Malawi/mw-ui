@@ -17,10 +17,7 @@ describe('openlmis.stockmanagement.stockCardSummaries state', function() {
 
     var $q, $state, $rootScope, $location, $templateCache, state, STOCKMANAGEMENT_RIGHTS, authorizationService,
         stockCardRepositoryMock, StockCardSummaryDataBuilder, stockCardSummaries, facilityProgramCacheService,
-        offlineService,
-        // MALAWISUP-3068: Add filter in SOH
-        displayStockCardSummaries;
-        // MALAWISUP-3068: ends here
+        offlineService;
 
     beforeEach(function() {
         loadModules();
@@ -33,33 +30,26 @@ describe('openlmis.stockmanagement.stockCardSummaries state', function() {
         expect($state.current.name).not.toEqual('openlmis.stockmanagement.stockCardSummaries');
 
         goToUrl('/stockmanagement/stockCardSummaries');
+
+        expect($state.current.name).toEqual('openlmis.stockmanagement.stockCardSummaries');
     });
 
-    // MALAWISUP-3068: Add filter in SOH
-    it('should resolve displayStockCardSummaries', function() {
-        // MALAWISUP-3068: ends here
+    it('should resolve stockCardSummaries', function() {
         goToUrl('/stockmanagement/stockCardSummaries?page=0&size=10&program=program-id');
 
-        // MALAWISUP-3068: Add filter in SOH
-        expect(getResolvedValue('displayStockCardSummaries')).toEqual(displayStockCardSummaries);
-        // MALAWISUP-3068: ends here
+        expect(getResolvedValue('stockCardSummaries')).toEqual(stockCardSummaries);
     });
 
     it('should call stock card summary repository with parameters', function() {
-        // MALAWISUP-3068: Add filter in SOH
         goToUrl('/stockmanagement/stockCardSummaries' +
-            '?page=0&size=10&facility=facility-id&program=program-id&keyword=200');
+            '?page=0&size=10&facility=facility-id&program=program-id');
 
-        expect(getResolvedValue('displayStockCardSummaries')).toEqual(displayStockCardSummaries);
-        // MALAWISUP-3068: ends here
+        expect(getResolvedValue('stockCardSummaries')).toEqual(stockCardSummaries);
         expect(stockCardRepositoryMock.query).toHaveBeenCalledWith({
             page: 0,
             size: 2147483647,
             facilityId: 'facility-id',
             programId: 'program-id',
-            // MALAWISUP-3068: Add filter in SOH
-            keyword: '200',
-            // MALAWISUP-3068: ends here
             nonEmptyOnly: true
         });
     });
@@ -67,19 +57,14 @@ describe('openlmis.stockmanagement.stockCardSummaries state', function() {
     it('should call stock card summary repository when offline and program selected', function() {
         spyOn(offlineService, 'isOffline').andReturn(true);
 
-        // MALAWISUP-3068: Add filter in SOH
-        goToUrl('/stockmanagement/stockCardSummaries?page=0&size=10&program=program-id&keyword=200');
+        goToUrl('/stockmanagement/stockCardSummaries?page=0&size=10&program=program-id');
 
-        expect(getResolvedValue('displayStockCardSummaries')).toEqual(displayStockCardSummaries);
-        // MALAWISUP-3068: ends here
+        expect(getResolvedValue('stockCardSummaries')).toEqual(stockCardSummaries);
         expect(stockCardRepositoryMock.query).toHaveBeenCalledWith({
             page: 0,
             size: 2147483647,
             facilityId: undefined,
             programId: 'program-id',
-            // MALAWISUP-3068: Add filter in SOH
-            keyword: '200',
-            // MALAWISUP-3068: ends here
             nonEmptyOnly: true
         });
     });
@@ -98,6 +83,14 @@ describe('openlmis.stockmanagement.stockCardSummaries state', function() {
         goToUrl('/stockmanagement/stockCardSummaries');
 
         expect(facilityProgramCacheService.loadData).not.toHaveBeenCalled();
+    });
+
+    it('should use template', function() {
+        spyOn($templateCache, 'get').andCallThrough();
+
+        goToUrl('/stockmanagement/stockCardSummaries');
+
+        expect($templateCache.get).toHaveBeenCalledWith('stock-card-summary-list/stock-card-summary-list.html');
     });
 
     it('should require stock cards view right to enter', function() {

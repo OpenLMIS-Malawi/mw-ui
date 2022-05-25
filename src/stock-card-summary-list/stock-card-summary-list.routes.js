@@ -26,11 +26,10 @@
     function routes($stateProvider, STOCKMANAGEMENT_RIGHTS) {
         $stateProvider.state('openlmis.stockmanagement.stockCardSummaries', {
             isOffline: true,
-            // MALAWISUP-3068: Add filter in SOH
-            // MALAWISUP-3550
-            url: '/stockCardSummaries?facility&program&supervised&page&size&includeInactive&keyword&productCode&productName&lotCode',
+            // MALAWISUP-3550: Starts here
+            // eslint-disable-next-line max-len
+            url: '/stockCardSummaries?facility&program&supervised&page&size&includeInactive&productCode&productName&lotCode',
             // MALAWISUP-3550: Ends here
-            // MALAWISUP-3068: ends here
             label: 'stockCardSummaryList.stockOnHand',
             priority: 1,
             showInNavigation: true,
@@ -56,12 +55,13 @@
                     paramsCopy.facilityId = $stateParams.facility;
                     paramsCopy.programId = $stateParams.program;
                     paramsCopy.includeInactive = $stateParams.includeInactive;
-                    // MALAWISUP-3550
+                    paramsCopy.nonEmptyOnly = true;
+
+                    // MALAWISUP-3550: Starts here
                     paramsCopy.productCode = $stateParams.productCode;
                     paramsCopy.productName = $stateParams.productName;
                     paramsCopy.lotCode = $stateParams.lotCode;
                     // MALAWISUP-3550: Ends here
-                    paramsCopy.nonEmptyOnly = true;
 
                     delete paramsCopy.facility;
                     delete paramsCopy.program;
@@ -69,37 +69,72 @@
 
                     return paramsCopy;
                 },
+                // MALAWISUP-3550: Starts here
                 stockCardSummaries: function(paginationService, StockCardSummaryRepository,
                     StockCardSummaryRepositoryImpl, $stateParams, offlineService, params) {
-                    // MALAWISUP-3550
                     var originalPage = parseInt(params.page);
                     var originalPageSize = parseInt(params.size);
 
                     params.page = 0;
                     params.size = 2147483647;
 
-                    var itemFilterPredicateFromFilterParams = function(item) {
-                        if (params.productName != null
-                            && !item.orderable.fullProductName.toLocaleLowerCase()
-                                .includes(params.productName.toLocaleLowerCase())) {
-                            return false;
+                    // eslint-disable-next-line complexity
+                    var filterStockCardSummariesByParams = function(stockCardSummaries) {
+                        var result = [];
+
+                        for (var i = 0; i < stockCardSummaries.length; i++) {
+                            var stockCardSummary = stockCardSummaries[i];
+
+                            var isNotProductNameNullOrUndefined = params.productName !== null
+                                && params.productName !== undefined;
+                            if (isNotProductNameNullOrUndefined
+                                && !stockCardSummary.orderable.fullProductName.toLocaleLowerCase()
+                                    .includes(params.productName.toLocaleLowerCase())) {
+                                continue;
+                            }
+
+                            var isNotProductCodeNullOrUndefined = params.productCode !== null
+                                && params.productCode !== undefined;
+                            if (isNotProductCodeNullOrUndefined
+                                && !stockCardSummary.orderable.productCode.toLocaleLowerCase()
+                                    .includes(params.productCode.toLocaleLowerCase())) {
+                                continue;
+                            }
+
+                            var isNotLotCodeNullOrUndefined = params.lotCode !== null
+                                && params.lotCode !== undefined;
+
+                            if (isNotLotCodeNullOrUndefined) {
+                                if (stockCardSummary.canFulfillForMe.length) {
+
+                                    stockCardSummary.canFulfillForMe = stockCardSummary.canFulfillForMe
+                                        .filter(function(canFulfillForMe) {
+                                            return canFulfillForMe.lot
+                                                && canFulfillForMe.lot.lotCode.toLocaleLowerCase()
+                                                    .includes(params.lotCode.toLocaleLowerCase());
+                                        });
+
+                                    if (!stockCardSummary.canFulfillForMe.length) {
+                                        continue;
+                                    }
+
+                                    stockCardSummary.stockOnHand = stockCardSummary
+                                        .canFulfillForMe
+                                        .reduce(function(prevValue, item) {
+                                            return prevValue + item.stockOnHand;
+                                        }, 0);
+
+                                }
+                            }
+
+                            result.push(stockCardSummary);
                         }
 
-                        if (params.productCode != null
-                            && !item.orderable.productCode.includes(params.productCode)) {
-                            return false;
-                        }
-
-                        if (params.lotCode != null
-                            && (!item.orderable.lotCode || !item.orderable.lotCode.includes(params.lotCode))) {
-                            return false;
-                        }
-
-                        return true;
+                        return result;
                     };
 
                     var filterOutItemsByUserParamsFilter = function(itemsPageSpec, targetPage, targetPageSize) {
-                        var itemsPageContent = itemsPageSpec.content.filter(itemFilterPredicateFromFilterParams);
+                        var itemsPageContent = filterStockCardSummariesByParams(itemsPageSpec.content);
 
                         var start = targetPage * targetPageSize;
                         var end = Math.min(itemsPageContent.length, start + targetPageSize);
@@ -118,7 +153,7 @@
                             itemsPageContent.length,
                             totalPages,
                             actualContent
-                        )
+                        );
                     };
 
                     if (offlineService.isOffline() && $stateParams.program) {
@@ -126,7 +161,7 @@
                             return new StockCardSummaryRepository(new StockCardSummaryRepositoryImpl())
                                 .query(params)
                                 .then(function(itemsPage) {
-                                    return filterOutItemsByUserParamsFilter(itemsPage, params.page, params.size)
+                                    return filterOutItemsByUserParamsFilter(itemsPage, params.page, params.size);
                                 })
                                 .then(function(itemsPage) {
                                     return itemsPage.content;
@@ -152,18 +187,11 @@
                         customSizeParamName: 'size',
                         paginationId: 'stockCardList'
                     });
-                    // MALAWISUP-3550: Ends here
-                    // MALAWISUP-3068: Add filter in SOH
-                },
-                displayStockCardSummaries: function(stockCardSummaryListService, $stateParams, 
-                    stockCardSummaries) {
-                    return stockCardSummaryListService.search($stateParams.keyword, stockCardSummaries);
                 }
-                // MALAWISUP-3068: Ends here
-            } 
+            }
         });
     }
-    // MALAWISUP-3550
+
     // FIXME: Import this class from openlmis-ui-components.openlmis-pagination module
     function Page(first, last, number, numberOfElements, size, sort, totalElements,
                   totalPages, content) {

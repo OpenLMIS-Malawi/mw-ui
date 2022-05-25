@@ -31,11 +31,6 @@
                        ng-model="vm.includeInactive"/>
                 {{'stockPhysicalInventoryDraft.includeInactiveItems' | message}}
             </label>
-            <!-- MALAWISUP-3068: Add filter in SOH -->
-            <label for="search">{{'stockCardSummaryList.keyword'|message}}</label>	
-            <input id="search" type="text" ng-model="vm.keyword" maxlength="50"/>
-            <!-- MALAWISUP-3068: ends here -->
-
             <!-- MALAWISUP-3550 -->
             <label for="productCode">{{'stockCardSummaryList.productCode' | message}}</label>
             <input id="productCode" type="text" ng-model="vm.productCode"/>
@@ -51,16 +46,9 @@
     </form>
     <button class="primary" ng-disabled="!vm.displayStockCardSummaries.length" ng-click="vm.print()">{{'stockCardSummaryList.print' | message}}</button>
     <table>
-        <!-- MALAWISUP-3068: Add filter in SOH -->
-        <caption ng-if="!vm.displayStockCardSummaries.length && !vm.stateParams.keyword">
-            <!-- MALAWISUP-3068: ends here -->
+        <caption ng-if="!vm.displayStockCardSummaries.length">
             {{'stockCardSummaryList.noProducts' | message}}
         </caption>
-        <!-- MALAWISUP-3068: Add filter in SOH -->
-        <caption ng-if="!vm.displayStockCardSummaries.length && vm.stateParams.keyword">
-            {{'stockCardSummaryList.noSearchResults' | message}}
-        </caption>
-        <!-- MALAWISUP-3068: ends here -->
         <thead>
             <tr>
                 <th>{{'stockCardSummaryList.productCode' | message}}</th>
@@ -97,9 +85,5 @@
             </tr>
         </tbody>
     </table>
-    <!-- MALAWISUP-3068: Add filter in SOH -->
-    <!--    MALAWISUP-3550-->
     <openlmis-pagination list="displayStockCardSummaries" pagination-id="'stockCardList'"/>
-    <!--    MALAWISUP-3550: Ends here-->
-    <!-- MALAWISUP-3068: ends here -->
 </section>

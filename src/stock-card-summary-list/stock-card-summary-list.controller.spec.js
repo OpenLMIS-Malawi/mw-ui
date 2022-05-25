@@ -141,9 +141,6 @@ describe('StockCardSummaryListController', function() {
                     stockCardSummariesSize: 10,
                     facility: 'facility',
                     program: 'program',
-                    // MALAWISUP-3068: Add filter in SOH
-                    keyword: undefined,
-                    // MALAWISUP-3068: ends here
                     supervised: true,
                     includeInactive: false,
                     // MALAWISUP-3550: Starts here

@@ -30,18 +30,11 @@
 
     controller.$inject = [
         'loadingModalService', '$state', '$stateParams', 'StockCardSummaryRepositoryImpl', 'stockCardSummaries',
-        'offlineService', '$scope',
-        // MALAWISUP-3068: Add filter in SOH
-        'displayStockCardSummaries',
-        // MALAWISUP-3068: ends here
-        'STOCKCARD_STATUS', 'messageService', 'paginationService'
+        'offlineService', '$scope', 'STOCKCARD_STATUS', 'messageService', 'paginationService'
     ];
 
     function controller(loadingModalService, $state, $stateParams, StockCardSummaryRepositoryImpl, stockCardSummaries,
-                        offlineService, $scope,
-                        // MALAWISUP-3068: Add filter in SOH
-                        displayStockCardSummaries, STOCKCARD_STATUS, messageService, paginationService) {
-                            // MALAWISUP-3068: ends here
+                        offlineService, $scope, STOCKCARD_STATUS, messageService, paginationService) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -51,48 +44,6 @@
         vm.search = search;
         vm.offline = offlineService.isOffline;
         vm.goToPendingOfflineEventsPage = goToPendingOfflineEventsPage;
-
-        // MALAWISUP-3068: Add filter in SOH
-        /**
-         * @ngdoc property
-         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
-         * @name keyword
-         * @type {String}
-         *
-         * @description
-         * Holds keywords for filtering.
-         */
-        vm.keyword = undefined;
-        // MALAWISUP-3068: ends here
-
-        // MALAWISUP-3550
-        /**
-         * @ngdoc property
-         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
-         * @name productCode
-         * @type {String}
-         *
-         */
-        vm.productCode = $stateParams.productCode;
-
-        /**
-         * @ngdoc property
-         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
-         * @name productName
-         * @type {String}
-         *
-         */
-        vm.productName = $stateParams.productName;
-
-        /**
-         * @ngdoc property
-         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
-         * @name lotCode
-         * @type {String}
-         *
-         */
-        vm.lotCode = $stateParams.lotCode;
-        // MALAWISUP-3550: Ends here
 
         /**
          * @ngdoc property
@@ -127,6 +78,35 @@
          */
         vm.includeInactive = $stateParams.includeInactive;
 
+        // MALAWISUP-3550: Starts here
+        /**
+         * @ngdoc property
+         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name productCode
+         * @type {String}
+         *
+         */
+        vm.productCode = $stateParams.productCode;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name productName
+         * @type {String}
+         *
+         */
+        vm.productName = $stateParams.productName;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name lotCode
+         * @type {String}
+         *
+         */
+        vm.lotCode = $stateParams.lotCode;
+        // MALAWISUP-3550: Ends here
+
         /**
          * @ngdoc method
          * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
@@ -137,18 +117,13 @@
          */
         function onInit() {
             vm.stockCardSummaries = stockCardSummaries;
-            // MALAWISUP-3068: Add filter in SOH
-            vm.displayStockCardSummaries = displayStockCardSummaries;
-            // MALAWISUP-3068: ends here
+            vm.displayStockCardSummaries = angular.copy(stockCardSummaries);
             checkCanFulFillIsEmpty();
             paginationService.registerList(null, $stateParams, function() {
                 return vm.displayStockCardSummaries;
             }, {
                 paginationId: 'stockCardSummaries'
             });
-
-            $stateParams.keyword = vm.keyword;
-
         }
 
         /**
@@ -162,14 +137,12 @@
         function loadStockCardSummaries() {
             var stateParams = angular.copy($stateParams);
 
-            // MALAWISUP-3068: Add filter in SOH
-            stateParams.keyword = vm.keyword;
-            // MALAWISUP-3068: ends here
             stateParams.facility = vm.facility.id;
             stateParams.program = vm.program.id;
             stateParams.active = STOCKCARD_STATUS.ACTIVE;
             stateParams.supervised = vm.isSupervised;
-            // MALAWISUP-3550
+
+            // MALAWISUP-3550: Starts here
             stateParams.productName = vm.productName;
             stateParams.productCode = vm.productCode;
             stateParams.lotCode = vm.lotCode;
@@ -188,7 +161,7 @@
          * @description
          * Go to the clicked stock card's page to view its details.
          *
-         * @param {sting} stockCardId the Stock Card UUID
+         * @param {String} stockCardId the Stock Card UUID
          */
         function viewSingleCard(stockCardId) {
             $state.go('openlmis.stockmanagement.stockCardSummaries.singleCard', {
@@ -213,17 +186,15 @@
          * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
          * @name search
          */
-         function search() {
+        function search() {
             var stateParams = angular.copy($stateParams);
-            // MALAWISUP-3068: Add filter in SOH
-            stateParams.keyword = vm.keyword;
-            // MALAWISUP-3068: ends here
+
             stateParams.facility = vm.facility.id;
             stateParams.program = vm.program.id;
             stateParams.supervised = vm.isSupervised;
             stateParams.includeInactive = vm.includeInactive;
 
-            // MALAWISUP-3550
+            // MALAWISUP-3550: Starts here
             stateParams.productCode = vm.productCode;
             stateParams.productName = vm.productName;
             stateParams.lotCode = vm.lotCode;
@@ -256,7 +227,7 @@
          * @description
          * Filters only not empty displayStockCardSummaries.
          */
-         function checkCanFulFillIsEmpty() {
+        function checkCanFulFillIsEmpty() {
             vm.displayStockCardSummaries = vm.displayStockCardSummaries.filter(function(summary) {
                 if (summary.canFulfillForMe.length !== 0) {
                     return summary;
