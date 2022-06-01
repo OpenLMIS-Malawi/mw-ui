@@ -693,8 +693,9 @@
             // MALAWISUP-3141: Revert MALAWISUP-2702 'Remove the "Reasons" field under "Receive"' and select default reason in Reason screen
             // vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state && adjustmentType.state !== ADJUSTMENT_TYPE.RECEIVE.state);
             vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state);
-            vm.selectDefaultReason = (adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state);
-            // MALAWISUP-3141: ends here
+            // MALAWISUP-3634: Select default reason in Issue screen
+            vm.selectDefaultReason = (adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state || adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state);
+            // MALAWISUP-3141, MALAWISUP-3634: end here
             // MALAWISUP-2703: Allow displaying reason free text on the Adjustments screen
             vm.showReasonRemarks = (adjustmentType.state === ADJUSTMENT_TYPE.ADJUSTMENT.state);
             // MW-1045: Allow display expiry date in dropdown on the Issue screen
