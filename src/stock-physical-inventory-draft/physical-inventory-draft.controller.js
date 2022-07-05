@@ -637,6 +637,28 @@
         }
         // MALAWISUP-2974: ends here
 
+        // MALAWISUP-3617: Added validation for unaccounted quantities
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name validateUnaccountedQuantity
+         *
+         * @description
+         * Validate line item quantity and returns self.
+         *
+         * @param {Object} lineItem line item to be validated.
+         */
+        vm.validateUnaccountedQuantity = function(lineItem) {
+            if (lineItem.unaccountedQuantity === 0) {
+                lineItem.unaccountedQuantityInvalid = false;
+            } else {
+                lineItem.unaccountedQuantityInvalid = messageService
+                    .get('stockPhysicalInventoryDraft.unaccountedQuantityError');
+            }
+            return lineItem.unaccountedQuantityInvalid;
+        };
+        // MALAWISUP-3617: Ends here
+
         function isEmpty(value) {
             return value === '' || value === undefined || value === null;
         }
@@ -649,7 +671,9 @@
                 .each(function(item) {
                     if (!item.active) {
                         activeError = 'stockPhysicalInventoryDraft.submitInvalidActive';
-                    } else if (vm.validateQuantity(item)) {
+                        // MALAWISUP-3617: Added validation for unaccounted quantities
+                    } else if (vm.validateQuantity(item) || vm.validateUnaccountedQuantity(item)) {
+                        // MALAWISUP-3617: Ends here
                         qtyError = 'stockPhysicalInventoryDraft.submitInvalid';
                     }
                 });
