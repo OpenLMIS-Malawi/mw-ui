@@ -696,6 +696,12 @@
                 return item.lot;
             });
 
+            // MALAWISUP-3857: Fixed error message while submitting physical inventory draft
+                draft.lineItems.forEach(function(item) {
+                    checkUnaccountedStockAdjustments(item);
+                });
+            // MALAWISUP-3857: Ends here
+
             vm.updateProgress();
 
             var orderableGroups = orderableGroupService.groupByOrderableId(draft.lineItems);
