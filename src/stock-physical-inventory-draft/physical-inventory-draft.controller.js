@@ -380,70 +380,26 @@
          */
         vm.saveDraft = function(withNotification) {
             loadingModalService.open();
-            return saveLots(draft, function() {
-                return physicalInventoryFactory.saveDraft(draft).then(function() {
-                    if (!withNotification) {
-                        notificationService.success('stockPhysicalInventoryDraft.saved');
-                    }
-                    draft.$modified = undefined;
-                    vm.cacheDraft();    
-
-                    $stateParams.program = vm.program;
-                    $stateParams.facility = vm.facility;
-                    draft.lineItems.forEach(function(lineItem) {
-                        if (lineItem.$isNewItem) {
-                            lineItem.$isNewItem = false;
-                        }
-                    });
-                    $stateParams.noReload = true;
-
-                    $state.go($state.current.name, $stateParams, {
-                        reload: $state.current.name
-                    });
-                }, function(errorResponse) {
-                    loadingModalService.close();
-                    alertService.error(errorResponse.data.message);
-                });
-            });
-        };
-
-        // MALAWISUP-2974: Added ability to edit lots and remove specified row
-        /**
-         * @ngdoc method
-         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
-         * @name removeLineItem
-         *
-         * @description
-         * Removes selected line item
-         *
-         * @param {Object} lineItem line item to remove
-         */
-        vm.removeLineItem = function(lineItem) {
-            confirmService.confirmDestroy(
-                'stockPhysicalInventoryDraft.deleteItem',
-                'stockPhysicalInventoryDraft.yes'
-            ).then(function() {
-                loadingModalService.open();
-                vm.displayLineItemsGroup.forEach(function(array) {
-                    var indexOfItem = array.indexOf(lineItem);
-                    if (indexOfItem > -1) {
-                        array[indexOfItem].isAdded = false;
-                        array[indexOfItem].quantity = null;
-                        array[indexOfItem].stockOnHand = null;
-                        if (array.length === 1 && angular.equals(array[0], lineItem)) {
-                            indexOfItem = vm.displayLineItemsGroup.indexOf(array);
-                            vm.displayLineItemsGroup.splice(indexOfItem, 1);
-                        } else {
-                            array.splice(indexOfItem, 1);
-                        }
-                    }
-                });
-                if (lineItem.$isNewItem) {
-                    var indexOfLineItem = draft.lineItems.indexOf(lineItem);
-                    draft.lineItems.splice(indexOfLineItem, 1);
+            return physicalInventoryFactory.saveDraft(draft).then(function() {
+                if (!withNotification) {
+                    notificationService.success('stockPhysicalInventoryDraft.saved');
                 }
+                draft.$modified = undefined;
                 vm.cacheDraft();
-                vm.search();
+                $stateParams.program = vm.program;
+                $stateParams.facility = vm.facility;
+                draft.lineItems.forEach(function(lineItem) {
+                    if (lineItem.$isNewItem) {
+                        lineItem.$isNewItem = false;
+                    }
+                });
+                $stateParams.noReload = true;
+                $state.go($state.current.name, $stateParams, {
+                    reload: $state.current.name
+                });
+            }, function(errorResponse) {
+                loadingModalService.close();
+                alertService.error(errorResponse.data.message);
             });
         };
 
@@ -584,28 +540,19 @@
             var lotPromises = [],
                 lotResource = new LotResource(),
                 errorLots = [];
+
             draft.lineItems.forEach(function(lineItem) {
                 if (lineItem.lot && lineItem.$isNewItem && !lineItem.lot.id) {
-                    lotPromises.push(lotResource.query({
-                        lotCode: lineItem.lot.lotCode
-                    })
-                        .then(function(queryResponse) {
-                            if (queryResponse.numberOfElements > 0 &&
-                                containsLotCode(queryResponse.content, lineItem.lot.lotCode)) {
+                    lotPromises.push(lotResource.create(lineItem.lot)
+                        .then(function(createResponse) {
+                            lineItem.$isNewItem = false;
+                            return createResponse;
+                        })
+                        .catch(function(response) {
+                            if (response.data.messageKey ===
+                                'referenceData.error.lot.lotCode.mustBeUnique') {
                                 errorLots.push(lineItem.lot.lotCode);
-                                return queryResponse;
                             }
-                            return lotResource.create(lineItem.lot)
-                                .then(function(createResponse) {
-                                    lineItem.$isNewItem = false;
-                                    return createResponse;
-                                })
-                                .catch(function(response) {
-                                    if (response.data.messageKey ===
-                                        'referenceData.error.lot.lotCode.mustBeUnique') {
-                                        errorLots.push(lineItem.lot.lotCode);
-                                    }
-                                });
                         }));
                 }
             });

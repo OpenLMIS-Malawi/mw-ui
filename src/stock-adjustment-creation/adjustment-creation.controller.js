@@ -517,8 +517,6 @@
 
             generateKitConstituentLineItem(addedLineItems);
 
-            // MALAWISUP-2974: Added error message when created lot already exists in database
-            // and avoiding sending lots duplicates
             var lotPromises = [],
                 errorLots = [];
             var distinctLots = [];
@@ -530,31 +528,22 @@
                 }
             });
             distinctLots.forEach(function(lot) {
-                lotPromises.push(lotResource.query({
-                    lotCode: lot.lotCode
-                })
-                    .then(function(queryResponse) {
-                        if (queryResponse.numberOfElements > 0 && containsLotCode(queryResponse.content, lot.lotCode)) {
-                            errorLots.push(lot.lotCode);
-                            return queryResponse;
+                lotPromises.push(lotResource.create(lot)
+                .then(function(createResponse) {
+                    vm.addedLineItems.forEach(function(item) {
+                        if (item.lot.lotCode === lot.lotCode) {
+                            item.$isNewItem = false;
+                            addItemToOrderableGroups(item);
                         }
-                        return lotResource.create(lot)
-                            .then(function(createResponse) {
-                                vm.addedLineItems.forEach(function(item) {
-                                    if (item.lot.lotCode === lot.lotCode) {
-                                        item.$isNewItem = false;
-                                        addItemToOrderableGroups(item);
-                                    }
-                                });
-                                return createResponse;
-                            })
-                            .catch(function(response) {
-                                if (response.data.messageKey ===
-                                    'referenceData.error.lot.lotCode.mustBeUnique') {
-                                    errorLots.push(lot.lotCode);
-                                }
-                            });
-                    }));
+                    });
+                    return createResponse;
+                })
+                .catch(function(response) {
+                    if (response.data.messageKey ===
+                        'referenceData.error.lot.lotCode.mustBeUnique') {
+                        errorLots.push(lot.lotCode);
+                    }
+                }));
             });
 
             return $q.all(lotPromises)
@@ -564,7 +553,8 @@
                     }
                     responses.forEach(function(lot) {
                         addedLineItems.forEach(function(lineItem) {
-                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode) {
+                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode
+                                && lineItem.lot.tradeItemId === lot.tradeItemId) {
                                 lineItem.lot = lot;
                             }
                         });
@@ -601,7 +591,6 @@
                     }
                     alertService.error(errorResponse.data.message);
                 });
-            // MALAWISUP-2974: ends here
         }
 
         function addItemToOrderableGroups(item) {
