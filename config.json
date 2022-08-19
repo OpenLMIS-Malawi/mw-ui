@@ -17,5 +17,5 @@
   "applicationLoadingMessage": "Starting Malawi OpenLMIS",
   "applicationTitle": "Malawi OpenLMIS",
   "noLint": true,
-  "showRequisitionLessOrder": "true"
+  "showRequisitionLessOrder": "false"
 }
