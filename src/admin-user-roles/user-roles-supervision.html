@@ -1,0 +1,84 @@
+<form class="form-inline" ng-if="vm.editable" ng-submit="vm.addRole()" reload-form>
+        <div class="form-group">
+            <label for="program">{{'adminUserRoles.program' | message}}</label>
+            <select id="program" ng-model="vm.selectedProgram"
+                ng-options="program as program.name for program in vm.programs"
+                required>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="supervisoryNode">{{'adminUserRoles.supervisoryNode' | message}}</label>
+            <select id="supervisoryNode" ng-model="vm.selectedSupervisoryNode"
+                ng-options="supervisoryNode as (supervisoryNode | supervisoryNode) for supervisoryNode in vm.supervisoryNodes"
+                no-auto-select="true">
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="role">{{'adminUserRoles.role' | message}}</label>
+            <select id="role" ng-model="vm.selectedRole"
+                ng-options="role as role.name for role in vm.filteredRoles" required>
+            </select>
+        </div>
+        <button type="submit" class="add">{{'adminUserRoles.addRole' | message}}</button>
+</form>
+<!-- MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles: Starts here-->
+<section class="openlmis-table-container">
+    <form ng-submit="vm.search()" openlmis-table-filter>
+        <fieldset class="form-group">
+        <label for="role">{{'adminUserRoles.role' | message}}</label>
+        <select id="role"
+                ng-options="role.id as role.name for role in vm.filteredRoles"
+                ng-model="vm.roleId">
+        </select>
+        <label for="program">{{'adminUserRoles.program' | message}}</label>
+        <select id="program"
+                ng-options="program.id as program.name for program in vm.programs"
+                ng-model="vm.programId">
+        </select>
+        </fieldset>
+        <input type="submit" value="{{'adminUserRoles.search' | message}}"/>
+    </form>
+    <table>
+        <caption ng-if="!vm.roleAssignments || vm.roleAssignments.length === 0">
+            {{'adminUserRoles.noRolesAssigned' | message}}
+        </caption>
+        <thead>
+            <tr>
+                <th class="col-sticky" ng-if="vm.roleAssignments.length !== 0">
+                    <input type="checkbox" ng-model="vm.selectAll"
+                        ng-change="vm.toggleSelectAll(vm.selectAll)">
+                </th>
+                <th ng-if="vm.showErrorColumn"></th>
+                <th>{{'adminUserRoles.program' | message}}</th>
+                <th>{{'adminUserRoles.supervisoryNode' | message}}</th>
+                <th popover="{{'adminUserRoles.hoveringOverRolesWillRevealRightsAssignedToThen' | message}}">
+                    {{'adminUserRoles.role' | message}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="roleAssignment in vm.roleAssignments | orderBy : '$name'">
+                <td>
+                    <input type="checkbox" ng-model="roleAssignment.$selected"
+                           ng-change="vm.onRoleSelect(roleAssignment)">
+                </td>
+                <!-- MALAWISUP-3888: Ends here -->
+                <td ng-if="vm.showErrorColumn && roleAssignment.errors.length"
+                    class="role-assignment-invalid"
+                    popover-template="admin-user-roles/role-assignment-errors-popover.html">
+                </td>
+                <td ng-if="vm.showErrorColumn && !roleAssignment.errors.length"></td>
+                <td>{{roleAssignment.programName}}</td>
+                <td>{{roleAssignment.supervisoryNodeName}}</td>
+                <td popover-template="admin-user-roles/user-role-right-popover.html"
+                    popover-title="{{'adminUserRoles.assignedRights' | message}}">
+                    {{roleAssignment.roleName}}
+                </td>
+            </tr>
+        </tbody>
+        <input type="button" class="danger" value="{{'adminUserRoles.deleteSelectedRoles' | message}}" ng-if="vm.getSelected().length" ng-click="vm.removeRoles()"/>
+    </table>
+    <openlmis-pagination
+        list="vm.roleAssignments"
+        paged-list="vm.items"/>
+</section>
