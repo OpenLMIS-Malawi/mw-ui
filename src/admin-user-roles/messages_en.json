@@ -3,5 +3,7 @@
     "adminUserRoles.role": "Role",
     "adminUserRoles.search": "Search",
     "adminUserRoles.removeRole.label": "Remove Roles",
-    "adminUserRoles.removeRole.question": "Selected role assignments will be removed. Do you want to continue?"
+    "adminUserRoles.removeRole.question": "Selected role assignments will be removed. Do you want to continue?",
+    "adminUserRoles.deleteSuccessful": "User roles deleted successfully!",
+    "adminUserRoles.deleteFailed": "Failed to delete user roles"
 }

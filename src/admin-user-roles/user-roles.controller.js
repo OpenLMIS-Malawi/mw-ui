@@ -28,9 +28,9 @@
         .module('admin-user-roles')
         .controller('UserRolesController', controller);
 
-    controller.$inject = ['user', 'loadingModalService', '$state', 'notificationService', 'ROLE_TYPES'];
+    controller.$inject = ['user', 'loadingModalService', '$state', 'notificationService', 'ROLE_TYPES', 'confirmService'];
 
-    function controller(user, loadingModalService, $state, notificationService, ROLE_TYPES) {
+    function controller(user, loadingModalService, $state, notificationService, ROLE_TYPES, confirmService) {
 
         var vm = this;
 
@@ -84,9 +84,23 @@
          * @description
          * Updates user roles.
          */
-        function saveUserRoles() {
-            var loadingPromise = loadingModalService.open(true);
+        function saveUserRoles(action) {
 
+            if (action === 'delete') {
+                return confirmService.confirmDestroy('adminUserRoles.removeRole.question', 'adminUserRoles.removeRole.label')
+                    .then(function() {
+                        var loadingPromise = loadingModalService.open(true);
+                        loadingPromise.then(function() {
+                            notificationService.success('adminUserRoles.deleteSuccessful');
+                        });
+                        goToUserList();
+                    }, function() {
+                        notificationService.error('adminUserRoles.deleteFailed');
+                    }
+                    ).finally(loadingModalService.close);
+            }
+
+            var loadingPromise = loadingModalService.open(true);
             return vm.user.save().then(function() {
                 loadingPromise.then(function() {
                     notificationService.success('adminUserRoles.updateSuccessful');

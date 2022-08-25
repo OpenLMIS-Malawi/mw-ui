@@ -26,7 +26,6 @@
         $stateProvider.state('openlmis.administration.users.roles', {
             abstract: true,
             label: 'adminUserRoles.editUserRoles',
-            // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles: Starts here
             url: '/:id/roles',
             accessRights: [ADMINISTRATION_RIGHTS.USERS_MANAGE],
             resolve: {
@@ -67,7 +66,7 @@
                 }
             }
         });
-
+        // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles: Starts here
         addStateForRoleType(ROLE_TYPES.SUPERVISION, '/supervision?page&size&programId&roleId&storageKey', 'user-roles-supervision.html');
         addStateForRoleType(ROLE_TYPES.ORDER_FULFILLMENT, '/fulfillment?page&size&programId&roleId&storageKey', 'user-roles-fulfillment.html');
         addStateForRoleType(ROLE_TYPES.GENERAL_ADMIN, '/admin?page&size&programId&roleId&storageKey', 'user-roles-tab.html');

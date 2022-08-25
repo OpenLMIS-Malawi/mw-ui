@@ -334,8 +334,10 @@
             var selectedRoleId = selectedRole.programId + '/' + selectedRole.roleId + '/' + selectedRole.supervisoryNodeId;
 
             if (selectedRole.$selected) {
+                // user.removeRoleAssignment(selectedRole)
                 storageRoles[selectedRoleId] = selectedRole;
             } else {
+                // user.addRoleAssignment(selectedRole)
                 delete storageRoles[selectedRoleId];
             }
 
@@ -360,9 +362,9 @@
                 confirmService.confirmDestroy('adminUserRoles.removeRole.question', 'adminUserRoles.removeRole.label')
                     .then(function() {
                         for (var key in selectedRoles) {
-                            console.log(selectedRoles[key])
                             user.removeRoleAssignment(selectedRoles[key]);
                         }
+                        $window.sessionStorage.removeItem(vm.selectedRolesStorageKey);
                         reloadState();
                         });
         }
