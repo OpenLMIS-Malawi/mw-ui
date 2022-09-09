@@ -71,7 +71,6 @@
         addStateForRoleType(ROLE_TYPES.ORDER_FULFILLMENT, '/fulfillment?page&size&programId&roleId&storageKey', 'user-roles-fulfillment.html');
         addStateForRoleType(ROLE_TYPES.GENERAL_ADMIN, '/admin?page&size&programId&roleId&storageKey', 'user-roles-tab.html');
         addStateForRoleType(ROLE_TYPES.REPORTS, '/reports?page&size&programId&roleId&storageKey', 'user-roles-tab.html');
-        // MALAWISUP-3888: Ends here
         function addStateForRoleType(type, url, templateFile) {
             $stateProvider.state('openlmis.administration.users.roles.' + type, {
                 label: ROLE_TYPES.getLabel(type),
@@ -83,9 +82,27 @@
                     tab: function() {
                         return type;
                     },
-                    roleAssignments: function(paginationService, $stateParams, user, tab) {
+                    filteredRoleAssignments: function($stateParams, user, tab) {
+                        var assignments = user.getRoleAssignments(tab);
+
+                        if ($stateParams.programId) {
+                            assignments = assignments.filter(function(assignment) {
+                                return assignment.programId === $stateParams.programId;
+                            });
+                        }
+
+                        if ($stateParams.roleId) {
+                            console.log(assignments[0])
+                            assignments = assignments.filter(function(assignment) {
+                                return assignment.roleId === $stateParams.roleId;
+                            });
+                        }
+
+                        return assignments;
+                    },
+                    roleAssignments: function(paginationService, $stateParams, filteredRoleAssignments) {
                         return paginationService.registerList(null, $stateParams, function() {
-                            return user.getRoleAssignments(tab);
+                            return filteredRoleAssignments;
                         });
                     },
                     filteredRoles: function(roles, tab) {
@@ -94,6 +111,7 @@
                         });
                     }
                 }
+                // MALAWISUP-3888: Ends here
             });
         }
     }

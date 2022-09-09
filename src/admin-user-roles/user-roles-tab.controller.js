@@ -45,6 +45,7 @@
         vm.$onInit = onInit;
         vm.removeRoles = removeRoles;
         vm.addRole = addRole;
+        vm.removeRole = removeRole;
         vm.search = search;
         vm.toggleSelectAll = toggleSelectAll;
         vm.setSelectAll = setSelectAll;
@@ -61,7 +62,6 @@
          * Indicates if all roles from list are selected or not.
          */
         vm.selectAll = false;
-        // MALAWISUP-3888: Ends here
 
         /**
          * @ngdoc property
@@ -182,7 +182,6 @@
          * Initialization method of the UserFormModalController.
          */
 
-        // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles: Starts here
         function onInit() {
             vm.supervisoryNodes = supervisoryNodes;
             vm.warehouses = warehouses;
@@ -207,7 +206,9 @@
             vm.selectedRolesStorageKey = 'admin-user-roles/selected-roles/'
                 + $stateParams.storageKey;
 
-            loadPreviouslySelectedRoles();
+            if (tab == 'fulfillment' || tab == 'supervision') {
+                loadPreviouslySelectedRoles();
+            }
         }
 
         /**
@@ -272,9 +273,9 @@
          * @param {Boolean} selectAll Determines if all roles should be selected or not
          */
         function toggleSelectAll(selectAll) {
-            angular.forEach(vm.roleAssignments, function(roleAssignment) {
-                roleAssignment.$selected = selectAll;
-                vm.onRoleSelect(roleAssignment);
+            angular.forEach(vm.items, function(items) {
+                items.$selected = selectAll;
+                vm.onRoleSelect(items);
             });
         }
 
@@ -289,8 +290,8 @@
          */
         function setSelectAll() {
             var value = true;
-            angular.forEach(vm.roleAssignments, function(roleAssignment) {
-                value = value && roleAssignment.$selected;
+            angular.forEach(vm.items, function(item) {
+                value = value && item.$selected;
             });
             vm.selectAll = value;
         }
@@ -314,8 +315,6 @@
                     vm.roleAssignments[i].$selected = true;
                 }
             }
-
-            setSelectAll();
         }
 
         /**
@@ -334,10 +333,8 @@
             var selectedRoleId = selectedRole.programId + '/' + selectedRole.roleId + '/' + selectedRole.supervisoryNodeId;
 
             if (selectedRole.$selected) {
-                // user.removeRoleAssignment(selectedRole)
                 storageRoles[selectedRoleId] = selectedRole;
             } else {
-                // user.addRoleAssignment(selectedRole)
                 delete storageRoles[selectedRoleId];
             }
 
@@ -359,7 +356,7 @@
          */
         function removeRoles() {
             var selectedRoles = getSelected();
-                confirmService.confirmDestroy('adminUserRoles.removeRole.question', 'adminUserRoles.removeRole.label')
+                confirmService.confirmDestroy('adminUserRoles.removeRole.question', 'adminUserRoles.removeRoles.label')
                     .then(function() {
                         for (var key in selectedRoles) {
                             user.removeRoleAssignment(selectedRoles[key]);
@@ -396,6 +393,24 @@
                 notificationService.error(error.message);
                 return $q.reject();
             }
+        }
+
+         /**
+         * @ngdoc method
+         * @methodOf admin-user-roles.controller:UserRolesTabController
+         * @name removeRole
+         *
+         * @description
+         * Removes role from user object.
+         *
+         * @param {Object} roleAssignment the role assignment to be removed
+         */
+          function removeRole(roleAssignment) {
+            confirmService.confirmDestroy('adminUserRoles.removeRole.question', 'adminUserRoles.removeRole.label')
+                .then(function() {
+                    user.removeRoleAssignment(roleAssignment);
+                    reloadState();
+                });
         }
 
         function reloadState() {
