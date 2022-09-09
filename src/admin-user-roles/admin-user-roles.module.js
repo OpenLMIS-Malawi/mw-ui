@@ -38,7 +38,7 @@
         'openlmis-admin',
         'admin-role-form',
         'openlmis-object-utils',
-        // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles: Starts here
+        // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
         'openlmis-uuid'
         // MALAWISUP-3888: Ends here
     ]);

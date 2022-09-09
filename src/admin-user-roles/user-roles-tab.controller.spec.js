@@ -18,7 +18,6 @@ describe('UserRolesTabController', function() {
     beforeEach(function() {
 
         module('admin-user-roles');
-        // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles: Starts here
         inject(function($injector) {
             this.$controller = $injector.get('$controller');
             this.$rootScope = $injector.get('$rootScope');
@@ -32,6 +31,7 @@ describe('UserRolesTabController', function() {
             this.SupervisoryNodeDataBuilder = $injector.get('SupervisoryNodeDataBuilder');
             this.confirmService = $injector.get('confirmService');
             this.notificationService = $injector.get('notificationService');
+            // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
             this.UuidGenerator =  $injector.get('UuidGenerator');
         });
 

@@ -28,7 +28,7 @@
         .module('admin-user-roles')
         .controller('UserRolesTabController', controller);
 
-    // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles: Starts here
+    // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
 
     controller.$inject = [
         'user', 'supervisoryNodes', 'programs', 'warehouses', '$stateParams', '$q', 'tab', '$state', '$filter',
@@ -221,26 +221,26 @@
          *
          * @return {Array} list of selected user roles
          */
-                 function getSelected() {
-                    var storageSelected = $window.sessionStorage.getItem(vm.selectedRolesStorageKey);
+        function getSelected() {
+                var storageSelected = $window.sessionStorage.getItem(vm.selectedRolesStorageKey);
         
-                    storageSelected = storageSelected ? JSON.parse(storageSelected) : {};
+                storageSelected = storageSelected ? JSON.parse(storageSelected) : {};
         
-                    var selectedRoles = [];
+                var selectedRoles = [];
         
-                    for (var id in storageSelected) {
-                        if (storageSelected.hasOwnProperty(id)) {
-                            selectedRoles.push(storageSelected[id]);
-                        }
+                for (var id in storageSelected) {
+                     if (storageSelected.hasOwnProperty(id)) {
+                        selectedRoles.push(storageSelected[id]);
                     }
+                }
         
-                    angular.forEach(vm.roleAssignments, function(roleAssignment) {
-                        if (roleAssignment.$selected && roleAssignments[roleAssignment.id] === undefined) {
-                            selectedRoles.push(roleAssignment);
-                        }
-                    });
+                angular.forEach(vm.roleAssignments, function(roleAssignment) {
+                    if (roleAssignment.$selected && roleAssignments[roleAssignment.id] === undefined) {
+                        selectedRoles.push(roleAssignment);
+                    }
+                });
         
-                    return selectedRoles;
+                return selectedRoles;
                 }
 
         /**
@@ -251,7 +251,7 @@
          * @description
          * Reloads the page with new search parameters.
          */
-         function search() {
+        function search() {
             var stateParams = angular.copy($stateParams);
 
             stateParams.programId = vm.programId;
@@ -304,7 +304,7 @@
          * @description
          * Selects checkboxes on current page if checked before
          */
-         function loadPreviouslySelectedRoles() {
+        function loadPreviouslySelectedRoles() {
             var storageRoles = $window.sessionStorage.getItem(vm.selectedRolesStorageKey);
             storageRoles = storageRoles ? JSON.parse(storageRoles) : {};
 
@@ -405,7 +405,7 @@
          *
          * @param {Object} roleAssignment the role assignment to be removed
          */
-          function removeRole(roleAssignment) {
+        function removeRole(roleAssignment) {
             confirmService.confirmDestroy('adminUserRoles.removeRole.question', 'adminUserRoles.removeRole.label')
                 .then(function() {
                     user.removeRoleAssignment(roleAssignment);

@@ -66,7 +66,7 @@
                 }
             }
         });
-        // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles: Starts here
+        // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
         addStateForRoleType(ROLE_TYPES.SUPERVISION, '/supervision?page&size&programId&roleId&storageKey', 'user-roles-supervision.html');
         addStateForRoleType(ROLE_TYPES.ORDER_FULFILLMENT, '/fulfillment?page&size&programId&roleId&storageKey', 'user-roles-fulfillment.html');
         addStateForRoleType(ROLE_TYPES.GENERAL_ADMIN, '/admin?page&size&programId&roleId&storageKey', 'user-roles-tab.html');
@@ -92,7 +92,6 @@
                         }
 
                         if ($stateParams.roleId) {
-                            console.log(assignments[0])
                             assignments = assignments.filter(function(assignment) {
                                 return assignment.roleId === $stateParams.roleId;
                             });
@@ -100,6 +99,7 @@
 
                         return assignments;
                     },
+        // MALAWISUP-3888: Ends here
                     roleAssignments: function(paginationService, $stateParams, filteredRoleAssignments) {
                         return paginationService.registerList(null, $stateParams, function() {
                             return filteredRoleAssignments;
@@ -111,7 +111,6 @@
                         });
                     }
                 }
-                // MALAWISUP-3888: Ends here
             });
         }
     }
