@@ -1,0 +1,8 @@
+{
+    "adminUserRoles.deleteSelectedRoles": "Delete Selected User Roles",
+    "adminUserRoles.role": "Role",
+    "adminUserRoles.search": "Search",
+    "adminUserRoles.removeRoles.label": "Delete roles",
+    "adminUserRoles.deleteSuccessful": "User roles deleted successfully!",
+    "adminUserRoles.deleteFailed": "Failed to delete user roles"
+}

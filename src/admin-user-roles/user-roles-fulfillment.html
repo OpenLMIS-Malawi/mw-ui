@@ -1,0 +1,69 @@
+<form class="form-inline" ng-if="vm.editable" ng-submit="vm.addRole()" reload-form>
+    <div class="form-group">
+        <label for="supplyingFacility">{{'adminUserRoles.supplyingFacility' | message}}</label>
+        <select id="supplyingFacility" ng-model="vm.selectedWarehouse" required
+            ng-options="warehouse as warehouse.name for warehouse in vm.warehouses">
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="role">{{'adminUserRoles.role' | message}}</label>
+        <select id="role" ng-model="vm.selectedRole"
+            ng-options="role as role.name for role in vm.filteredRoles" required>
+        </select>
+    </div>
+    <button type="submit" class="add">{{'adminUserRoles.addRole' | message}}</button>
+</form>
+<section class="openlmis-table-container">
+    <!-- MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles-->
+    <form ng-submit="vm.search()" openlmis-table-filter>
+        <fieldset class="form-group">
+        <label for="role">{{'adminUserRoles.role' | message}}</label>
+        <select id="role"
+                ng-options="role.id as role.name for role in vm.filteredRoles"
+                ng-model="vm.roleId">
+        </select>
+        </fieldset>
+        <input type="submit" value="{{'adminUserRoles.search' | message}}"/>
+    </form>
+    <!-- MALAWISUP-3888: Ends here -->
+    <table>
+        <caption ng-if="!vm.roleAssignments || vm.roleAssignments.length === 0">
+            {{'adminUserRoles.noRolesAssigned' | message}}
+        </caption>
+        <thead>
+            <tr>
+                <!-- MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles-->
+                <th ng-if="vm.roleAssignments.length !== 0" ng-style="{'text-align':'center'}">
+                    <input type="checkbox" ng-model="vm.selectAll"
+                        ng-change="vm.toggleSelectAll(vm.selectAll)">
+                </th>
+                <!-- MALAWISUP-3888: Ends here -->
+                <th>{{'adminUserRoles.supplyingFacility' | message}}</th>
+                <th popover="{{'adminUserRoles.hoveringOverRolesWillRevealRightsAssignedToThen' | message}}">
+                    {{'adminUserRoles.role' | message}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="roleAssignment in vm.items | orderBy : '$name'">
+                <!-- MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles-->
+                <td>
+                    <input type="checkbox" ng-model="roleAssignment.$selected"
+                           ng-change="vm.onRoleSelect(roleAssignment)">
+                </td>
+                <!-- MALAWISUP-3888: Ends here -->
+                <td>{{roleAssignment.warehouseName}}</td>
+                <td popover-template="admin-user-roles/user-role-right-popover.html"
+                    popover-title="{{'adminUserRoles.assignedRights' | message}}">
+                    {{roleAssignment.roleName}}
+                </td>
+            </tr>
+        </tbody>
+        <!-- MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles-->
+        <input type="button" class="danger" value="{{'adminUserRoles.deleteSelectedRoles' | message}}" ng-if="vm.getSelected().length" ng-click="vm.removeRoles()"/>
+        <!-- MALAWISUP-3888: Ends here -->
+    </table>
+    <openlmis-pagination
+        list="vm.roleAssignments"
+        paged-list="vm.items"/>
+</section>
