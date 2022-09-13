@@ -21,8 +21,8 @@
         </div>
         <button type="submit" class="add">{{'adminUserRoles.addRole' | message}}</button>
 </form>
-<!-- MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles-->
 <section class="openlmis-table-container">
+    <!-- MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles-->
     <form ng-submit="vm.search()" openlmis-table-filter>
         <fieldset class="form-group">
         <label for="role">{{'adminUserRoles.role' | message}}</label>
@@ -38,16 +38,19 @@
         </fieldset>
         <input type="submit" value="{{'adminUserRoles.search' | message}}"/>
     </form>
+    <!-- MALAWISUP-3888: Ends here -->
     <table>
         <caption ng-if="!vm.roleAssignments || vm.roleAssignments.length === 0">
             {{'adminUserRoles.noRolesAssigned' | message}}
         </caption>
         <thead>
             <tr>
+                <!-- MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles-->
                 <th ng-if="vm.roleAssignments.length !== 0" ng-style="{}">
                     <input type="checkbox" ng-model="vm.selectAll"
                         ng-change="vm.toggleSelectAll(vm.selectAll)">
                 </th>
+                <!-- MALAWISUP-3888: Ends here -->
                 <th ng-if="vm.showErrorColumn"></th>
                 <th>{{'adminUserRoles.program' | message}}</th>
                 <th>{{'adminUserRoles.supervisoryNode' | message}}</th>
@@ -58,10 +61,12 @@
         </thead>
         <tbody>
             <tr ng-repeat="roleAssignment in vm.items | orderBy : '$name'">
+                <!-- MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles-->
                 <td>
                     <input type="checkbox" ng-model="roleAssignment.$selected"
                            ng-change="vm.onRoleSelect(roleAssignment)">
                 </td>
+                <!-- MALAWISUP-3888: Ends here -->
                 <td ng-if="vm.showErrorColumn && roleAssignment.errors.length"
                     class="role-assignment-invalid"
                     popover-template="admin-user-roles/role-assignment-errors-popover.html">
@@ -75,9 +80,10 @@
                 </td>
             </tr>
         </tbody>
+        <!-- MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles-->
         <input type="button" class="danger" value="{{'adminUserRoles.deleteSelectedRoles' | message}}" ng-if="vm.getSelected().length" ng-click="vm.removeRoles()"/>
+        <!-- MALAWISUP-3888: Ends here -->
     </table>
-    <!-- MALAWISUP-3888: Ends here -->
     <openlmis-pagination
         list="vm.roleAssignments"
         paged-list="vm.items"/>

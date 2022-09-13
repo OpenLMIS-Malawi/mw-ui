@@ -33,6 +33,7 @@ describe('UserRolesTabController', function() {
             this.notificationService = $injector.get('notificationService');
             // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
             this.UuidGenerator =  $injector.get('UuidGenerator');
+            // MALAWISUP-3888: Ends here
         });
 
         this.supervisoryNodes = [
@@ -67,12 +68,14 @@ describe('UserRolesTabController', function() {
             .withGeneralAdminRoleAssignment(this.roles[1].id)
             .build();
 
+        // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
         this.uuidGenerator = new this.UuidGenerator();
         this.stateParams = {
             page: 0,
             size: 10,
             storageKey: this.uuidGenerator.generate()
         };
+        // MALAWISUP-3888: Ends here
 
         this.roleRightsMap = {};
         this.roleRightsMap[this.roles[0].id] = this.roles[0].rights;
@@ -89,11 +92,13 @@ describe('UserRolesTabController', function() {
             supervisoryNodes: this.supervisoryNodes,
             warehouses: this.warehouses,
             programs: this.programs,
+            // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
             roleAssignments: [this.user.roleAssignments[0], this.user.roleAssignments[1]],
             tab: this.ROLE_TYPES.SUPERVISION,
             roleRightsMap: this.roleRightsMap,
             UuidGenerator: this.UuidGenerator,
             confirmService: this.confirmService
+            // MALAWISUP-3888: Ends here
         });
 
         this.vm.$onInit();
@@ -103,7 +108,7 @@ describe('UserRolesTabController', function() {
     });
 
     describe('on init', function() {
-
+        // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
         afterEach(function() {
             inject(function($injector) {
                 var selected = this.vm.getSelected();
@@ -114,6 +119,27 @@ describe('UserRolesTabController', function() {
                 $injector.get('$window').sessionStorage.clear();
             });
         });
+
+        it('should set roleAssignments', function() {
+            expect(this.vm.roleAssignments.length).toBe(2);
+            expect(this.vm.roleAssignments[0]).toEqual(this.user.roleAssignments[0]);
+            expect(this.vm.roleAssignments[1]).toEqual(this.user.roleAssignments[1]);
+        });
+
+        it('should get all selected roles', function() {
+            this.vm.roleAssignments[0].$selected = true;
+    
+            var selectedroleAssignments = this.vm.getSelected();
+    
+            expect(selectedroleAssignments).toEqual([this.vm.roleAssignments[0]]);
+        });
+        
+        it('should get an empty array if no roles are selected', function() {
+            var selectedValidDestinations = this.vm.getSelected();
+    
+            expect(selectedValidDestinations).toEqual([]);
+        });
+        // MALAWISUP-3888: Ends here
 
         it('should set supervisoryNodes', function() {
             expect(this.vm.supervisoryNodes).toEqual(this.supervisoryNodes);
@@ -129,12 +155,6 @@ describe('UserRolesTabController', function() {
 
         it('should set selectedType', function() {
             expect(this.vm.selectedType).toEqual(this.ROLE_TYPES.SUPERVISION);
-        });
-
-        it('should set roleAssignments', function() {
-            expect(this.vm.roleAssignments.length).toBe(2);
-            expect(this.vm.roleAssignments[0]).toEqual(this.user.roleAssignments[0]);
-            expect(this.vm.roleAssignments[1]).toEqual(this.user.roleAssignments[1]);
         });
 
         it('should set filteredRoles', function() {
@@ -163,20 +183,6 @@ describe('UserRolesTabController', function() {
             this.$rootScope.$apply();
 
             expect(this.vm.roleRightsMap).toEqual(this.roleRightsMap);
-        });
-
-        it('should get all selected roles', function() {
-            this.vm.roleAssignments[0].$selected = true;
-    
-            var selectedroleAssignments = this.vm.getSelected();
-    
-            expect(selectedroleAssignments).toEqual([this.vm.roleAssignments[0]]);
-        });
-        
-        it('should get an empty array if no roles are selected', function() {
-            var selectedValidDestinations = this.vm.getSelected();
-    
-            expect(selectedValidDestinations).toEqual([]);
         });
     });
 
@@ -273,6 +279,7 @@ describe('UserRolesTabController', function() {
         });
     });
     
+    // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
     it('should set "select all" option when all roles are selected by user', function() {
         for (var i = 0; i < this.vm.roleAssignments.length; i++) {
             this.vm.roleAssignments[i].$selected = true;

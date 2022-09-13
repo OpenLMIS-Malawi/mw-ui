@@ -62,6 +62,7 @@
          * Indicates if all roles from list are selected or not.
          */
         vm.selectAll = false;
+        // MALAWISUP-3888: Ends here
 
         /**
          * @ngdoc property
@@ -172,7 +173,8 @@
          * Flag defining whether the roles can be edited.
          */
         vm.editable = undefined;
-
+        
+        // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
         /**
          * @ngdoc method
          * @methodOf admin-user-roles.controller:UserRolesTabController

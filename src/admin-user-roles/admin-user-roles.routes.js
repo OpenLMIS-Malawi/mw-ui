@@ -99,12 +99,12 @@
 
                         return assignments;
                     },
-        // MALAWISUP-3888: Ends here
                     roleAssignments: function(paginationService, $stateParams, filteredRoleAssignments) {
                         return paginationService.registerList(null, $stateParams, function() {
                             return filteredRoleAssignments;
                         });
                     },
+                    // MALAWISUP-3888: Ends here
                     filteredRoles: function(roles, tab) {
                         return roles.filter(function(role) {
                             return role.type === tab;
