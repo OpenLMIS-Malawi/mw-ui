@@ -192,6 +192,8 @@
             vm.roleAssignments = roleAssignments;
             vm.filteredRoles = filteredRoles;
             vm.editable = true;
+            vm.programId = $stateParams.programId;
+            vm.roleId = $stateParams.roleId;
             vm.showErrorColumn = roleAssignments.filter(function(role) {
                 return role.errors && role.errors.length;
             }).length > 0;
@@ -212,6 +214,28 @@
                 loadPreviouslySelectedRoles();
             }
         }
+
+        /**
+         * @ngdoc property
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @name roleId
+         * @type {String}
+         *
+         * @description
+         * Contains role id param for searching roles by role id.
+         */
+        vm.roleId = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @name programId
+         * @type {String}
+         *
+         * @description
+         * Contains program id param for searching roles by program id.
+         */
+        vm.programId = undefined;
 
         /**
          * @ngdoc method
@@ -260,7 +284,7 @@
             stateParams.roleId = vm.roleId;
             
             $state.go('openlmis.administration.users.roles.' + tab, stateParams, {
-                reload: true
+                reload: false
             });
         }
 
