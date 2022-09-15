@@ -175,47 +175,7 @@
         vm.editable = undefined;
         
         // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
-        /**
-         * @ngdoc method
-         * @methodOf admin-user-roles.controller:UserRolesTabController
-         * @name $onInit
-         *
-         * @description
-         * Initialization method of the UserFormModalController.
-         */
-
-        function onInit() {
-            vm.supervisoryNodes = supervisoryNodes;
-            vm.warehouses = warehouses;
-            vm.programs = programs;
-            vm.selectedType = tab;
-            vm.roleAssignments = roleAssignments;
-            vm.filteredRoles = filteredRoles;
-            vm.editable = true;
-            vm.programId = $stateParams.programId;
-            vm.roleId = $stateParams.roleId;
-            vm.showErrorColumn = roleAssignments.filter(function(role) {
-                return role.errors && role.errors.length;
-            }).length > 0;
-            vm.roleRightsMap = roleRightsMap;
-
-            if ($stateParams.storageKey === undefined) {
-                $stateParams.storageKey = vm.uuidGenerator.generate();
-                $state.go($state.current.name, $stateParams, {
-                    reload: false,
-                    notify: false
-                });
-            }
-
-            vm.selectedRolesStorageKey = 'admin-user-roles/selected-roles/'
-                + $stateParams.storageKey;
-
-            if (tab == 'fulfillment' || tab == 'supervision') {
-                loadPreviouslySelectedRoles();
-            }
-        }
-
-        /**
+         /**
          * @ngdoc property
          * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name roleId
@@ -236,8 +196,49 @@
          * Contains program id param for searching roles by program id.
          */
         vm.programId = undefined;
-
         /**
+        
+        /**
+         * @ngdoc method
+         * @methodOf admin-user-roles.controller:UserRolesTabController
+         * @name $onInit
+         *
+         * @description
+         * Initialization method of the UserFormModalController.
+         */
+
+        function onInit() {
+            vm.supervisoryNodes = supervisoryNodes;
+            vm.warehouses = warehouses;
+            vm.programs = programs;
+            vm.selectedType = tab;
+            vm.roleAssignments = roleAssignments;
+            vm.filteredRoles = filteredRoles;
+            vm.editable = true;
+            vm.programId = $stateParams.programId;
+            vm.roleId = $stateParams.roleId;
+
+            vm.showErrorColumn = roleAssignments.filter(function(role) {
+                return role.errors && role.errors.length;
+            }).length > 0;
+            vm.roleRightsMap = roleRightsMap;
+
+            if ($stateParams.storageKey === undefined) {
+                $stateParams.storageKey = vm.uuidGenerator.generate();
+                $state.go($state.current.name, $stateParams, {
+                    reload: false,
+                    notify: false
+                });
+            }
+
+            vm.selectedRolesStorageKey = 'admin-user-roles/selected-roles/'
+                + $stateParams.storageKey;
+
+            if (tab == 'fulfillment' || tab == 'supervision') {
+                loadPreviouslySelectedRoles();
+            }
+        }
+        
          * @ngdoc method
          * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name getSelected
