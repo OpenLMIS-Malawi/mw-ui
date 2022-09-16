@@ -175,6 +175,29 @@
         vm.editable = undefined;
         
         // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
+         /**
+         * @ngdoc property
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @name roleId
+         * @type {String}
+         *
+         * @description
+         * Contains role id param for searching roles by role id.
+         */
+        vm.roleId = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @name programId
+         * @type {String}
+         *
+         * @description
+         * Contains program id param for searching roles by program id.
+         */
+        vm.programId = undefined;
+        /**
+        
         /**
          * @ngdoc method
          * @methodOf admin-user-roles.controller:UserRolesTabController
@@ -192,6 +215,9 @@
             vm.roleAssignments = roleAssignments;
             vm.filteredRoles = filteredRoles;
             vm.editable = true;
+            vm.programId = $stateParams.programId;
+            vm.roleId = $stateParams.roleId;
+
             vm.showErrorColumn = roleAssignments.filter(function(role) {
                 return role.errors && role.errors.length;
             }).length > 0;
@@ -212,8 +238,7 @@
                 loadPreviouslySelectedRoles();
             }
         }
-
-        /**
+        
          * @ngdoc method
          * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name getSelected
@@ -260,7 +285,7 @@
             stateParams.roleId = vm.roleId;
             
             $state.go('openlmis.administration.users.roles.' + tab, stateParams, {
-                reload: true
+                reload: false
             });
         }
 
