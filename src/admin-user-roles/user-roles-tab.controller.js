@@ -196,7 +196,6 @@
          * Contains program id param for searching roles by program id.
          */
         vm.programId = undefined;
-        /**
         
         /**
          * @ngdoc method
@@ -239,6 +238,7 @@
             }
         }
         
+        /**
          * @ngdoc method
          * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name getSelected
