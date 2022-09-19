@@ -28,13 +28,15 @@
         .module('report')
         .controller('ReportGenerateController', controller);
 
+    // MW-1178: Add datepicker & multiple select to report parameters
     controller.$inject = [
         '$state', '$scope', '$window', 'report', 'reportFactory',
-        'reportParamsOptions', 'reportUrlFactory', 'accessTokenFactory'
+        'reportParamsOptions', 'reportUrlFactory', 'accessTokenFactory', '$q'
     ];
 
     function controller($state, $scope, $window, report, reportFactory,
-                        reportParamsOptions, reportUrlFactory, accessTokenFactory) {
+                        reportParamsOptions, reportUrlFactory, accessTokenFactory, $q) {
+    // MW-1178: Ends here
         var vm = this;
 
         vm.$onInit = onInit;
@@ -49,6 +51,17 @@
             GeographicZone: 'report.geographicZoneInfo',
             DueDays: 'report.dueDaysInfo'
         };
+
+        // MW-1178: Add datepicker & multiple select to report parameters
+        vm.booleanOptions = [{
+            name: 'Yes',
+            value: 'true'
+        },
+        {
+            name: 'No',
+            value: 'false'
+        }]
+        // MW-1178: Ends here
 
         /**
          * @ngdoc property
@@ -117,6 +130,9 @@
          * url, passing selected param options as well as the selected format.
          */
         function downloadReport() {
+            // MW-1178: Add datepicker & multiple select to report parameters
+            vm.mapParameters(vm.selectedParamsOptions);
+            // MW-1178: Ends here
             $window.open(
                 accessTokenFactory.addAccessToken(
                     reportUrlFactory.buildUrl(
@@ -186,6 +202,11 @@
             }
             vm.format = vm.formats[0];
             // --- ends here ---
+
+            // MW-1178: Add datepicker & multiple select to report parameters
+            vm.filterAvailableParameters = filterAvailableParameters;
+            vm.mapParameters = mapParameters;
+            // MW-1178: Ends here
         }
 
         // Malawi: supported formats
@@ -193,5 +214,61 @@
             return vm.formats.indexOf(format) !== -1;
         }
         // --- ends here ---
+
+        // MW-1178: Add datepicker & multiple select to report parameters
+        function changeCommasToSemicolons(text) {
+            return text.join().split(',')
+                .join(';');
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf report.controller:ReportGenerateController
+         * @name mapParameters
+         *
+         * @description
+         * Method changig the types of parameters in order to create an report (which requires concrete types)
+         * @param  {Array} parameter the parameter used when filtering tags
+         * @return {String} string 
+         */
+        function mapParameters(parameters) {
+            for (const property in parameters) {
+                if ((typeof parameters[property]) == (typeof [])) {
+                    parameters[property] = changeCommasToSemicolons(parameters[property]);
+                }
+              }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf report.controller:ReportGenerateController
+         * @name filterAvailableParameters
+         *
+         * @description
+         * Filters the list of available parameters with the given query. Returns a promise resolving to the filtered list.
+         * The reason why this method returns a promise is that it is required by the ngTagsInput.
+         *
+         * @param  {String} parameter the parameter used when filtering tags
+         * @param  {String} query the query used when filtering tags
+         * @return {Promise}      the promise resolving to filtered list
+         */
+           function filterAvailableParameters(parameter, query) {
+            if (!vm.paramsOptions[parameter.name]) {
+                return $q.resolve([]);
+            }
+
+            if (!query) {
+                return $q.resolve(vm.paramsOptions[parameter.name]);
+            }
+
+            return $q.resolve([...new Set(vm.paramsOptions[parameter.name].filter(function(parameter) {
+                return parameter.name.toLowerCase()
+                    .indexOf(query.toLowerCase()) > -1;
+            }).map(function(parameter) {
+                return parameter.name;
+            }))]);
+        }
+        // MW-1178: Ends here
     }
 })();
+
