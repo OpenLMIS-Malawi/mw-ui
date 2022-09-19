@@ -206,6 +206,7 @@
             // MW-1178: Add datepicker & multiple select to report parameters
             vm.filterAvailableParameters = filterAvailableParameters;
             vm.mapParameters = mapParameters;
+            // MW-1178: Ends here
         }
 
         // Malawi: supported formats
@@ -267,6 +268,7 @@
                 return parameter.name;
             }))]);
         }
+        // MW-1178: Ends here
     }
 })();
 
