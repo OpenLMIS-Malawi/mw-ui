@@ -131,14 +131,14 @@
          */
         function downloadReport() {
             // MW-1178: Add datepicker & multiple select to report parameters
-            vm.mapParameters(vm.selectedParamsOptions);
+            const mappedParameters = vm.mapParameters(vm.selectedParamsOptions);
             // MW-1178: Ends here
             $window.open(
                 accessTokenFactory.addAccessToken(
                     reportUrlFactory.buildUrl(
                         vm.report.$module,
                         vm.report,
-                        vm.selectedParamsOptions,
+                        mappedParameters,
                         vm.format
                     )
                 ),
@@ -217,8 +217,10 @@
 
         // MW-1178: Add datepicker & multiple select to report parameters
         function changeCommasToSemicolons(text) {
-            return text.join().split(',')
-                .join(';');
+            const reducedText = text.reduce((acc, curr) => {
+                return acc + curr.replace(',', ';;') + ";"
+            }, "");
+            return reducedText.slice(0, reducedText.length - 1);
         }
 
         /**
@@ -232,11 +234,13 @@
          * @return {String} string 
          */
         function mapParameters(parameters) {
-            for (const property in parameters) {
-                if ((typeof parameters[property]) == (typeof [])) {
-                    parameters[property] = changeCommasToSemicolons(parameters[property]);
+            const mappedParameters = Object.assign({}, parameters);
+            for (const property in mappedParameters) {
+                if ((typeof mappedParameters[property]) == (typeof [])) {
+                    mappedParameters[property] = changeCommasToSemicolons(mappedParameters[property]);
                 }
-              }
+              };
+            return mappedParameters;
         }
 
         /**
