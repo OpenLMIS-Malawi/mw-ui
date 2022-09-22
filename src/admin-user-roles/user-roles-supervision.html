@@ -81,7 +81,7 @@
             </tr>
         </tbody>
         <!-- MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles-->
-        <input type="button" class="danger" value="{{'adminUserRoles.deleteSelectedRoles' | message}}" ng-if="vm.getSelected().length" ng-click="vm.removeRoles()"/>
+        <input type="button" class="danger" value="{{'adminUserRoles.deleteSelectedRoles' | message}}" ng-if="vm.getSelected().length && !vm.getParams().programId && !vm.getParams().roleId" ng-click="vm.removeRoles()"/>
         <!-- MALAWISUP-3888: Ends here -->
     </table>
     <openlmis-pagination

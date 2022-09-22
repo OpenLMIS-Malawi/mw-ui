@@ -216,6 +216,7 @@
             vm.editable = true;
             vm.programId = $stateParams.programId;
             vm.roleId = $stateParams.roleId;
+            vm.getParams = getParams;
 
             vm.showErrorColumn = roleAssignments.filter(function(role) {
                 return role.errors && role.errors.length;
@@ -238,9 +239,13 @@
             }
         }
         
+        function getParams() {
+            return $stateParams;
+        }
+
         /**
          * @ngdoc method
-         * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @methodOf admin-user-roles.controller:UserRolesTabController
          * @name getSelected
          *
          * @description
@@ -325,7 +330,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @methodOf admin-user-roles.controller:UserRolesTabController
          * @name loadPreviouslySelectedRoles
          *
          * @description
@@ -346,7 +351,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @methodOf admin-user-roles.controller:UserRolesTabController
          * @name onRoleSelect
          *
          * @description

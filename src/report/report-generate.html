@@ -8,14 +8,14 @@
 
     <!-- MW-1178: Add datepicker & multiple select to report parameters -->
     <input id="{{parameter.name}}"
-    ng-if="parameter.description == 'datepickers' && parameter.description != 'checkbox' && parameter.description != 'multipleselect'"
+    ng-if="parameter.description == 'datepickers' && parameter.description != 'booleanSelect' && parameter.description != 'multipleselect'"
     type="date" ng-model="vm.selectedParamsOptions[parameter.name]"
     ng-required="{{parameter.required}}"/>
 
     <div class="input-control" input-control>
     <tags-input
     replace-spaces-with-dashes="false"
-    ng-if="parameter.description == 'multipleselect' &&  parameter.description != 'checkbox' && parameter.description != 'datepickers' && (vm.paramsOptions[parameter.name].length > 0 || parameter.dependencies.length > 0)"
+    ng-if="parameter.description == 'multipleselect' &&  parameter.description != 'booleanSelect' && parameter.description != 'datepickers' && (vm.paramsOptions[parameter.name].length > 0 || parameter.dependencies.length > 0)"
     ng-model="vm.selectedParamsOptions[parameter.name] "
     use-strings="true"
     debounceDelay="50"
@@ -26,7 +26,7 @@
     </div>
 
     <select id="{{parameter.name}}"
-    ng-if="parameter.description == 'checkbox' && parameter.description != 'datepickers' && parameter.description != 'multipleselect' && vm.paramsOptions[parameter.name].length == 0"
+    ng-if="parameter.description == 'booleanSelect' && parameter.description != 'datepickers' && parameter.description != 'multipleselect' && vm.paramsOptions[parameter.name].length == 0"
     ng-model="vm.selectedParamsOptions[parameter.name]"
     ng-options="option.value as option.name for option in vm.booleanOptions"
     ng-required="{{parameter.required}}"
@@ -34,7 +34,7 @@
     </select>
 
     <select id="{{parameter.name}}"
-            ng-if="parameter.description != 'checkbox' && parameter.description != 'datepickers' && parameter.description != 'multipleselect' && (vm.paramsOptions[parameter.name].length > 0 || parameter.dependencies.length > 0)"
+            ng-if="parameter.description != 'booleanSelect' && parameter.description != 'datepickers' && parameter.description != 'multipleselect' && (vm.paramsOptions[parameter.name].length > 0 || parameter.dependencies.length > 0)"
             ng-model="vm.selectedParamsOptions[parameter.name]"
             ng-disabled="vm.paramsOptions[parameter.name].length == 0"
             ng-options="option.value as option.name for option in vm.paramsOptions[parameter.name]"
@@ -42,7 +42,7 @@
             aria-labelledby="infolabelForSelect">
     </select>
 
-    <span ng-if="vm.paramsOptions[parameter.name].length == 0 && parameter.dependencies.length == 0 && parameter.description != 'datepickers' && parameter.description != 'checkbox' && parameter.description != 'multipleselect'"
+    <span ng-if="vm.paramsOptions[parameter.name].length == 0 && parameter.dependencies.length == 0 && parameter.description != 'datepickers' && parameter.description != 'booleanSelect' && parameter.description != 'multipleselect'"
           ng-switch="parameter.dataType"
           ng-repeat-end>
     <!-- MW-1178: Ends here-->
