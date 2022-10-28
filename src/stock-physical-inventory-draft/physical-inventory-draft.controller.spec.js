@@ -309,7 +309,6 @@ describe('PhysicalInventoryDraftController', function() {
         it('should show modal for occurred date if no quantity missing', function() {
             this.lineItem1.active = true;
             this.lineItem3.active = true;
-            // MALAWISUP-3617: Added validation for unaccounted quantities
             this.lineItem1.quantity = 1234;
             this.lineItem3.quantity = 123;
             this.lineItem1.stockAdjustments = [{
