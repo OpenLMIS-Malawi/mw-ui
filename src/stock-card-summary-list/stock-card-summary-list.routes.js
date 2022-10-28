@@ -55,7 +55,6 @@
                     paramsCopy.programId = $stateParams.program;
                     paramsCopy.includeInactive = $stateParams.includeInactive;
 
-                    // MALAWISUP-3550: Starts here
                     paramsCopy.productCode = $stateParams.productCode;
                     paramsCopy.productName = $stateParams.productName;
                     paramsCopy.lotCode = $stateParams.lotCode;
