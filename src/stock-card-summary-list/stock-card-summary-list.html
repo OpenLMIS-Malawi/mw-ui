@@ -9,7 +9,6 @@
     <a ng-click="vm.goToPendingOfflineEventsPage()">{{ 'stockCardSummaryList.pendingOfflineEvents' | message}}</a>
     {{ 'stockCardSummaryList.offline4' | message}}
 </p>
-
 <form ng-submit="vm.loadStockCardSummaries()" class="sidebar">
     <openlmis-facility-program-select
         is-supervised="vm.isSupervised"
@@ -31,7 +30,6 @@
                        ng-model="vm.includeInactive"/>
                 {{'stockPhysicalInventoryDraft.includeInactiveItems' | message}}
             </label>
-            <!-- MALAWISUP-3550 -->
             <label for="productCode">{{'stockCardSummaryList.productCode' | message}}</label>
             <input id="productCode" type="text" ng-model="vm.productCode"/>
 
@@ -40,7 +38,6 @@
 
             <label for="lotCode">{{'stockCardSummaryList.lotCode' | message}}</label>
             <input id="lotCode" type="text" ng-model="vm.lotCode"/>
-            <!-- MALAWISUP-3550: Ends here -->
             <input type="submit" value="{{'stockCardSummaryList.search' | message}}"/>
         </fieldset>
     </form>
@@ -85,5 +82,6 @@
             </tr>
         </tbody>
     </table>
-    <openlmis-pagination list="displayStockCardSummaries" pagination-id="'stockCardList'"/>
+    <openlmis-pagination ng-if="!vm.offline()" list="vm.displayStockCardSummaries" paged-list="vm.pagedList" pagination-id="'stockCardList'"/>	
+    <openlmis-pagination ng-if="vm.offline()" list="vm.stockCardSummaries" paged-list="vm.pagedList"></openlmis-pagination>
 </section>

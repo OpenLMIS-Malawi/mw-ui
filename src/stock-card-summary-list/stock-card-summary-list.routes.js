@@ -26,11 +26,10 @@
     function routes($stateProvider, STOCKMANAGEMENT_RIGHTS) {
         $stateProvider.state('openlmis.stockmanagement.stockCardSummaries', {
             isOffline: true,
-            // MALAWISUP-3550: Starts here
-            // eslint-disable-next-line max-len
-            url: '/stockCardSummaries?facility&program&supervised&page&size&includeInactive&productCode&productName&lotCode',
-            // MALAWISUP-3550: Ends here
-            label: 'stockCardSummaryList.stockOnHand',
+            url: '/stockCardSummaries'
+                + '?facility&program&supervised&page&size&includeInactive'
+                + '&productCode&productName&lotCode',
+             label: 'stockCardSummaryList.stockOnHand',
             priority: 1,
             showInNavigation: true,
             views: {
@@ -55,14 +54,13 @@
                     paramsCopy.facilityId = $stateParams.facility;
                     paramsCopy.programId = $stateParams.program;
                     paramsCopy.includeInactive = $stateParams.includeInactive;
-                    paramsCopy.nonEmptyOnly = true;
 
                     // MALAWISUP-3550: Starts here
                     paramsCopy.productCode = $stateParams.productCode;
                     paramsCopy.productName = $stateParams.productName;
                     paramsCopy.lotCode = $stateParams.lotCode;
-                    // MALAWISUP-3550: Ends here
 
+                    paramsCopy.nonEmptyOnly = true;
                     delete paramsCopy.facility;
                     delete paramsCopy.program;
                     delete paramsCopy.supervised;
