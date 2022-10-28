@@ -2,7 +2,7 @@ version: "2"
 services:
 
   mw-ui:
-    image: openlmis/dev-ui:9.0.3
+    image: openlmis/dev-ui:9.0.4
     working_dir: /app
     volumes:
       - '.:/app'
@@ -46,12 +46,12 @@ services:
       - '/openlmis-fulfillment-ui'
 
   referencedata-ui:
-    image: openlmis/referencedata-ui:5.6.7
+    image: openlmis/referencedata-ui:5.6.8
     volumes:
       - '/openlmis-referencedata-ui'
 
   stockmanagement-ui:
-    image: openlmis/stockmanagement-ui:2.1.2
+    image: openlmis/stockmanagement-ui:2.1.3
     volumes:
       - '/openlmis-stockmanagement-ui'
 
@@ -66,7 +66,7 @@ services:
       - '/openlmis-report-ui'
 
   requisition-ui:
-    image: openlmis/requisition-ui:7.0.7
+    image: openlmis/requisition-ui:7.0.8
     volumes:
       - '/openlmis-requisition-ui'
 
@@ -76,7 +76,7 @@ services:
       - '/openlmis-ui-components'
 
   ui-layout:
-    image: openlmis/ui-layout:5.2.1
+    image: openlmis/ui-layout:5.2.2
     volumes:
       - '/openlmis-ui-layout'
 
