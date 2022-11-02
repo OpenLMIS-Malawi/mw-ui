@@ -1,0 +1,57 @@
+<h2>{{'adminLotList.lots' | message}}</h2>
+<section class="openlmis-table-container">
+    <form ng-submit="vm.search()">
+        <fieldset class="form-group">
+            <label for="expirationDateFrom">{{'adminLotList.expirationDateFrom' | message}}</label>
+            <input type="date" id="expirationDateFrom" ng-model="vm.expirationDateFrom"/>
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="expirationDateTo">{{'adminLotList.expirationDateTo' | message}}</label>
+            <input type="date" id="expirationDateTo" ng-model="vm.expirationDateTo"/>
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="product">{{'adminLotList.product' | message}}</label>
+            <select id="product"
+                    ng-model="vm.orderableId"
+                    ng-options="o.id as o.fullProductName for o in vm.orderables">
+            </select>
+        </fieldset>
+        <!-- MALAWISUP-3895 -->
+        <fieldset class="form-group">
+            <label for="lotCode">{{'adminLotList.lotCode' | message}}</label>
+            <input type="text" id="lotCode" ng-model="vm.lotCode"/>
+        </fieldset>
+        <!-- MALAWISUP-3895 ends here -->
+        <input type="submit" value="{{'adminLotList.search' | message}}"/>
+    </form>
+    <table>
+        <caption ng-if="vm.lots.length === 0">
+            {{'adminLotList.noLots' | message}}
+        </caption>
+        <thead>
+        <tr>
+            <th>{{'adminLotList.productCode' | message}}</th>
+            <th>{{'adminLotList.productName' | message}}</th>
+            <th>{{'adminLotList.lotCode' | message}}</th>
+            <th>{{'adminLotList.expirationDate' | message}}</th>
+            <th>{{'adminLotList.manufacturedDate' | message}}</th>
+            <th>{{'adminLotList.actions' | message}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="lot in vm.lots">
+            <td>{{lot.productCode}}</td>
+            <td>{{lot.productName}}</td>
+            <td>{{lot.lotCode}}</td>
+            <td>{{lot.expirationDate}}</td>
+            <td>{{lot.manufacturedDate}}</td>
+            <td>
+                <button ui-sref="openlmis.administration.lots.edit({lotId: lot.id})">
+                    {{'adminLotList.edit' | message}}
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <openlmis-pagination/>
+</section>
