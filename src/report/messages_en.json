@@ -1,7 +1,7 @@
 {
   "report.xlsx": "XLSX",
   "report.superset.reports": "Reports",
-  "report.LMISReports": "LMIS Reports",
+  "report.lmisReports": "LMIS Reports",
   "report.additionalReports": "Additional Reports",
   "report.dashboardReports": "Dashboard Reports"
 }

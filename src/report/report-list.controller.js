@@ -36,7 +36,7 @@
         vm.hasRight = hasRight;
 
         // MW-1207: Adjust reports table view to support categories
-        const LMISReports = reports.filter((report) => {
+        const lmisReports = reports.filter((report) => {
             return report.category === 'LMIS Reports';
         });
 
@@ -47,13 +47,13 @@
         /**
          * @ngdoc property
          * @propertyOf report.controller:ReportListController
-         * @name LMISReports
+         * @name lmisReports
          * @type {Array}
          *
          * @description
          * The list of all available LMIS reports.
          */
-        vm.LMISReports = LMISReports;
+        vm.lmisReports = lmisReports;
         
         /**
          * @ngdoc property
