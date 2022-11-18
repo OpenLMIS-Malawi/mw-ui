@@ -290,7 +290,7 @@
             storageRequisitions = storageRequisitions ? JSON.parse(storageRequisitions) : {};
             var requisitionId = requisition.requisition.id;
 
-            storageRequisitions[requisitionId].requisition.supplyingFacility = requisition.requisition.supplyingFacility
+            storageRequisitions[requisitionId].requisition.supplyingFacility = requisition.requisition.supplyingFacility;
 
             $window.sessionStorage.setItem(
                 vm.selectedRequisitionsStorageKey, JSON.stringify(storageRequisitions)
