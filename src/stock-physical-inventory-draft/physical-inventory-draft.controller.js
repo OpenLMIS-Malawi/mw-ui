@@ -539,9 +539,11 @@
                 lotResource = new LotResource(),
                 errorLots = [];
             
+            //MALAWISUP-4189: Improved performance when submitting Physical Inventory
             draft.lineItems.filter((lineItem) => {
                 return lineItem.lot && lineItem.$isNewItem && !lineItem.lot.id
             }).forEach(function(lineItem) {
+            //MALAWISUP-4189: Ends here
                     lotPromises.push(lotResource.create(lineItem.lot)
                         .then(function(createResponse) {
                             lineItem.$isNewItem = false;
