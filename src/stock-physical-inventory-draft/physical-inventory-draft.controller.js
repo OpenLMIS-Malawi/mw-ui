@@ -538,9 +538,10 @@
             var lotPromises = [],
                 lotResource = new LotResource(),
                 errorLots = [];
-
-            draft.lineItems.forEach(function(lineItem) {
-                if (lineItem.lot && lineItem.$isNewItem && !lineItem.lot.id) {
+            
+            draft.lineItems.filter((lineItem) => {
+                return lineItem.lot && lineItem.$isNewItem && !lineItem.lot.id
+            }).forEach(function(lineItem) {
                     lotPromises.push(lotResource.create(lineItem.lot)
                         .then(function(createResponse) {
                             lineItem.$isNewItem = false;
@@ -560,7 +561,6 @@
                                 });
                            }
                         }));
-                }
             });
 
             return $q.all(lotPromises)
