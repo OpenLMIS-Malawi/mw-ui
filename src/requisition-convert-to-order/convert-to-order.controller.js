@@ -63,7 +63,7 @@
         vm.toggleSelectAll = toggleSelectAll;
         vm.setSelectAll = setSelectAll;
         vm.onRequisitionSelect = onRequisitionSelect;
-        // MALAWISUP-4161: Start: define new property
+        // MALAWISUP-4161: Fix issue with selecting supplying facility
         vm.onSupplyingFacilitySelect = onSupplyingFacilitySelect;
         // MALAWISUP-4161: End
         vm.search = search;
@@ -274,7 +274,7 @@
             setSelectAll();
         }
 
-        // MALAWISUP-4161: Start: define new function
+        // MALAWISUP-4161: Fix issue with selecting supplying facility
         /**
          * @ngdoc method
          * @methodOf requisition-convert-to-order.controller:ConvertToOrderController

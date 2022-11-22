@@ -49,7 +49,7 @@
 					<i ng-class="{'icon-ok': item.requisition.emergency}"></i>
 				</td>
                 <td>
-					<!-- MALAWISUP-4161: Start: Add ng-change="mv.onSupplyingFacilitySelect(item)" to select -->
+					<!-- MALAWISUP-4161: Fix issue with selecting supplying facility -->
 					<select ng-model="item.requisition.supplyingFacility" required
 							ng-change="vm.onSupplyingFacilitySelect(item)"
 							ng-options="depot.id as depot.name for depot in item.supplyingDepots">
