@@ -27,11 +27,11 @@
             </caption>
             <thead>
                 <tr>
-                    <th>{{'report.additionalReports' | message}}</th>
+                    <th>{{'report.epiReports' | message}}</th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="report in vm.additionalReports">
+                <tr ng-repeat="report in vm.epiReports">
                     <td>
                         <a ui-sref=".generate({module: report.$module, report: report.id})">{{report.name}}</a>
                     </td>

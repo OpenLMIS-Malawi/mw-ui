@@ -40,7 +40,7 @@
             return report.category === 'LMIS Reports';
         });
 
-        const additionalReports = reports.filter((report) => {
+        const epiReports = reports.filter((report) => {
             return report.category === 'Additional Reports';
         });
 
@@ -58,13 +58,13 @@
         /**
          * @ngdoc property
          * @propertyOf report.controller:ReportListController
-         * @name additionalReports
+         * @name epiReports
          * @type {Array}
          *
          * @description
-         * The list of all available additional reports.
+         * The list of all available epi reports.
          */
-        vm.additionalReports = additionalReports;
+        vm.epiReports = epiReports;
         // MW-1207: Ends here
 
         /**
