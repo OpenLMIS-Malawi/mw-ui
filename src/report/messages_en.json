@@ -2,6 +2,6 @@
   "report.xlsx": "XLSX",
   "report.superset.reports": "Reports",
   "report.lmisReports": "LMIS Reports",
-  "report.additionalReports": "Additional Reports",
+  "report.epiReports": "EPI Reports",
   "report.dashboardReports": "Dashboard Reports"
 }
