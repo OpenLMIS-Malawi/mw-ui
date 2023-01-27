@@ -35,9 +35,7 @@
         'permissionService', 'authorizationService', '$stateParams', 'periods', 'canInitiateRnr', 'UuidGenerator',
         'facilityFactory'
     ];
-    // MALAWISUP-4393: Ends here
-
-    // MALAWISUP-4393: Restrict creation of Emergenecy orders to DHO users 
+    
     function RequisitionInitiateController(requisitionService, $state, loadingModalService, notificationService,
                                            REQUISITION_RIGHTS, permissionService, authorizationService, $stateParams,
                                            periods, canInitiateRnr, UuidGenerator, facilityFactory) {
