@@ -13,10 +13,12 @@
             <input type="radio" ng-model="vm.emergency" ng-value="false"/>
             {{'requisitionInitiate.regular' | message}}
         </label>
+        <!-- MALAWISUP-4393: Restrict creation of Emergenecy orders to DHO users -->
         <label class="radio">
-            <input type="radio" ng-model="vm.emergency" ng-value="true"/>
+            <input type="radio" ng-model="vm.emergency" ng-value="true" ng-disabled="!vm.canInitiateEmergency"/>
             {{'requisitionInitiate.emergency' | message}}
         </label>
+        <!-- MALAWISUP-4393: Ends here -->
     </fieldset>
     <input type="submit" value="{{'requisitionInitiate.search'|message}}"/>
 </form>
