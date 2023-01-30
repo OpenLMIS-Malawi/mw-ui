@@ -29,15 +29,17 @@
         .module('requisition-initiate')
         .controller('RequisitionInitiateController', RequisitionInitiateController);
 
+    // MALAWISUP-4393: Restrict creation of Emergenecy orders to DHO users 
     RequisitionInitiateController.$inject = [
         'requisitionService', '$state', 'loadingModalService', 'notificationService', 'REQUISITION_RIGHTS',
-        'permissionService', 'authorizationService', '$stateParams', 'periods', 'canInitiateRnr', 'UuidGenerator'
+        'permissionService', 'authorizationService', '$stateParams', 'periods', 'canInitiateRnr', 'UuidGenerator',
+        'facilityFactory'
     ];
-
+    
     function RequisitionInitiateController(requisitionService, $state, loadingModalService, notificationService,
                                            REQUISITION_RIGHTS, permissionService, authorizationService, $stateParams,
-                                           periods, canInitiateRnr, UuidGenerator) {
-
+                                           periods, canInitiateRnr, UuidGenerator, facilityFactory) {
+    // MALAWISUP-4393: Ends here
         var vm = this,
             uuidGenerator = new UuidGenerator(),
             key = uuidGenerator.generate();
@@ -47,6 +49,30 @@
         vm.initRnr = initRnr;
         vm.periodHasRequisition = periodHasRequisition;
         vm.goToRequisition = goToRequisition;
+
+        // MALAWISUP-4393: Restrict creation of Emergenecy orders to DHO users 
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-initiate.controller:RequisitionInitiateController
+         * @name canInitiateEmergency
+         * @type {Boolean}
+         *
+         * @description
+         * Holds a boolean indicating if user has permission to initiate emergency requisition
+         */
+        vm.canInitiateEmergency = false;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-initiate.controller:RequisitionInitiateController
+         * @name facilityTypesCanInitiateEmergency
+         * @type {Array}
+         *
+         * @description
+         * Holds a list of facility types which have permission to initiate emergency requisition
+         */
+        vm.facilityTypesCanInitiateEmergency = ["DHO", "DHOp", "CentH", "CentHp"];
+        // MALAWISUP-4393: Ends here
 
         /**
          * @ngdoc property
@@ -94,6 +120,14 @@
          * Initialization method of the RequisitionInitiateController controller.
          */
         function onInit() {
+            // MALAWISUP-4393: Restrict creation of Emergenecy orders to DHO users 
+            facilityFactory.getUserHomeFacility().then((facility) => {
+                if (vm.facilityTypesCanInitiateEmergency.includes(facility.type.code)) {
+                    vm.canInitiateEmergency = true;
+                }
+            });
+            // MALAWISUP-4393: Ends here
+
             vm.emergency = $stateParams.emergency === 'true';
             vm.periods = periods;
             vm.canInitiateRnr = canInitiateRnr;
