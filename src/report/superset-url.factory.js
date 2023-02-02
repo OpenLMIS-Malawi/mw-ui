@@ -32,7 +32,7 @@
 
     function supersetUrlFactory(authUrl, SUPERSET_URL) {
         // MW-1234: The SuperSet Upgrade
-        var supersetURL = (new URL(url));
+        var supersetURL = (new URL(SUPERSET_URL));
         var supersetDomain = supersetURL.hostname;
         var redirectUrl= 'http://' + supersetDomain + '/oauth-authorized/openlmis';
         // MW-1234: ends here
@@ -74,7 +74,7 @@
          */
         function buildApproveSupersetUrl() {
             // MW-1234: The SuperSet Upgrade
-            var supersetURL = (new URL(url));
+            var supersetURL = (new URL(SUPERSET_URL));
             var supersetDomain = supersetURL.hostname;
             var redirectUrl= 'http://' + supersetDomain + '/oauth-authorized/openlmis'; 
             // MW-1234: ends here
@@ -95,7 +95,7 @@
          */
         function buildCheckSupersetAuthorizationUrl() {
             // MW-1234: The SuperSet Upgrade 
-            var supersetURL = (new URL(url));
+            var supersetURL = (new URL(SUPERSET_URL));
             var supersetDomain = supersetURL.hostname;
             var redirectUrl= 'http://' + supersetDomain + '/oauth-authorized/openlmis'; 
             // MW-1234: ends here
