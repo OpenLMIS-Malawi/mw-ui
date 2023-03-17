@@ -71,7 +71,7 @@
          * @description
          * Holds a list of facility types which have permission to initiate emergency requisition
          */
-        vm.facilityTypesCanInitiateEmergency = ["DHO", "DHOp", "CentH", "CentHp"];
+        vm.facilityTypesCanInitiateEmergency = ["MentH", "DHO", "DHOp", "CentH", "CentHp"];
         // MALAWISUP-4393: Ends here
 
         /**
