@@ -10,20 +10,22 @@
 <status-messages requisition="vm.requisition"></status-messages>
 <nav>
     <ul>
+        <!-- MALAWISUP-4711: Fix issues related to new Chrome popover functionality -->
         <li ui-sref-active="active" role="presentation"
             ng-class="{'is-invalid': !vm.isFullSupplyTabValid()}"
-            popover="{{vm.invalidFullSupply}}">
+            openlmis-popover="{{vm.invalidFullSupply}}">
             <a ui-sref="openlmis.requisitions.requisition.fullSupply">
                 {{'requisitionView.fullSupplyProducts' | message}}
             </a>
         </li>
         <li ui-sref-active="active" ng-if="vm.program.showNonFullSupplyTab"
             role="presentation" ng-class="{'is-invalid': !vm.isNonFullSupplyTabValid()}"
-            popover="{{vm.invalidNonFullSupply}}">
+            openlmis-popover="{{vm.invalidNonFullSupply}}">
             <a ui-sref="openlmis.requisitions.requisition.nonFullSupply">
                 {{'requisitionView.nonFullSupplyProducts' | message}}
             </a>
         </li>
+        <!-- MALAWISUP-4711: Ends here-->
     </ul>
 </nav>
 <div ui-view=""></div>
