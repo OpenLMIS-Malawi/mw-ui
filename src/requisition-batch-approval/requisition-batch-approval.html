@@ -15,7 +15,6 @@
                         <th class="col-sticky" colspan="2">
                           {{'requisitionBatchApproval.product' | message}}
                         </th>
-                        <!-- MALAWISUP-4711: Fix issues related to new Chrome popover functionality -->
                         <th ng-repeat="requisition in vm.requisitions track by requisition.id"
                             openlmis-popover="{{requisition.$error}}"
                             colspan="2"
@@ -23,7 +22,6 @@
                                        'is-hidden': !(requisition)}">
                             {{requisition.facilityName}} - {{requisition.periodName}}
                         </th>
-                        <!-- MALAWISUP-4711: Ends here -->
                         <th class="col-sticky col-sticky-right" colspan="2">{{'requisitionBatchApproval.totalForAllFacilities' | message}}</th>
                     </tr>
                     <tr>
