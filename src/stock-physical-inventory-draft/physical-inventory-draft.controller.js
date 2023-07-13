@@ -138,17 +138,6 @@
          */
         vm.groupedCategories = false;
 
-        /**	
-         * @ngdoc property	
-         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController	
-         * @name isSubmitted	
-         * @type {boolean}	
-         *	
-         * @description	
-         * If submitted once, set this to true and allow to do validation.	
-         */	
-        vm.isSubmitted = $stateParams.isSubmitted;
-
         /**
          * @ngdoc property
          * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
@@ -439,23 +428,7 @@
         vm.saveOnPageChange = function() {
             var params = {};
             params.noReload = true;
-            params.isSubmitted = vm.isSubmitted;
             return $q.resolve(params);
-        };
-
-        /**	
-         * @ngdoc method	
-         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController	
-         * @name validateOnPageChange	
-         *	
-         * @description	
-         * Validate physical inventory draft if form was submitted once.	
-         */	
-         vm.validateOnPageChange = function() {	
-            if ($stateParams.isSubmitted === true) {	
-                validate();	
-                $scope.$broadcast('openlmis-form-submit');	
-            }	
         };
 
         /**
@@ -492,7 +465,6 @@
          * Submit physical inventory.
          */
         vm.submit = function() {
-            vm.isSubmitted = true;
             var error = validate();
             if (error) {
                 $scope.$broadcast('openlmis-form-submit');
@@ -783,8 +755,5 @@
                 }
             });
         }
-
-        vm.validateOnPageChange();
-        
     }
 })();

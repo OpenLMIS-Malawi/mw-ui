@@ -49,8 +49,7 @@
             STOCK_SOURCES_MANAGE: 'STOCK_SOURCES_MANAGE',
             STOCK_DESTINATIONS_MANAGE: 'STOCK_DESTINATIONS_MANAGE',
             // MW-1098: Ends here
-            ORDER_CREATE: 'ORDER_CREATE',
-            DATA_EXPORT: 'DATA_EXPORT'
+            ORDER_CREATE: 'ORDER_CREATE'
         };
     }
 

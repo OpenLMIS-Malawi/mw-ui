@@ -81,7 +81,7 @@ describe('periodService', function() {
             $httpBackend
                 .whenGET(
                     requisitionUrlFactoryMock('/api/requisitions/periodsForInitiate?emergency=' + emergency +
-                    '&facilityId=' + facilityId + '&programId=' + programId + '&unfinished=' + true)
+                    '&facilityId=' + facilityId + '&programId=' + programId)
                 )
                 .respond(200, [periodOne, periodTwo, periodThree], {
                     Date: serverDate
@@ -165,7 +165,7 @@ describe('periodService', function() {
 
         it('should show an alert if facility is not supported', function() {
             $httpBackend.when('GET', requisitionUrlFactoryMock('/api/requisitions/periodsForInitiate?emergency=' +
-                emergency + '&facilityId=' + facilityId + '&programId=' + programId + '&unfinished=' + true))
+                emergency + '&facilityId=' + facilityId + '&programId=' + programId))
                 .respond(400, {
                     messageKey: 'requisition.error.facilityDoesNotSupportProgram'
                 });
