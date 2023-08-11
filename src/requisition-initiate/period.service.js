@@ -63,7 +63,8 @@
             return resource.periodsForInitiate({
                 programId: programId,
                 facilityId: facilityId,
-                emergency: emergency
+                emergency: emergency,
+                unfinished: true
             }).$promise.catch(function(response) {
                 if (response.status === 400) {
                     var data = angular.fromJson(response.data);

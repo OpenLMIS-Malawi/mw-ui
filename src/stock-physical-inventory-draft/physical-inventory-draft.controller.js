@@ -141,6 +141,17 @@
         /**
          * @ngdoc property
          * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name isSubmitted
+         * @type {boolean}
+         *
+         * @description
+         * If submitted once, set this to true and allow to do validation.
+         */
+        vm.isSubmitted = $stateParams.isSubmitted;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
          * @name showVVMStatusColumn
          * @type {boolean}
          *
@@ -428,7 +439,23 @@
         vm.saveOnPageChange = function() {
             var params = {};
             params.noReload = true;
+            params.isSubmitted = vm.isSubmitted;
             return $q.resolve(params);
+        };
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name validateOnPageChange
+         *
+         * @description
+         * Validate physical inventory draft if form was submitted once.
+         */
+        vm.validateOnPageChange = function() {
+            if ($stateParams.isSubmitted === true) {
+                validate();
+                $scope.$broadcast('openlmis-form-submit');
+            }
         };
 
         /**
@@ -465,6 +492,7 @@
          * Submit physical inventory.
          */
         vm.submit = function() {
+            vm.isSubmitted = true;
             var error = validate();
             if (error) {
                 $scope.$broadcast('openlmis-form-submit');
@@ -538,7 +566,7 @@
             var lotPromises = [],
                 lotResource = new LotResource(),
                 errorLots = [];
-            
+
             //MALAWISUP-4189: Improved performance when submitting Physical Inventory
             draft.lineItems.filter((lineItem) => {
                 return lineItem.lot && lineItem.$isNewItem && !lineItem.lot.id
@@ -572,7 +600,7 @@
                     }
                     responses.forEach(function(lot) {
                         draft.lineItems.forEach(function(lineItem) {
-                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode	
+                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode
                                 && lineItem.orderable.identifiers['tradeItem'] === lot.tradeItemId) {
                                 lineItem.lot = lot;
                             }
@@ -584,16 +612,16 @@
                 .catch(function(errorResponse) {
                     loadingModalService.close();
                     if (errorLots) {
-                        var errorLotsReduced = errorLots.reduce(function(result, currentValue) {	
-                            if (currentValue.error in result) {	
-                                result[currentValue.error].push(currentValue.lotCode);	
-                            } else {	
-                                result[currentValue.error] = [currentValue.lotCode];	
-                            }	
-                            return result;	
-                        }, {});	
-                        for (var error in errorLotsReduced) {	
-                            alertService.error(error, errorLotsReduced[error].join(', '));	
+                        var errorLotsReduced = errorLots.reduce(function(result, currentValue) {
+                            if (currentValue.error in result) {
+                                result[currentValue.error].push(currentValue.lotCode);
+                            } else {
+                                result[currentValue.error] = [currentValue.lotCode];
+                            }
+                            return result;
+                        }, {});
+                        for (var error in errorLotsReduced) {
+                            alertService.error(error, errorLotsReduced[error].join(', '));
                         }
                         return $q.reject(errorResponse.data.message);
                     }
@@ -656,9 +684,9 @@
                 return item.lot;
             });
 
-            draft.lineItems.forEach(function(item) {	
-                item.unaccountedQuantity =	
-                    stockReasonsCalculations.calculateUnaccounted(item, item.stockAdjustments);	
+            draft.lineItems.forEach(function(item) {
+                item.unaccountedQuantity =
+                    stockReasonsCalculations.calculateUnaccounted(item, item.stockAdjustments);
             });
 
             vm.updateProgress();
@@ -755,5 +783,8 @@
                 }
             });
         }
+
+        vm.validateOnPageChange();
+
     }
 })();

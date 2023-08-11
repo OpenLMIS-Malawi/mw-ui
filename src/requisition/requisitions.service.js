@@ -517,11 +517,7 @@
                                     }
                                 });
                             });
-                            var newRequisition = new Requisition(requisition, statusMessages);
-                            localStorageFactory('initiateRequisitionData').clearAll();
-                            localStorageFactory('initiateRequisitionData').put(newRequisition);
-
-                            return newRequisition
+                            return new Requisition(requisition, statusMessages);
                         });
                 });
         }
