@@ -12,14 +12,14 @@
     <ul>
         <li ui-sref-active="active" role="presentation"
             ng-class="{'is-invalid': !vm.isFullSupplyTabValid()}"
-            popover="{{vm.invalidFullSupply}}">
+            openlmis-popover="{{vm.invalidFullSupply}}">
             <a ui-sref="openlmis.requisitions.requisition.fullSupply">
                 {{'requisitionView.fullSupplyProducts' | message}}
             </a>
         </li>
         <li ui-sref-active="active" ng-if="vm.program.showNonFullSupplyTab"
             role="presentation" ng-class="{'is-invalid': !vm.isNonFullSupplyTabValid()}"
-            popover="{{vm.invalidNonFullSupply}}">
+            openlmis-popover="{{vm.invalidNonFullSupply}}">
             <a ui-sref="openlmis.requisitions.requisition.nonFullSupply">
                 {{'requisitionView.nonFullSupplyProducts' | message}}
             </a>

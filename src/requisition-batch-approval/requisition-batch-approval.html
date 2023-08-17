@@ -16,7 +16,7 @@
                           {{'requisitionBatchApproval.product' | message}}
                         </th>
                         <th ng-repeat="requisition in vm.requisitions track by requisition.id"
-                            popover="{{requisition.$error}}"
+                            openlmis-popover="{{requisition.$error}}"
                             colspan="2"
                             ng-class="{'requisition-error': requisition.$error,
                                        'is-hidden': !(requisition)}">
