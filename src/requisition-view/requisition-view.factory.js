@@ -99,7 +99,7 @@
          */
         function canApproveAndReject(user, requisition) {
             if (requisition.$isAuthorized() || requisition.$isInApproval()) {
-                // MALAWISUP-4404: 
+                // MALAWISUP-4404: Fix error related to second requisition approval
                 return permissionService.hasRoleWithRightForProgramAndSupervisoryNode(
                     REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition
                 );
