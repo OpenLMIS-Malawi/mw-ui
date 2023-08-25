@@ -278,7 +278,7 @@
             ];
 
             if (requisitionInFirstApproval) {
-                promiseArray.push(this.requisitionGroupService.getAll())
+                promiseArray.push(this.requisitionGroupService.getAll());
             }
 
             return $q
