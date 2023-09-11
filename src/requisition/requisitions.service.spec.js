@@ -34,6 +34,7 @@ describe('requisitionService', function() {
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             context.onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
+            context.stateStorage = jasmine.createSpyObj('stateStorage', ['put', 'clearAll', 'getAll']);
 
             $provide.service('localStorageFactory', function() {
                 return jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
@@ -45,6 +46,9 @@ describe('requisitionService', function() {
                     }
                     if (resourceName === 'statusMessages') {
                         return context.statusMessagesStorage;
+                    }
+                    if (resourceName === 'initiateRequisitionData') {
+                        return context.stateStorage;
                     }
                 });
             });
@@ -293,6 +297,7 @@ describe('requisitionService', function() {
             this.$httpBackend.flush();
             this.$rootScope.$apply();
 
+            expect(this.stateStorage.clearAll).toHaveBeenCalled();
             expect(data.id).toBe(this.requisition.id);
             expect(data.eTag).toBe(headers['eTag']);
             expect(this.requisitionCacheService.cacheRequisition).toHaveBeenCalled();
