@@ -517,7 +517,12 @@
                                     }
                                 });
                             });
-                            return new Requisition(requisition, statusMessages);
+
+                            var newRequisition = new Requisition(requisition, statusMessages);
+                            localStorageFactory('initiateRequisitionData').clearAll();
+                            localStorageFactory('initiateRequisitionData').put(newRequisition);
+
+                            return newRequisition;
                         });
                 });
         }
