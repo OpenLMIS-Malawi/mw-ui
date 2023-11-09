@@ -217,6 +217,11 @@
 
         // MW-1178: Add datepicker & multiple select to report parameters
         function changeCommasToSemicolons(text) {
+            // MALAWISUP-4789: Fix error related to reports not pulling data
+            if (text === null) {
+                return text;
+            }
+            // MALAWISUP-4789: Ends here
             const reducedText = text.reduce((acc, curr) => {
                 return acc + curr.replace(',', ';;') + ";"
             }, "");
