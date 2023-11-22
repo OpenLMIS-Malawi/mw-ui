@@ -323,12 +323,10 @@
          * indicates a version conflict.
          */
         function syncRnr() {
-            var loadingPromise = loadingModalService.open();
+            loadingModalService.open();
             saveRnr().then(function() {
-                loadingPromise.then(function() {
-                    notificationService.success('requisitionView.sync.success');
-                });
-                reloadState();
+                notificationService.success('requisitionView.sync.success');
+                loadingModalService.close();
             }, function(response) {
                 handleSaveError(response.status);
             });
