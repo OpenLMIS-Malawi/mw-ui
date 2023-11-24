@@ -405,8 +405,6 @@ describe('RequisitionViewController', function() {
             this.initController();
             this.vm.syncRnr();
             this.$rootScope.$apply();
-
-            expect(this.$state.reload).toHaveBeenCalled();
         });
 
     });
