@@ -79,7 +79,7 @@
          * @name selectDefaultReason
          * @type {boolean}
          */
-        // vm.selectDefaultReason = false;
+        vm.selectDefaultReason = false;
         // MALAWISUP-3141: ends here
 
         //MW-1045
@@ -683,7 +683,7 @@
             // vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state && adjustmentType.state !== ADJUSTMENT_TYPE.RECEIVE.state);
             vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state);
             // MALAWISUP-3634: Select default reason in Issue screen
-            // vm.selectDefaultReason = (adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state || adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state);
+            vm.selectDefaultReason = (adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state || adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state);
             // MALAWISUP-3141, MALAWISUP-3634: end here
             // MALAWISUP-2703: Allow displaying reason free text on the Adjustments screen
             vm.showReasonRemarks = (adjustmentType.state === ADJUSTMENT_TYPE.ADJUSTMENT.state);
