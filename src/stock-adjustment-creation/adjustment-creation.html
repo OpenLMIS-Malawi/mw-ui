@@ -114,12 +114,14 @@
                             ng-change="vm.validateReason(lineItem);vm.clearFreeText(lineItem, 'reasonFreeText')"
                             ng-options="reason as reason.name for reason in vm.reasons track by reason.id" autofocus>
                         </select>
+                        <!-- MALAWISUP-5495: enabled reason field -->
                         <select ng-if="vm.selectDefaultReason" ng-init="lineItem.reason = vm.reasons[0]" ng-model="lineItem.reason"
                             ng-change="vm.validateReason(lineItem);vm.clearFreeText(lineItem, 'reasonFreeText')"
-                            ng-options="reason as reason.name for reason in vm.reasons track by reason.id" ng-disabled="vm.selectDefaultReason" autofocus>
-                            <!-- MALAWISUP-3141: ends here -->
-                            <!-- MALAWISUP-2861: ends here -->
+                            ng-options="reason as reason.name for reason in vm.reasons track by reason.id" autofocus>
                         </select>
+                        <!-- MALAWISUP-5495: ends here -->
+                        <!-- MALAWISUP-3141: ends here -->
+                        <!-- MALAWISUP-2861: ends here -->
                     </td>
                     <!-- MALAWISUP-2703 -->
                     <td ng-if="vm.showReasonRemarks">
