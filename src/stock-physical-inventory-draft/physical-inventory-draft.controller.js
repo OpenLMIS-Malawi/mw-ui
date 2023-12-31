@@ -737,6 +737,9 @@
             vm.updateProgress();
             vm.validateQuantity(lineItem);
             vm.checkUnaccountedStockAdjustments(lineItem);
+            // MW-973: Unaccounted quantity not being flagged red
+            vm.validateUnaccountedQuantity(lineItem);
+            // MW-973: Ends here
             vm.dataChanged = !vm.dataChanged;
         }
 
