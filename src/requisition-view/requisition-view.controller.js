@@ -324,12 +324,16 @@
          */
         function syncRnr() {
             loadingModalService.open();
+            // MALAWISUP-5487: Fixed data loss after sync with server
             saveRnr().then(function() {
                 notificationService.success('requisitionView.sync.success');
-                loadingModalService.close();
-            }, function(response) {
+                reloadState();
+            }).then(function() {
+                reloadState();
+            }).catch(function(response) {
                 handleSaveError(response.status);
             });
+            // MALAWISUP-5487: Ends here
         }
 
         /**
@@ -699,6 +703,9 @@
                 reloadState();
             } else {
                 failWithMessage('requisitionView.sync.failure')();
+                // MALAWISUP-5487: Fixed data loss after sync with server
+                reloadState();
+                // MALAWISUP-5487: Ends here
             }
         }
 
