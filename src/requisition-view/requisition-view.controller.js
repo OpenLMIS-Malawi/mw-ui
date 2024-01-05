@@ -703,9 +703,6 @@
                 reloadState();
             } else {
                 failWithMessage('requisitionView.sync.failure')();
-                // MALAWISUP-5487: Fixed data loss after sync with server
-                reloadState();
-                // MALAWISUP-5487: Ends here
             }
         }
 
