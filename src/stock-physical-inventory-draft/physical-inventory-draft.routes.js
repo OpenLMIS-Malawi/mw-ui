@@ -70,7 +70,9 @@
                     var validator = function(items) {
                         return _.chain(items).flatten()
                             .every(function(item) {
-                                return !!item.quantityInvalid === false;
+                                // MW-973: Unaccounted quantity not being flagged red
+                                return !item.quantityInvalid && !item.unaccountedQuantityInvalid;
+                                // MW-973: Ends here
                             })
                             .value();
                     };
