@@ -141,17 +141,6 @@
         /**
          * @ngdoc property
          * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
-         * @name isSubmitted
-         * @type {boolean}
-         *
-         * @description
-         * If submitted once, set this to true and allow to do validation.
-         */
-        vm.isSubmitted = $stateParams.isSubmitted;
-
-        /**
-         * @ngdoc property
-         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
          * @name showVVMStatusColumn
          * @type {boolean}
          *
@@ -439,23 +428,7 @@
         vm.saveOnPageChange = function() {
             var params = {};
             params.noReload = true;
-            params.isSubmitted = vm.isSubmitted;
             return $q.resolve(params);
-        };
-
-        /**
-         * @ngdoc method
-         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
-         * @name validateOnPageChange
-         *
-         * @description
-         * Validate physical inventory draft if form was submitted once.
-         */
-        vm.validateOnPageChange = function() {
-            if ($stateParams.isSubmitted === true) {
-                validate();
-                $scope.$broadcast('openlmis-form-submit');
-            }
         };
 
         /**
@@ -492,8 +465,12 @@
          * Submit physical inventory.
          */
         vm.submit = function() {
-            vm.isSubmitted = true;
-            var error = validate();
+            // MW-973: Unaccounted quantity not being flagged red
+            var error = validateAllFields();
+            draft.$modified = true;
+            vm.cacheDraft();
+            // MW-973: Ends here
+
             if (error) {
                 $scope.$broadcast('openlmis-form-submit');
                 alertService.error(error);
@@ -529,27 +506,6 @@
                     });
                 });
             }
-        };
-
-        /**
-         * @ngdoc method
-         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
-         * @name validateQuantity
-         *
-         * @description
-         * Validate line item quantity and returns self.
-         *
-         * @param {Object} lineItem line item to be validated.
-         */
-        vm.validateQuantity = function(lineItem) {
-            if (lineItem.quantity > MAX_INTEGER_VALUE) {
-                lineItem.quantityInvalid = messageService.get('stockmanagement.numberTooLarge');
-            } else if (isEmpty(lineItem.quantity)) {
-                lineItem.quantityInvalid = messageService.get('stockPhysicalInventoryDraft.required');
-            } else {
-                lineItem.quantityInvalid = false;
-            }
-            return lineItem.quantityInvalid;
         };
 
         function containsLotCode(lotsArray, lotCode) {
@@ -632,28 +588,36 @@
         /**
          * @ngdoc method
          * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
-         * @name validateUnaccountedQuantity
+         * @name validateQuantity
          *
          * @description
          * Validate line item quantity and returns self.
          *
          * @param {Object} lineItem line item to be validated.
          */
-        vm.validateUnaccountedQuantity = function(lineItem) {
-            if (lineItem.unaccountedQuantity === 0) {
-                lineItem.unaccountedQuantityInvalid = false;
-            } else {
-                lineItem.unaccountedQuantityInvalid = messageService
+        // MW-973: Unaccounted quantity not being flagged red
+        vm.validateQuantity = function(lineItem) {
+            if (lineItem.quantity > MAX_INTEGER_VALUE) {
+                lineItem.quantityInvalid = messageService.get('stockmanagement.numberTooLarge');
+            } else if (isEmpty(lineItem.quantity)) {
+                lineItem.quantityInvalid = messageService.get('stockPhysicalInventoryDraft.required');
+            } else if (lineItem.unaccountedQuantity !== 0) {
+                lineItem.quantityInvalid = messageService
                     .get('stockPhysicalInventoryDraft.unaccountedQuantityError');
+            } else {
+                lineItem.quantityInvalid = false;
             }
-            return lineItem.unaccountedQuantityInvalid;
+
+            return lineItem.quantityInvalid;
         };
+        // MW-973: Ends here
 
         function isEmpty(value) {
             return value === '' || value === undefined || value === null;
         }
 
-        function validate() {
+        // MW-973: Unaccounted quantity not being flagged red
+        function validateAllFields() {
             var qtyError = false;
             var activeError = false;
 
@@ -661,12 +625,13 @@
                 .each(function(item) {
                     if (!item.active) {
                         activeError = 'stockPhysicalInventoryDraft.submitInvalidActive';
-                    } else if (vm.validateQuantity(item) || vm.validateUnaccountedQuantity(item)) {
+                    } else if (vm.validateQuantity(item)) {
                         qtyError = 'stockPhysicalInventoryDraft.submitInvalid';
                     }
                 });
             return activeError || qtyError;
         }
+        // MW-973: Ends here
 
         function onInit() {
             $state.current.label = messageService.get('stockPhysicalInventoryDraft.title', {
@@ -719,8 +684,6 @@
         function checkUnaccountedStockAdjustments(lineItem) {
             lineItem.unaccountedQuantity =
               stockReasonsCalculations.calculateUnaccounted(lineItem, lineItem.stockAdjustments);
-            draft.$modified = true;
-            vm.cacheDraft();
         }
 
         /**
@@ -735,8 +698,14 @@
          */
         function quantityChanged(lineItem) {
             vm.updateProgress();
-            vm.validateQuantity(lineItem);
             vm.checkUnaccountedStockAdjustments(lineItem);
+            vm.validateQuantity(lineItem);
+
+            // MW-973: Unaccounted quantity not being flagged red
+            draft.$modified = true;
+            vm.cacheDraft();
+            // MW-973: Ends here
+
             vm.dataChanged = !vm.dataChanged;
         }
 
@@ -783,8 +752,5 @@
                 }
             });
         }
-
-        vm.validateOnPageChange();
-
     }
 })();
