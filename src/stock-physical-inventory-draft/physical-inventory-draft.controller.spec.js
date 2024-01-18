@@ -292,11 +292,6 @@ describe('PhysicalInventoryDraftController', function() {
         it('should highlight empty quantities before submit', function() {
             this.lineItem1.active = true;
             this.lineItem3.active = true;
-
-            // MW-973: Unaccounted quantity not being flagged red
-            this.lineItem1.unaccountedQuantity = 0;
-            this.lineItem3.unaccountedQuantity = 0;
-            // MW-973: Ends here
             
             this.vm.submit();
 

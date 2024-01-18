@@ -2,7 +2,7 @@ version: "2"
 services:
 
   mw-ui:
-    image: openlmis/dev-ui:9.0.6-SNAPSHOT
+    image: openlmis/dev-ui:9.0.5
     working_dir: /app
     volumes:
       - '.:/app'
