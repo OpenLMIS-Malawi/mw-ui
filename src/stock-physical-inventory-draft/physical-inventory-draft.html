@@ -85,8 +85,7 @@
                 <input class="form-control"
                        ng-model="lineItem.quantity"
                        ng-change="vm.quantityChanged(lineItem)"
-                       ng-blur="vm.quantityChanged(lineItem)"
-                       ng-focus="vm.quantityChanged(lineItem)"/>
+                       ng-blur="vm.quantityChanged(lineItem)"/>
             </td>
             <td ng-if="vm.showVVMStatusColumn" class="digit-cell">
                 <select ng-if="lineItem.orderable.extraData.useVVM == 'true'"
