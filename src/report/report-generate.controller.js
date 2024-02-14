@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-(function() {
+(function () {
 
     'use strict';
 
@@ -35,8 +35,8 @@
     ];
 
     function controller($state, $scope, $window, report, reportFactory,
-                        reportParamsOptions, reportUrlFactory, accessTokenFactory, $q) {
-    // MW-1178: Ends here
+        reportParamsOptions, reportUrlFactory, accessTokenFactory, $q) {
+        // MW-1178: Ends here
         var vm = this;
 
         vm.$onInit = onInit;
@@ -161,16 +161,40 @@
          */
         function watchDependency(param, dep) {
             var watchProperty = 'vm.selectedParamsOptions.' + dep.dependency;
-            $scope.$watch(watchProperty, function(newVal) {
+            $scope.$watch(watchProperty, function (newVal) {
                 vm.selectedParamsDependencies[dep.dependency] = newVal;
                 if (newVal) {
                     reportFactory.getReportParamOptions(param, vm.selectedParamsDependencies)
-                        .then(function(items) {
+                        .then(function (items) {
                             vm.paramsOptions[param.name] = items;
                         });
                 }
             });
         }
+
+        // MALAWISUP-5452: Limit 'All districts' option in certain reports
+        /**
+         * @ngdoc method
+         * @methodOf report.controller:ReportGenerateController
+         * @name $watchForAllDistricts
+         *
+         * @description
+         * Checks whether report has restricted 'All districts' option for generating in PDF format.
+         */
+        function watchForAllDistricts() {
+            const restrictedReports = ["Distribution List", "LMIS Summary by facility"]
+            $scope.$watch('vm.format', function (newVal) {
+                if (newVal && restrictedReports.includes(vm.report.name)) {
+                    vm.report.templateParameters = vm.report.templateParameters.map((templateParameter) => {
+                        if (templateParameter.name === 'district') {
+                            templateParameter.required = newVal === 'pdf';
+                        }
+                        return templateParameter;
+                    });
+                }
+            })
+        }
+        // MALAWISUP-5452: Ends here
 
         /**
          * @ngdoc method
@@ -181,18 +205,24 @@
          * Initialization method of the ReportGenerateController.
          */
         function onInit() {
-            angular.forEach(report.templateParameters, function(param) {
-                angular.forEach(param.dependencies, function(dependency) {
+
+            angular.forEach(report.templateParameters, function (param) {
+                angular.forEach(param.dependencies, function (dependency) {
                     watchDependency(param, dependency);
                 });
             });
+
+            // MALAWISUP-5452: Limit 'All districts' option in certain reports
+            watchForAllDistricts();
+            // MALAWISUP-5452: Ends here
+
             // Malawi: supported formats
             var supportedFormats = ['pdf', 'csv', 'xls', 'xlsx', 'html'];
             var defaultFormats = ['pdf', 'csv', 'xls', 'html'];
 
             vm.formats = [];
 
-            angular.forEach(report.supportedFormats, function(format) {
+            angular.forEach(report.supportedFormats, function (format) {
                 if (supportedFormats.indexOf(format) !== -1) {
                     vm.formats.push(format);
                 }
@@ -244,7 +274,7 @@
                 if ((typeof mappedParameters[property]) == (typeof [])) {
                     mappedParameters[property] = changeCommasToSemicolons(mappedParameters[property]);
                 }
-              };
+            };
             return mappedParameters;
         }
 
@@ -261,7 +291,7 @@
          * @param  {String} query the query used when filtering tags
          * @return {Promise}      the promise resolving to filtered list
          */
-           function filterAvailableParameters(parameter, query) {
+        function filterAvailableParameters(parameter, query) {
             if (!vm.paramsOptions[parameter.name]) {
                 return $q.resolve([]);
             }
@@ -270,10 +300,10 @@
                 return $q.resolve(vm.paramsOptions[parameter.name]);
             }
 
-            return $q.resolve([...new Set(vm.paramsOptions[parameter.name].filter(function(parameter) {
+            return $q.resolve([...new Set(vm.paramsOptions[parameter.name].filter(function (parameter) {
                 return parameter.name.toLowerCase()
                     .indexOf(query.toLowerCase()) > -1;
-            }).map(function(parameter) {
+            }).map(function (parameter) {
                 return parameter.name;
             }))]);
         }

@@ -3,7 +3,6 @@
     <!-- Malawi: add report header name -->
     <h2>{{vm.report.name}}</h2>
     <!-- ends here -->
-
     <label for="{{parameter.name}}" ng-repeat-start="parameter in vm.report.templateParameters">{{parameter.displayName}}</label>
 
     <!-- MW-1178: Add datepicker & multiple select to report parameters -->
@@ -33,14 +32,19 @@
     aria-labelledby="infolabelForSelect">
     </select>
 
+    <!-- MALAWISUP-5452: Limit 'All districts' option in certain reports -->
     <select id="{{parameter.name}}"
-            ng-if="parameter.description != 'booleanSelect' && parameter.description != 'datepickers' && parameter.description != 'multipleselect' && (vm.paramsOptions[parameter.name].length > 0 || parameter.dependencies.length > 0)"
+            ng-if="parameter.description != 'booleanSelect' 
+            && parameter.description != 'datepickers' 
+            && parameter.description != 'multipleselect' 
+            && (vm.paramsOptions[parameter.name].length > 0 || parameter.dependencies.length > 0)"
             ng-model="vm.selectedParamsOptions[parameter.name]"
             ng-disabled="vm.paramsOptions[parameter.name].length == 0"
             ng-options="option.value as option.name for option in vm.paramsOptions[parameter.name]"
-            ng-required="{{parameter.required}}"
+            ng-required="parameter.required"
             aria-labelledby="infolabelForSelect">
     </select>
+    <!-- MALAWISUP-5452: Ends here -->
 
     <span ng-if="vm.paramsOptions[parameter.name].length == 0 && parameter.dependencies.length == 0 && parameter.description != 'datepickers' && parameter.description != 'booleanSelect' && parameter.description != 'multipleselect'"
           ng-switch="parameter.dataType"
