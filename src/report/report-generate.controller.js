@@ -35,8 +35,8 @@
     ];
 
     function controller($state, $scope, $window, report, reportFactory,
-                        reportParamsOptions, reportUrlFactory, accessTokenFactory, $q) {
-    // MW-1178: Ends here
+        reportParamsOptions, reportUrlFactory, accessTokenFactory, $q) {
+        // MW-1178: Ends here
         var vm = this;
 
         vm.$onInit = onInit;
@@ -172,6 +172,30 @@
             });
         }
 
+        // MALAWISUP-5452: Limit 'All districts' option in certain reports
+        /**
+         * @ngdoc method
+         * @methodOf report.controller:ReportGenerateController
+         * @name $watchForAllDistricts
+         *
+         * @description
+         * Checks whether report has restricted 'All districts' option for generating in PDF format.
+         */
+        function watchForAllDistricts() {
+            const restrictedReports = ["Distribution List", "LMIS Summary by facility"]
+            $scope.$watch('vm.format', function (newVal) {
+                if (newVal && restrictedReports.includes(vm.report.name)) {
+                    vm.report.templateParameters = vm.report.templateParameters.map((templateParameter) => {
+                        if (templateParameter.name === 'district') {
+                            templateParameter.required = newVal === 'pdf';
+                        }
+                        return templateParameter;
+                    });
+                }
+            })
+        }
+        // MALAWISUP-5452: Ends here
+
         /**
          * @ngdoc method
          * @methodOf report.controller:ReportGenerateController
@@ -186,6 +210,11 @@
                     watchDependency(param, dependency);
                 });
             });
+
+            // MALAWISUP-5452: Limit 'All districts' option in certain reports
+            watchForAllDistricts();
+            // MALAWISUP-5452: Ends here
+
             // Malawi: supported formats
             var supportedFormats = ['pdf', 'csv', 'xls', 'xlsx', 'html'];
             var defaultFormats = ['pdf', 'csv', 'xls', 'html'];
@@ -244,7 +273,7 @@
                 if ((typeof mappedParameters[property]) == (typeof [])) {
                     mappedParameters[property] = changeCommasToSemicolons(mappedParameters[property]);
                 }
-              };
+            };
             return mappedParameters;
         }
 
@@ -261,7 +290,7 @@
          * @param  {String} query the query used when filtering tags
          * @return {Promise}      the promise resolving to filtered list
          */
-           function filterAvailableParameters(parameter, query) {
+        function filterAvailableParameters(parameter, query) {
             if (!vm.paramsOptions[parameter.name]) {
                 return $q.resolve([]);
             }
