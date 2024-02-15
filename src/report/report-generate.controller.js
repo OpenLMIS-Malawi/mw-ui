@@ -161,11 +161,11 @@
          */
         function watchDependency(param, dep) {
             var watchProperty = 'vm.selectedParamsOptions.' + dep.dependency;
-            $scope.$watch(watchProperty, function (newVal) {
+            $scope.$watch(watchProperty, function(newVal) {
                 vm.selectedParamsDependencies[dep.dependency] = newVal;
                 if (newVal) {
                     reportFactory.getReportParamOptions(param, vm.selectedParamsDependencies)
-                        .then(function (items) {
+                        .then(function(items) {
                             vm.paramsOptions[param.name] = items;
                         });
                 }
@@ -205,9 +205,8 @@
          * Initialization method of the ReportGenerateController.
          */
         function onInit() {
-
-            angular.forEach(report.templateParameters, function (param) {
-                angular.forEach(param.dependencies, function (dependency) {
+            angular.forEach(report.templateParameters, function(param) {
+                angular.forEach(param.dependencies, function(dependency) {
                     watchDependency(param, dependency);
                 });
             });
@@ -222,7 +221,7 @@
 
             vm.formats = [];
 
-            angular.forEach(report.supportedFormats, function (format) {
+            angular.forEach(report.supportedFormats, function(format) {
                 if (supportedFormats.indexOf(format) !== -1) {
                     vm.formats.push(format);
                 }
@@ -300,10 +299,10 @@
                 return $q.resolve(vm.paramsOptions[parameter.name]);
             }
 
-            return $q.resolve([...new Set(vm.paramsOptions[parameter.name].filter(function (parameter) {
+            return $q.resolve([...new Set(vm.paramsOptions[parameter.name].filter(function(parameter) {
                 return parameter.name.toLowerCase()
                     .indexOf(query.toLowerCase()) > -1;
-            }).map(function (parameter) {
+            }).map(function(parameter) {
                 return parameter.name;
             }))]);
         }
