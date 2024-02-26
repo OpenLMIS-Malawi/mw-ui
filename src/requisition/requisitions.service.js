@@ -444,7 +444,7 @@
 
         function filterRequisitionStockAdjustmentReasons(requisition) {
             // MALAWISUP-4388: Exclude reasons from requisition's reason window
-            var reasonsToExclude = ['Recalled', 'Transfer In', 'Transfer Out', 'Receipts', 'Receive', 'Consumed', 'Issue', 'Found'];
+            var reasonsToExclude = ['Transfer In', 'Transfer Out', 'Receipts', 'Receive', 'Consumed', 'Issue', 'Found'];
             requisition.stockAdjustmentReasons = requisition.stockAdjustmentReasons.filter(function(reason) {
                 return !reasonsToExclude.includes(reason.name) && !reason.hidden;
             });
