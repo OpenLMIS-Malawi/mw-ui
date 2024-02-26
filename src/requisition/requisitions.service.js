@@ -443,11 +443,12 @@
         }
 
         function filterRequisitionStockAdjustmentReasons(requisition) {
-            requisition.stockAdjustmentReasons =  $filter('filter')(
-                requisition.stockAdjustmentReasons, {
-                    hidden: '!true'
-                }
-            );
+            // MALAWISUP-4388: Exclude reasons from requisition's reason window
+            var reasonsToExclude = ['Recalled', 'Transfer In', 'Transfer Out', 'Receipts', 'Receive', 'Consumed', 'Issue', 'Found'];
+            requisition.stockAdjustmentReasons = requisition.stockAdjustmentReasons.filter(function(reason) {
+                return !reasonsToExclude.includes(reason.name) && !reason.hidden;
+            });
+            // MALAWISUP-4388: ends here
         }
 
         function getIdempotencyKey(config) {
