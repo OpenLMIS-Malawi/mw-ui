@@ -2,7 +2,7 @@ version: "2"
 services:
 
   mw-ui:
-    image: openlmis/dev-ui:9.0.7-SNAPSHOT
+    image: openlmis/dev-ui:9.0.5
     working_dir: /app
     volumes:
       - '.:/app'
@@ -86,7 +86,7 @@ services:
       - '/openlmis-offline-ui'
 
   mw-dhis2-integration-ui:
-    image: openlmismw/dhis2-integration-ui:1.0.2-SNAPSHOT
+    image: openlmismw/dhis2-integration-ui:1.0.2
     volumes:
       - '/mw-dhis2-integration-ui'
 
