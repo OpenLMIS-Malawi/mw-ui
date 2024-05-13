@@ -49,6 +49,8 @@
                     return $q.resolve();
                 },
                 params: function($stateParams) {
+                    var DEFAULT_PAGE_SIZE = 10;
+                    var DEFAULT_PAGE = 0;
                     var paramsCopy = angular.copy($stateParams);
 
                     paramsCopy.facilityId = $stateParams.facility;
@@ -58,6 +60,9 @@
                     paramsCopy.productCode = $stateParams.productCode;
                     paramsCopy.productName = $stateParams.productName;
                     paramsCopy.lotCode = $stateParams.lotCode;
+
+                    paramsCopy.page = $stateParams.page || DEFAULT_PAGE;
+                    paramsCopy.size = $stateParams.size || DEFAULT_PAGE_SIZE;
 
                     paramsCopy.nonEmptyOnly = true;
                     delete paramsCopy.facility;
