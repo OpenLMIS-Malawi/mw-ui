@@ -33,12 +33,12 @@
     RequisitionInitiateController.$inject = [
         'requisitionService', '$state', 'loadingModalService', 'notificationService', 'REQUISITION_RIGHTS',
         'permissionService', 'authorizationService', '$stateParams', 'periods', 'canInitiateRnr', 'UuidGenerator',
-        'facilityFactory'
+        'facilityFactory', 'localStorageFactory'
     ];
     
     function RequisitionInitiateController(requisitionService, $state, loadingModalService, notificationService,
                                            REQUISITION_RIGHTS, permissionService, authorizationService, $stateParams,
-                                           periods, canInitiateRnr, UuidGenerator, facilityFactory) {
+                                           periods, canInitiateRnr, UuidGenerator, facilityFactory, localStorageFactory) {
     // MALAWISUP-4393: Ends here
         var vm = this,
             uuidGenerator = new UuidGenerator(),
@@ -131,6 +131,10 @@
             vm.emergency = $stateParams.emergency === 'true';
             vm.periods = periods;
             vm.canInitiateRnr = canInitiateRnr;
+
+            // MALAWISUP-5781: Start here
+            localStorageFactory('initiateRequisitionData').clearAll();
+            // MALAWISUP-5781: End here
         }
 
         /**
