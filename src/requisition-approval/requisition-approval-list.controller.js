@@ -123,7 +123,9 @@
             vm.offline = $stateParams.offline === 'true' || offlineService.isOffline();
             vm.isBatchApproveScreenActive = isBatchApproveScreenActive;
 
+            // MALAWISUP-5781: Start here
             localStorageFactory('initiateRequisitionData').clearAll();
+            // MALAWISUP-5781: End here
         }
 
         /**

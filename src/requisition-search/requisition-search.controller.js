@@ -176,7 +176,9 @@
 
             vm.offline = $stateParams.offline === 'true' || offlineService.isOffline();
 
+            // MALAWISUP-5781: Start here
             localStorageFactory('initiateRequisitionData').clearAll();
+            // MALAWISUP-5781: End here
 
             if ($stateParams.facility) {
                 vm.selectedFacility = $filter('filter')(vm.facilities, {
