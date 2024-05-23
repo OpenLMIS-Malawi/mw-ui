@@ -16,8 +16,11 @@
 describe('requisition-validation-override.requisitionValidator', function() {
     var requisitionValidator, TEMPLATE_COLUMNS, requisition, columns, lineItem, presetErrors;
 
-    beforeEach(module('requisition-validation-override'));
-    module('requisition-view-tab');
+    beforeEach(function() {
+        module('requisition-validation-override');
+        module('requisition-view-tab');
+    });
+
 
     beforeEach(inject(function($injector) {
         requisitionValidator = $injector.get('requisitionValidator');
