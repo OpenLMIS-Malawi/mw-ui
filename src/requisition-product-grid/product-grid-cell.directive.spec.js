@@ -17,6 +17,7 @@ describe('ProductGridCell', function() {
     beforeEach(function() {
         this.getCompiledElement = getCompiledElement;
 
+        module('requisition-view-tab');
         module('requisition');
         module('requisition-product-grid', function($compileProvider, $provide) {
             $compileProvider.directive('lossesAndAdjustments', function() {
@@ -50,17 +51,18 @@ describe('ProductGridCell', function() {
         });
 
         this.scope = this.$rootScope.$new();
+        this.scope.requisition = new this.RequisitionDataBuilder().build();
 
         this.fullSupplyColumns = [
-            new this.RequisitionColumnDataBuilder().buildRequestedQuantityColumn()
+            new this.RequisitionColumnDataBuilder().buildBeginningBalanceColumn(this.scope.requisition)
         ];
 
         this.nonFullSupplyColumns = [
-            new this.RequisitionColumnDataBuilder().build(),
-            new this.RequisitionColumnDataBuilder().build()
+            new this.RequisitionColumnDataBuilder().build(this.scope.requisition),
+            new this.RequisitionColumnDataBuilder().build(this.scope.requisition)
         ];
 
-        this.scope.requisition = new this.RequisitionDataBuilder().build();
+        this.scope.requisition.template.patientsTabEnabled = false;
         this.scope.column = this.fullSupplyColumns[0];
         this.scope.lineItem = this.scope.requisition.requisitionLineItems[0];
 
@@ -105,7 +107,7 @@ describe('ProductGridCell', function() {
     });
 
     it('should produce currency cell if column is of currency type', function() {
-        this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalCostColumn();
+        this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalCostColumn(this.scope.requisition);
         this.scope.lineItem.getFieldValue.andReturn(123);
 
         this.directiveElem = this.getCompiledElement();
@@ -114,7 +116,7 @@ describe('ProductGridCell', function() {
     });
 
     it('should produce cell with integer input for numeric column that is not read only', function() {
-        this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalConsumedQuantityColumn();
+        this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalConsumedQuantityColumn(this.scope.requisition);
         this.scope.userCanEdit = true;
 
         this.directiveElem = this.getCompiledElement();
@@ -220,7 +222,8 @@ describe('ProductGridCell', function() {
 
     it('should produce editable cell if user can edit and column is editable', function() {
         this.scope.userCanEdit = true;
-        this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalConsumedQuantityColumn();
+        this.scope.column = new this.RequisitionColumnDataBuilder().
+        buildTotalConsumedQuantityColumn(this.scope.requisition);
 
         var cell = angular.element(this.getCompiledElement().children()[0]);
 
@@ -232,7 +235,8 @@ describe('ProductGridCell', function() {
         this.authorizationService.hasRight.andReturn(false);
         // --- ends here ---
         this.scope.userCanEdit = false;
-        this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalConsumedQuantityColumn();
+        this.scope.column = new this.RequisitionColumnDataBuilder()
+            .buildTotalConsumedQuantityColumn(this.scope.requisition);
 
         var cell = angular.element(this.getCompiledElement().children()[0]);
 
@@ -241,7 +245,7 @@ describe('ProductGridCell', function() {
 
     it('should produce real only cell if column is not editable', function() {
         this.scope.userCanEdit = true;
-        this.scope.column = new this.RequisitionColumnDataBuilder().buildProductCodeColumn();
+        this.scope.column = new this.RequisitionColumnDataBuilder().buildProductCodeColumn(this.scope.requisition);
 
         var cell = angular.element(this.getCompiledElement().children()[0]);
 
@@ -459,7 +463,7 @@ describe('ProductGridCell', function() {
         var skipColumn, element;
 
         beforeEach(function() {
-            skipColumn = new this.RequisitionColumnDataBuilder().buildSkipColumn();
+            skipColumn = new this.RequisitionColumnDataBuilder().buildSkipColumn(false, this.scope.requisition);
             this.scope.column = skipColumn;
         });
 
