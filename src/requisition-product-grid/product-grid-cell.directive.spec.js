@@ -54,7 +54,7 @@ describe('ProductGridCell', function() {
         this.scope.requisition = new this.RequisitionDataBuilder().build();
 
         this.fullSupplyColumns = [
-            new this.RequisitionColumnDataBuilder().buildBeginningBalanceColumn(this.scope.requisition)
+            new this.RequisitionColumnDataBuilder().buildRequestedQuantityColumn(this.scope.requisition)
         ];
 
         this.nonFullSupplyColumns = [
@@ -341,7 +341,7 @@ describe('ProductGridCell', function() {
 
             var cell = angular.element(this.getCompiledElement().children()[0]);
 
-            expect(cell.text()).toEqual('readOnlyFieldValue');
+            expect(cell.text()).not.toEqual('readOnlyFieldValue');
         });
 
         it('should return false if initiated and user can submit', function() {
@@ -363,7 +363,7 @@ describe('ProductGridCell', function() {
 
             cell = angular.element(this.getCompiledElement().children()[0]);
 
-            expect(cell.text()).toEqual('readOnlyFieldValue');
+            expect(cell.text()).not.toEqual('readOnlyFieldValue');
         });
 
         it('should return false if rejected and user can submit', function() {
@@ -385,7 +385,7 @@ describe('ProductGridCell', function() {
 
             cell = angular.element(this.getCompiledElement().children()[0]);
 
-            expect(cell.text()).toEqual('readOnlyFieldValue');
+            expect(cell.text()).not.toEqual('readOnlyFieldValue');
         });
 
         it('should return false if submitted and user can approve', function() {
@@ -406,7 +406,7 @@ describe('ProductGridCell', function() {
 
             cell = angular.element(this.getCompiledElement().children()[0]);
 
-            expect(cell.text()).toEqual('readOnlyFieldValue');
+            expect(cell.text()).not.toEqual('readOnlyFieldValue');
         });
 
         it('should return true if column is beginning balance', function() {
