@@ -28,7 +28,7 @@
             label: 'openlmisSupport.contactSupport',
             showInNavigation: true,
             priority: -999,
-            externalUrl: 'http://malawi-support.openlmis.org'
+            externalUrl: 'https://openlmis.atlassian.net/servicedesk/customer/portal/2'
         });
     }
 
