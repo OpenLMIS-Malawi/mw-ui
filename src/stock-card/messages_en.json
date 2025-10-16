@@ -8,7 +8,6 @@
   "stockCard.adjustment": "Adjustment",
   "stockCard.soh": "Stock on hand",
   "stockCard.signature": "Signature",
-  "stockCard.performedBy": "Performed by",
   "stockCard.binCardName": "Bin Card for ${program}",
   "stockCard.productCode": "Product code",
   "stockCard.facilityName": "Facility name",

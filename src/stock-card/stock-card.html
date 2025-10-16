@@ -60,7 +60,6 @@
       <th>{{'stockCard.reason' | message}}</th>
       <th>{{'stockCard.adjustment' | message}}</th>
       <th>{{'stockCard.soh' | message}}</th>
-      <th>{{'stockCard.performedBy' | message}}</th>
       <th>{{'stockCard.signature' | message}}</th>
     </tr>
     </thead>
@@ -80,7 +79,6 @@
       </td>
       <td align="right">{{lineItem.quantity}}</td>
       <td align="right">{{lineItem.stockOnHand}}</td>
-      <td>{{lineItem.username || ''}}</td>
       <td>{{lineItem.signature}}</td>
     </tr>
     </tbody>
