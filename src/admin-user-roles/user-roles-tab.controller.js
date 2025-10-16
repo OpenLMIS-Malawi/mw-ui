@@ -32,12 +32,13 @@
 
     controller.$inject = [
         'user', 'supervisoryNodes', 'programs', 'warehouses', '$stateParams', '$q', 'tab', '$state', '$filter',
-        'notificationService', 'confirmService', 'roleAssignments', 'filteredRoles', 'roleRightsMap', 'UuidGenerator', '$window'
+        'notificationService', 'confirmService', 'roleAssignments', 'filteredRoles', 'roleRightsMap', 'messageService',
+        'UuidGenerator', '$window'
     ];
 
     function controller(user, supervisoryNodes, programs, warehouses, $stateParams, $q, tab, $state, $filter,
-                        notificationService, confirmService, roleAssignments, filteredRoles, roleRightsMap, UuidGenerator,
-                        $window) {
+                        notificationService, confirmService, roleAssignments, filteredRoles, roleRightsMap, messageService,
+                        UuidGenerator, $window) {
 
         var vm = this;
         vm.$window = $window;
@@ -173,7 +174,7 @@
          * Flag defining whether the roles can be edited.
          */
         vm.editable = undefined;
-        
+
         // MALAWISUP-3888 Add checkboxes and column filters under roles when removing users roles
          /**
          * @ngdoc property
@@ -196,7 +197,7 @@
          * Contains program id param for searching roles by program id.
          */
         vm.programId = undefined;
-        
+
         /**
          * @ngdoc method
          * @methodOf admin-user-roles.controller:UserRolesTabController
@@ -238,7 +239,7 @@
                 loadPreviouslySelectedRoles();
             }
         }
-        
+
         function getParams() {
             return $stateParams;
         }
@@ -255,23 +256,23 @@
          */
         function getSelected() {
                 var storageSelected = $window.sessionStorage.getItem(vm.selectedRolesStorageKey);
-        
+
                 storageSelected = storageSelected ? JSON.parse(storageSelected) : {};
-        
+
                 var selectedRoles = [];
-        
+
                 for (var id in storageSelected) {
                      if (storageSelected.hasOwnProperty(id)) {
                         selectedRoles.push(storageSelected[id]);
                     }
                 }
-        
+
                 angular.forEach(vm.roleAssignments, function(roleAssignment) {
                     if (roleAssignment.$selected && roleAssignments[roleAssignment.id] === undefined) {
                         selectedRoles.push(roleAssignment);
                     }
                 });
-        
+
                 return selectedRoles;
                 }
 
@@ -288,7 +289,7 @@
 
             stateParams.programId = vm.programId;
             stateParams.roleId = vm.roleId;
-            
+
             $state.go('openlmis.administration.users.roles.' + tab, stateParams, {
                 reload: false
             });
@@ -373,7 +374,7 @@
             $window.sessionStorage.setItem(
                 vm.selectedRolesStorageKey, JSON.stringify(storageRoles)
             );
-            
+
             setSelectAll();
         }
 
@@ -397,7 +398,7 @@
                         reloadState();
                         });
         }
-        
+
         // MALAWISUP-3888: Ends here
 
         /**
@@ -438,7 +439,23 @@
          * @param {Object} roleAssignment the role assignment to be removed
          */
         function removeRole(roleAssignment) {
-            confirmService.confirmDestroy('adminUserRoles.removeRole.question', 'adminUserRoles.removeRole.label')
+            var roleToBeRemoved = vm.filteredRoles.filter(function(role) {
+                return role.id === roleAssignment.roleId;
+            });
+
+            var roleUsedByNumber =
+                roleToBeRemoved.length
+                    ? roleToBeRemoved[0].count > 0
+                        ? roleToBeRemoved[0].count - 1
+                        : 0
+                    : [];
+
+            var confirmMessage = messageService.get('adminUserRoles.removeRole.question', {
+                roleName: roleAssignment.roleName,
+                remainingUsers: roleUsedByNumber
+            });
+
+            confirmService.confirmDestroy(confirmMessage, 'adminUserRoles.removeRole.label')
                 .then(function() {
                     user.removeRoleAssignment(roleAssignment);
                     reloadState();

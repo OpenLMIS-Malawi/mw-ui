@@ -27,6 +27,7 @@
         'stockmanagement',
         'openlmis-auth',
         'stock-reasons-modal',
+        'openlmis-cached-repository',
         //  <-- Malawi starts here -->
         'referencedata-facility-type-approved-product'
         // <-- Malawi ends here -->

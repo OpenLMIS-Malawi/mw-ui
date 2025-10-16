@@ -108,19 +108,24 @@
 
                             var lotIds = getLotIds(stockCardSummariesPage.content),
                                 orderableIds = getOrderableIds(stockCardSummariesPage.content);
+                            var promises = [];
 
-                            return $q.all([
-                                orderableResource.query({
+                            if (orderableIds.length > 0) {
+                                promises.push(orderableResource.query({
                                     id: orderableIds
-                                }),
-                                lotService.query({
-                                    id: lotIds
-                                })
-                            ])
-                                .then(function(responses) {
-                                    var orderablePage = responses[0],
-                                        lotPage = responses[1];
+                                }));
+                            }
 
+                            if (lotIds.length > 0) {
+                                 promises.push(lotService.query({
+                                    id: lotIds
+                                 }));
+                            }
+
+                            return $q.all(promises)
+                                .then(function(responses) {
+                                    var orderablePage = responses[0] || [],
+                                        lotPage = responses[1] || [];
                                     return combineResponses(stockCardSummariesPage, orderablePage.content,
                                         lotPage.content, params);
                                 });
