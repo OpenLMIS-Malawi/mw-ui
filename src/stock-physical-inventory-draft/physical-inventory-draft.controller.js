@@ -35,7 +35,7 @@
         'VVM_STATUS', 'reasons', 'stockReasonsCalculations', 'loadingModalService', '$window',
         'stockmanagementUrlFactory', 'accessTokenFactory', 'orderableGroupService', '$filter', '$q',
         'offlineService', 'physicalInventoryDraftCacheService', 'stockCardService',
-        'LotResource', 'editLotModalService'];
+        'LotResource', 'editLotModalService', 'dateUtils'];
 
     function controller($scope, $state, $stateParams, addProductsModalService, messageService,
                         physicalInventoryFactory, notificationService, alertService,
@@ -44,7 +44,7 @@
                         reasons, stockReasonsCalculations, loadingModalService, $window,
                         stockmanagementUrlFactory, accessTokenFactory, orderableGroupService, $filter, $q,
                         offlineService, physicalInventoryDraftCacheService, stockCardService,
-                        LotResource, editLotModalService) {
+                        LotResource, editLotModalService, dateUtils) {
 
         var vm = this;
 
@@ -52,6 +52,7 @@
         vm.cacheDraft = cacheDraft;
         vm.quantityChanged = quantityChanged;
         vm.checkUnaccountedStockAdjustments = checkUnaccountedStockAdjustments;
+        vm.formatDate = formatDate;
 
         /**
          * @ngdoc property
@@ -759,6 +760,18 @@
                     vm.showHideButtonColumn = true;
                 }
             });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name formatDate
+         *
+         * @description
+         * Format date
+         */
+        function formatDate(date) {
+            return dateUtils.toStringDateWithDefaultFormat(date);
         }
     }
 })();

@@ -52,7 +52,9 @@
             ORDER_CREATE: 'ORDER_CREATE',
             DATA_EXPORT: 'DATA_EXPORT',
             DATA_IMPORT: 'DATA_IMPORT',
-            MANAGE_BUQ: 'MANAGE_BUQ'
+            MANAGE_BUQ: 'MANAGE_BUQ',
+            REPORT_CATEGORIES_MANAGE: 'REPORT_CATEGORIES_MANAGE',
+            REPORTS_MANAGE: 'REPORTS_MANAGE'
         };
     }
 

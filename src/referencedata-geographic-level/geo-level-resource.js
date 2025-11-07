@@ -33,6 +33,23 @@
             });
         }
 
+        GeoLevelResource.prototype.getTheLowestGeoLevel = getTheLowestGeoLevel;
+
         return GeoLevelResource;
+
+        function getTheLowestGeoLevel() {
+            return new Promise(function(resolve) {
+                new GeoLevelResource().query()
+                    .then(function(resource) {
+                        const lowestGeoLevel = resource.content.reduce(function(lowestGeoLevel, geoLevel) {
+                            // Compare and keep the one with the highest `levelNumber` value
+                            return geoLevel.levelNumber > lowestGeoLevel.levelNumber
+                                ? geoLevel : lowestGeoLevel;
+                        });
+
+                        resolve(lowestGeoLevel);
+                    });
+            });
+        }
     }
 })();

@@ -52,6 +52,7 @@
         vm.lotChanged = lotChanged;
         vm.addProduct = addProduct;
         vm.hasPermissionToAddNewLot = hasPermissionToAddNewLot;
+        vm.formatDate = formatDate;
 
         /**
          * @ngdoc property
@@ -799,6 +800,18 @@
          */
         function expirationDateChanged() {
             vm.newLot.expirationDateInvalid = undefined;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name formatDate
+         *
+         * @description
+         * Format date
+         */
+        function formatDate(date) {
+            return dateUtils.toStringDateWithDefaultFormat(date);
         }
 
         /**
