@@ -1,62 +1,22 @@
 <h2>{{'report.viewReports' | message}}</h2>
-<!-- MW-1207: Adjust reports table view to support categories -->
 <div style="display:flex">
-    <div class="openlmis-table-container">
+    <div class="openlmis-table-container" ng-repeat="(categoryName, reports) in vm.result">
         <table>
-            <caption class="error" ng-show="!vm.reports.length && !vm.supersetReports">
-                {{'report.noReports' | message}}
-            </caption>
             <thead>
-                <tr>
-                    <th>{{'report.lmisReports' | message}}</th>
-                </tr>
+            <tr>
+                <th>{{categoryName}}</th>
+            </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="report in vm.lmisReports">
-                    <td>
-                        <a ui-sref=".generate({module: report.$module, report: report.id})">{{report.name}}</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="openlmis-table-container">
-        <table>
-            <caption class="error" ng-show="!vm.reports.length && !vm.supersetReports">
-                {{'report.noReports' | message}}
-            </caption>
-            <thead>
-                <tr>
-                    <th>{{'report.epiReports' | message}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="report in vm.epiReports">
-                    <td>
-                        <a ui-sref=".generate({module: report.$module, report: report.id})">{{report.name}}</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="openlmis-table-container">
-        <table>
-            <caption class="error" ng-show="!vm.reports.length && !vm.supersetReports">
-                {{'report.noReports' | message}}
-            </caption>
-            <thead>
-                <tr>
-                    <th>{{'report.dashboardReports' | message}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="report in vm.supersetReports">
-                    <td ng-if="vm.hasRight(report.right)">
-                        <a ui-sref="{{'.superset.' + report.code}}">{{ 'report.superset.' + report.code | message}}</a>
-                    </td>
-                </tr>
+            <tr ng-show="reports.length === 0">
+                <td>{{'report.noReports' | message}}</td>
+            </tr>
+            <tr ng-show="reports.length !== 0" ng-repeat="report in reports">
+                <td>
+                    <a ui-sref="{{report.uisref}}">{{report.name}}</a>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
 </div>
-<!-- MW-1207: Ends here -->

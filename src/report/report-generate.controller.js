@@ -30,12 +30,12 @@
 
     // MW-1178: Add datepicker & multiple select to report parameters
     controller.$inject = [
-        '$state', '$scope', '$window', 'report', 'reportFactory',
-        'reportParamsOptions', 'reportUrlFactory', 'accessTokenFactory', '$q'
+        '$state', '$scope', '$window', 'report', 'reportFactory', '$timeout',
+        'reportParamsOptions', 'reportUrlFactory', 'accessTokenFactory', '$q', 'messageService'
     ];
 
-    function controller($state, $scope, $window, report, reportFactory,
-        reportParamsOptions, reportUrlFactory, accessTokenFactory, $q) {
+    function controller($state, $scope, $window, report, reportFactory, timeout,
+        reportParamsOptions, reportUrlFactory, accessTokenFactory, $q, messageService) {
         // MW-1178: Ends here
         var vm = this;
 
@@ -47,18 +47,31 @@
 
         vm.downloadReport = downloadReport;
 
+        vm.reinitializeSelect = reinitializeSelect;
+
         vm.paramsInfo = {
             GeographicZone: 'report.geographicZoneInfo',
             DueDays: 'report.dueDaysInfo'
         };
 
+        /**
+         * @ngdoc property
+         * @propertyOf report.controller:ReportGenerateController
+         * @name messageService
+         * @type {Object}
+         *
+         * @description
+         * The object representing the message service.
+         */
+        vm.messageService = messageService;
+
         // MW-1178: Add datepicker & multiple select to report parameters
         vm.booleanOptions = [{
-            name: 'Yes',
+            name: messageService.get('report.boolean.true'),
             value: 'true'
         },
         {
-            name: 'No',
+            name: messageService.get('report.boolean.false'),
             value: 'false'
         }]
         // MW-1178: Ends here
@@ -307,6 +320,52 @@
             }))]);
         }
         // MW-1178: Ends here
+
+        /**
+         * @ngdoc method
+         * @methodOf report.controller:ReportGenerateController
+         * @name reinitializeSelect
+         *
+         * @description
+         * Reinitializes the select2 plugin for the given parameter name.
+         */
+        function reinitializeSelect(parameterName) {
+            $timeout(function() {
+                var element = angular.element('#' + parameterName);
+
+                element.select2({
+                    allowClear: true,
+                    selectOnClose: true,
+                    placeholder: getPlaceholder(element),
+                    language: {
+                        noResults: function() {
+                            return messageService.get('openlmisForm.selectNoResults');
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf report.controller:ReportGenerateController
+         * @name getPlaceholder
+         *
+         * @description
+         * Gets the placeholder text from the first item in the placeholder list
+         */
+        function getPlaceholder(element) {
+            var placeholderOption = element.children('.placeholder:first');
+
+            if (placeholderOption.length === 0) {
+                return false;
+            }
+
+            return {
+                id: placeholderOption.val(),
+                text: placeholderOption.text()
+            };
+        }
     }
 })();
 
