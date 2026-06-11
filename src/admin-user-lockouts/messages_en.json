@@ -1,0 +1,22 @@
+{
+    "adminUserLockouts.lockouts.label": "Lockouts",
+    "adminUserLockouts.name": "Name",
+    "adminUserLockouts.username": "Username",
+    "adminUserLockouts.firstName": "First name",
+    "adminUserLockouts.lastName": "Last name",
+    "adminUserLockouts.email": "Email",
+    "adminUserLockouts.locked": "Locked",
+    "adminUserLockouts.search": "Search",
+    "adminUserLockouts.save": "Save",
+    "adminUserLockouts.unlock": "Unlock",
+    "adminUserLockouts.noLockedUsers": "There are no locked users.",
+    "adminUserLockouts.confirm.title": "Unlock users",
+    "adminUserLockouts.confirm.message": "Unlock ${count} users?",
+    "adminUserLockouts.summary.title": "Unlock summary",
+    "adminUserLockouts.summary.unlocked": "Successfully unlocked users",
+    "adminUserLockouts.summary.notFound": "Not found users",
+    "adminUserLockouts.summary.failed": "Failed operations",
+    "adminUserLockouts.summary.userId": "User ID",
+    "adminUserLockouts.summary.empty": "No users in this category.",
+    "adminUserLockouts.summary.close": "Close"
+}
