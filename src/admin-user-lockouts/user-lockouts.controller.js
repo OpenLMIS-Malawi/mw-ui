@@ -32,12 +32,13 @@
 
     controller.$inject = [
         '$state', '$stateParams', 'users', 'confirmService', 'messageService',
-        'openlmisModalService', 'userLockoutService', 'userLockoutSelectionService', 'loadingModalService'
+        'openlmisModalService', 'userLockoutService', 'userLockoutSelectionService', 'loadingModalService',
+        'notificationService'
     ];
 
     function controller($state, $stateParams, users, confirmService, messageService,
                         openlmisModalService, userLockoutService, userLockoutSelectionService,
-                        loadingModalService) {
+                        loadingModalService, notificationService) {
 
         var vm = this;
 
@@ -158,9 +159,9 @@
                         loadingModalService.close();
                         return openSummary(summary, usernamesById);
                     })
-                    .catch(function(error) {
+                    .catch(function() {
                         loadingModalService.close();
-                        throw error;
+                        notificationService.error('adminUserLockouts.unlock.failed');
                     });
             });
         }

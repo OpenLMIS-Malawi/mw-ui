@@ -24,6 +24,7 @@ describe('UserLockoutsController', function() {
             'set', 'isSelected', 'getSelected', 'getSelectedIds', 'getUsernamesById', 'count', 'clear'
         ]);
         this.loadingModalService = jasmine.createSpyObj('loadingModalService', ['open', 'close']);
+        this.notificationService = jasmine.createSpyObj('notificationService', ['error']);
 
         var context = this;
         module('admin-user-lockouts', function($provide) {
@@ -44,6 +45,9 @@ describe('UserLockoutsController', function() {
             });
             $provide.service('loadingModalService', function() {
                 return context.loadingModalService;
+            });
+            $provide.service('notificationService', function() {
+                return context.notificationService;
             });
         });
 
@@ -214,6 +218,18 @@ describe('UserLockoutsController', function() {
             this.$rootScope.$apply();
 
             expect(this.userLockoutService.unlock).not.toHaveBeenCalled();
+        });
+
+        it('should notify and close the loading modal when the unlock request fails', function() {
+            this.userLockoutService.unlock.andReturn(this.$q.reject('error'));
+
+            this.vm.save();
+            this.confirmDeferred.resolve();
+            this.$rootScope.$apply();
+
+            expect(this.loadingModalService.close).toHaveBeenCalled();
+            expect(this.notificationService.error).toHaveBeenCalledWith('adminUserLockouts.unlock.failed');
+            expect(this.openlmisModalService.createDialog).not.toHaveBeenCalled();
         });
     });
 });

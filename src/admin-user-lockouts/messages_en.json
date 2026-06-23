@@ -9,6 +9,7 @@
     "adminUserLockouts.search": "Search",
     "adminUserLockouts.save": "Save",
     "adminUserLockouts.unlock": "Unlock",
+    "adminUserLockouts.unlock.failed": "Failed to unlock the selected users. Please try again.",
     "adminUserLockouts.noLockedUsers": "There are no locked users.",
     "adminUserLockouts.confirm.title": "Unlock users",
     "adminUserLockouts.confirm.message": "Unlock ${count} users?",
