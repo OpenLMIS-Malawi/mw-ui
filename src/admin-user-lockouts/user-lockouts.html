@@ -1,0 +1,57 @@
+<section class="openlmis-table-container">
+    <openlmis-sort options="vm.options"/>
+    <form ng-submit="vm.search()">
+        <fieldset class="form-group">
+            <label for="username">{{'adminUserLockouts.username' | message}}</label>
+            <input type="text" id="username" ng-model="vm.username"/>
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="firstName">{{'adminUserLockouts.firstName' | message}}</label>
+            <input type="text" id="firstName" ng-model="vm.firstName"/>
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="lastName">{{'adminUserLockouts.lastName' | message}}</label>
+            <input type="text" id="lastName" ng-model="vm.lastName"/>
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="email">{{'adminUserLockouts.email' | message}}</label>
+            <input type="text" id="email" ng-model="vm.email"/>
+        </fieldset>
+        <input type="submit" value="{{'adminUserLockouts.search'|message}}"/>
+    </form>
+    <table>
+        <caption ng-if="!vm.users || vm.users.length === 0">
+            {{'adminUserLockouts.noLockedUsers' | message}}
+        </caption>
+        <thead>
+            <tr>
+                <th>{{'adminUserLockouts.name' | message}}</th>
+                <th>{{'adminUserLockouts.username' | message}}</th>
+                <th>{{'adminUserLockouts.email' | message}}</th>
+                <th>{{'adminUserLockouts.locked' | message}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="user in vm.users">
+                <td>{{user.firstName}} {{user.lastName}}</td>
+                <td>{{user.username}}</td>
+                <td>{{user.email}}</td>
+                <td>
+                    <input type="checkbox"
+                           aria-label="{{'adminUserLockouts.locked' | message}}"
+                           ng-model="user.selected"
+                           ng-change="vm.toggle(user)"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <openlmis-pagination pagination-id="'userLockouts'"/>
+</section>
+<div class="button-group">
+    <button type="button"
+            class="primary"
+            ng-disabled="!vm.hasSelection()"
+            ng-click="vm.save()">
+        {{'adminUserLockouts.save' | message}}
+    </button>
+</div>

@@ -1,0 +1,47 @@
+<div class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title">
+                    {{'adminUserLockouts.summary.title' | message}}
+                </h1>
+            </div>
+            <div class="modal-body">
+                <ul class="user-lockout-summary">
+                    <li ng-repeat="section in vm.sections" class="user-lockout-summary-section">
+                        <button type="button"
+                                class="user-lockout-summary-header"
+                                aria-expanded="{{vm.isExpanded(section.key)}}"
+                                ng-click="vm.toggle(section.key)">
+                            <i class="icon-chevron-right"
+                               ng-style="{transform: vm.isExpanded(section.key) ? 'rotate(90deg)' : 'none'}"></i>
+                            {{section.label | message}}: {{section.users.length}}
+                        </button>
+                        <table class="failed-entries-table" ng-if="vm.isExpanded(section.key)">
+                            <thead>
+                                <tr>
+                                    <th>{{'adminUserLockouts.username' | message}}</th>
+                                    <th>{{'adminUserLockouts.summary.userId' | message}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-if="!section.users.length">
+                                    <td colspan="2">{{'adminUserLockouts.summary.empty' | message}}</td>
+                                </tr>
+                                <tr ng-repeat="user in section.users">
+                                    <td>{{user.username || '-'}}</td>
+                                    <td>{{user.id}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="primary" ng-click="vm.close()">
+                    {{'adminUserLockouts.summary.close' | message}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

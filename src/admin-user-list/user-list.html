@@ -1,0 +1,64 @@
+<h2>{{'adminUserList.users.label' | message}}</h2>
+<!-- MW-1477: Users / Lockouts tab navigation -->
+<nav>
+    <ul>
+        <li ui-sref-active-eq="active" role="presentation">
+            <a ui-sref="openlmis.administration.users" ui-sref-opts="{reload: true}">{{'adminUserList.users.label' | message}}</a>
+        </li>
+        <li ui-sref-active="active" role="presentation">
+            <a ui-sref="openlmis.administration.users.lockouts" ui-sref-opts="{reload: true}">{{'adminUserLockouts.lockouts.label' | message}}</a>
+        </li>
+    </ul>
+</nav>
+<!-- MW-1477: hidden while the Lockouts tab is active -->
+<section class="openlmis-table-container" ng-if="!vm.isLockoutsActive()">
+    <openlmis-sort options="vm.options"/>
+    <button ui-sref="openlmis.administration.users.form" class="add">{{'adminUserList.addUser' | message}}</button>
+    <form ng-submit="vm.search()">
+        <fieldset class="form-group">
+            <label for="username">{{'adminUserList.username' | message}}</label>
+            <input type="text" id="username" ng-model="vm.username"/>
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="firstName">{{'adminUserList.firstName' | message}}</label>
+            <input type="text" id="firstName" ng-model="vm.firstName"/>
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="lastName">{{'adminUserList.lastName' | message}}</label>
+            <input type="text" id="lastName" ng-model="vm.lastName"/>
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="email">{{'adminUserList.email' | message}}</label>
+            <input type="text" id="email" ng-model="vm.email"/>
+        </fieldset>
+        <input type="submit" value="{{'adminUserList.search'|message}}"/>
+    </form>
+    <table>
+        <caption ng-if="!vm.users || vm.users.length === 0">
+            {{'adminUserList.users.error' | message}}
+        </caption>
+        <thead>
+            <tr>
+                <th>{{'adminUserList.name' | message}}</th>
+                <th>{{'adminUserList.username' | message}}</th>
+                <th>{{'adminUserList.email' | message}}</th>
+                <th>{{'adminUserList.actions' | message}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="user in vm.users">
+                <td>{{user.firstName}} {{user.lastName}}</td>
+                <td>{{user.username}}</td>
+                <td>{{user.email}}</td>
+                <td>
+                    <button class="primary" ui-sref="openlmis.administration.users.form({id: user.id})">{{'adminUserList.edit' | message}}</button>
+                    <button ui-sref="openlmis.administration.users.roles.SUPERVISION({id: user.id, page: 0})">{{'adminUserList.roles' | message}}</button>
+                    <button ng-click="vm.resetUserPassword(user)">{{'adminUserList.resetPassword' | message}}</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <openlmis-pagination/>
+</section>
+<!-- MW-1477: Lockouts tab content renders here -->
+<div ui-view></div>
