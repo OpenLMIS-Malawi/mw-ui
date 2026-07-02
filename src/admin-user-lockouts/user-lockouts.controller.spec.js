@@ -191,6 +191,28 @@ describe('UserLockoutsController', function() {
             expect(this.userLockoutService.unlock).not.toHaveBeenCalled();
         });
 
+        it('should use the singular confirm message when one user is selected', function() {
+            this.userLockoutSelectionService.getSelected.andReturn([this.users[0]]);
+
+            this.vm.save();
+
+            expect(this.messageService.get)
+                .toHaveBeenCalledWith('adminUserLockouts.confirm.messageSingular', {
+                    count: 1
+                });
+        });
+
+        it('should use the plural confirm message when several users are selected', function() {
+            this.userLockoutSelectionService.getSelected.andReturn([this.users[0], this.users[1]]);
+
+            this.vm.save();
+
+            expect(this.messageService.get)
+                .toHaveBeenCalledWith('adminUserLockouts.confirm.message', {
+                    count: 2
+                });
+        });
+
         it('should unlock the selected ids and open the summary modal after confirmation', function() {
             this.vm.save();
             this.confirmDeferred.resolve();
