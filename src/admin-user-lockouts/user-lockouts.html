@@ -28,7 +28,7 @@
                 <th>{{'adminUserLockouts.name' | message}}</th>
                 <th>{{'adminUserLockouts.username' | message}}</th>
                 <th>{{'adminUserLockouts.email' | message}}</th>
-                <th>{{'adminUserLockouts.locked' | message}}</th>
+                <th>{{'adminUserLockouts.unlockUser' | message}}</th>
             </tr>
         </thead>
         <tbody>
@@ -38,7 +38,7 @@
                 <td>{{user.email}}</td>
                 <td>
                     <input type="checkbox"
-                           aria-label="{{'adminUserLockouts.locked' | message}}"
+                           aria-label="{{'adminUserLockouts.unlockUser' | message}}"
                            ng-model="user.selected"
                            ng-change="vm.toggle(user)"/>
                 </td>

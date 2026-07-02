@@ -186,7 +186,10 @@
         }
 
         function buildConfirmMessage(selected) {
-            var message = messageService.get('adminUserLockouts.confirm.message', {
+            var messageKey = selected.length === 1
+                ? 'adminUserLockouts.confirm.messageSingular'
+                : 'adminUserLockouts.confirm.message';
+            var message = messageService.get(messageKey, {
                 count: selected.length
             });
 
