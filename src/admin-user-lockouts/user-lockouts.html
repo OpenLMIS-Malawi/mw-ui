@@ -1,5 +1,8 @@
-<section class="openlmis-table-container">
+<section class="openlmis-table-container admin-user-lockouts">
     <openlmis-sort options="vm.options"/>
+    <span class="selected-count">
+        {{'adminUserLockouts.selectedCount' | message:{count: vm.selectedCount()} }}
+    </span>
     <form ng-submit="vm.search()">
         <fieldset class="form-group">
             <label for="username">{{'adminUserLockouts.username' | message}}</label>
@@ -28,6 +31,7 @@
                 <th>{{'adminUserLockouts.name' | message}}</th>
                 <th>{{'adminUserLockouts.username' | message}}</th>
                 <th>{{'adminUserLockouts.email' | message}}</th>
+                <th>{{'adminUserLockouts.lastAttempt' | message}}</th>
                 <th>{{'adminUserLockouts.unlockUser' | message}}</th>
             </tr>
         </thead>
@@ -36,6 +40,7 @@
                 <td>{{user.firstName}} {{user.lastName}}</td>
                 <td>{{user.username}}</td>
                 <td>{{user.email}}</td>
+                <td>{{user.lastUnsuccessfulAuthenticationAttemptDate | openlmisDate}}</td>
                 <td>
                     <input type="checkbox"
                            aria-label="{{'adminUserLockouts.unlockUser' | message}}"
@@ -47,11 +52,11 @@
     </table>
     <openlmis-pagination pagination-id="'userLockouts'"/>
 </section>
-<div class="button-group">
+<div class="button-group admin-user-lockouts-actions">
     <button type="button"
             class="primary"
             ng-disabled="!vm.hasSelection()"
             ng-click="vm.save()">
-        {{'adminUserLockouts.save' | message}}
+        {{'adminUserLockouts.unlockSelected' | message}}
     </button>
 </div>

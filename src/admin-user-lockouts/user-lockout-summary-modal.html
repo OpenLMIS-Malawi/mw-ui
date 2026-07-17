@@ -17,23 +17,12 @@
                                ng-style="{transform: vm.isExpanded(section.key) ? 'rotate(90deg)' : 'none'}"></i>
                             {{section.label | message}}: {{section.users.length}}
                         </button>
-                        <table class="failed-entries-table" ng-if="vm.isExpanded(section.key)">
-                            <thead>
-                                <tr>
-                                    <th>{{'adminUserLockouts.username' | message}}</th>
-                                    <th>{{'adminUserLockouts.summary.userId' | message}}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-if="!section.users.length">
-                                    <td colspan="2">{{'adminUserLockouts.summary.empty' | message}}</td>
-                                </tr>
-                                <tr ng-repeat="user in section.users">
-                                    <td>{{user.username || '-'}}</td>
-                                    <td>{{user.id}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <ul class="user-lockout-summary-list" ng-if="vm.isExpanded(section.key)">
+                            <li ng-if="!section.users.length" class="empty">
+                                {{'adminUserLockouts.summary.empty' | message}}
+                            </li>
+                            <li ng-repeat="user in section.users">{{user.username}}</li>
+                        </ul>
                     </li>
                 </ul>
             </div>
