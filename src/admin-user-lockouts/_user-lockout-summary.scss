@@ -35,4 +35,35 @@
             margin-right: 8px;
         }
     }
+
+    .user-lockout-summary-list {
+        margin: 0;
+        padding: 8px 12px 8px 32px;
+
+        .empty {
+            list-style: none;
+            margin-left: -20px;
+            color: #767676;
+        }
+    }
+}
+
+// Lay out the generated toolbar (sort + injected Filters button + counter) as a flex row.
+.admin-user-lockouts > .row > .main > .toolbar {
+    display: flex;
+    align-items: center;
+}
+
+// order:1 moves the counter past the runtime-appended Filters button; margin-left:auto
+// keeps sort + Filters grouped on the left and pins the counter to the right.
+.admin-user-lockouts .selected-count {
+    order: 1;
+    margin-left: auto;
+    color: #767676;
+    white-space: nowrap;
+}
+
+.admin-user-lockouts-actions {
+    display: flex;
+    justify-content: flex-end;
 }

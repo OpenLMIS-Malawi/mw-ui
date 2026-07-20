@@ -48,6 +48,22 @@ describe('UserLockoutSummaryModalController', function() {
         expect(this.vm.sections[2].key).toBe('failed');
     });
 
+    it('should omit the not-found and failed sections when they are empty', function() {
+        var vm = this.$controller('UserLockoutSummaryModalController', {
+            summary: {
+                unlocked: ['id-one'],
+                notFound: [],
+                failed: []
+            },
+            usernamesById: this.usernamesById,
+            modalDeferred: this.modalDeferred
+        });
+        vm.$onInit();
+
+        expect(vm.sections.length).toBe(1);
+        expect(vm.sections[0].key).toBe('unlocked');
+    });
+
     it('should resolve cached usernames and fall back to the id', function() {
         expect(this.vm.sections[0].users).toEqual([{
             id: 'id-one',

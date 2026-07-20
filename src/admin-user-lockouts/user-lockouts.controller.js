@@ -46,6 +46,7 @@
         vm.search = search;
         vm.toggle = toggle;
         vm.hasSelection = hasSelection;
+        vm.selectedCount = selectedCount;
         vm.save = save;
 
         /**
@@ -136,6 +137,17 @@
         /**
          * @ngdoc method
          * @methodOf admin-user-lockouts.controller:UserLockoutsController
+         * @name selectedCount
+         *
+         * @return {Number} how many users are currently selected for unlocking
+         */
+        function selectedCount() {
+            return userLockoutSelectionService.count();
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-user-lockouts.controller:UserLockoutsController
          * @name save
          *
          * @description
@@ -144,12 +156,15 @@
          */
         function save() {
             var selected = userLockoutSelectionService.getSelected();
+            var titleKey = selected.length === 1
+                ? 'adminUserLockouts.confirm.titleSingular'
+                : 'adminUserLockouts.confirm.title';
 
             confirmService.confirm(
                 buildConfirmMessage(selected),
                 'adminUserLockouts.unlock',
                 undefined,
-                'adminUserLockouts.confirm.title'
+                titleKey
             ).then(function() {
                 var usernamesById = userLockoutSelectionService.getUsernamesById();
 
@@ -161,7 +176,7 @@
                     })
                     .catch(function() {
                         loadingModalService.close();
-                        notificationService.error('adminUserLockouts.unlock.failed');
+                        notificationService.error('adminUserLockouts.error.unlockFailed');
                     });
             });
         }
@@ -186,18 +201,19 @@
         }
 
         function buildConfirmMessage(selected) {
-            var messageKey = selected.length === 1
-                ? 'adminUserLockouts.confirm.messageSingular'
-                : 'adminUserLockouts.confirm.message';
-            var message = messageService.get(messageKey, {
-                count: selected.length
-            });
+            if (selected.length === 1) {
+                return messageService.get('adminUserLockouts.confirm.messageSingular', {
+                    username: '<strong>' + escapeHtml(selected[0].username) + '</strong>'
+                });
+            }
 
             var items = selected.map(function(user) {
                 return '<li>' + escapeHtml(user.username) + '</li>';
             }).join('');
 
-            return '<p>' + message + '</p><ul>' + items + '</ul>';
+            return messageService.get('adminUserLockouts.confirm.message', {
+                count: selected.length
+            }) + '<ul>' + items + '</ul>';
         }
 
         function escapeHtml(value) {

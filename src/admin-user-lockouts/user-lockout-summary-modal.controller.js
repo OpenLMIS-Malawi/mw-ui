@@ -43,26 +43,30 @@
         vm.close = close;
 
         function onInit() {
-            vm.sections = [
-                {
-                    key: 'unlocked',
-                    label: 'adminUserLockouts.summary.unlocked',
-                    users: toUsers(summary.unlocked)
-                },
-                {
-                    key: 'notFound',
-                    label: 'adminUserLockouts.summary.notFound',
-                    users: toUsers(summary.notFound)
-                },
-                {
-                    key: 'failed',
-                    label: 'adminUserLockouts.summary.failed',
-                    users: toUsers(summary.failed)
-                }
-            ];
+            // "Successfully unlocked" is always shown; "not found" and "failed" only appear
+            // when something actually landed in those buckets.
+            vm.sections = [{
+                key: 'unlocked',
+                label: 'adminUserLockouts.summary.unlocked',
+                users: toUsers(summary.unlocked)
+            }];
+
+            addSectionIfAny('notFound', 'adminUserLockouts.summary.notFound', summary.notFound);
+            addSectionIfAny('failed', 'adminUserLockouts.summary.failed', summary.failed);
 
             // All sections collapsed by default.
             vm.expanded = {};
+        }
+
+        function addSectionIfAny(key, label, ids) {
+            var users = toUsers(ids);
+            if (users.length) {
+                vm.sections.push({
+                    key: key,
+                    label: label,
+                    users: users
+                });
+            }
         }
 
         /**

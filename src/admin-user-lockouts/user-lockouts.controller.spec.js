@@ -159,6 +159,12 @@ describe('UserLockoutsController', function() {
 
             expect(this.vm.hasSelection()).toBe(false);
         });
+
+        it('should expose the number of selected users', function() {
+            this.userLockoutSelectionService.count.andReturn(3);
+
+            expect(this.vm.selectedCount()).toBe(3);
+        });
     });
 
     describe('save', function() {
@@ -191,18 +197,24 @@ describe('UserLockoutsController', function() {
             expect(this.userLockoutService.unlock).not.toHaveBeenCalled();
         });
 
-        it('should use the singular confirm message when one user is selected', function() {
+        it('should use the singular confirm message and title for one user', function() {
             this.userLockoutSelectionService.getSelected.andReturn([this.users[0]]);
 
             this.vm.save();
 
             expect(this.messageService.get)
                 .toHaveBeenCalledWith('adminUserLockouts.confirm.messageSingular', {
-                    count: 1
+                    username: '<strong>userOne</strong>'
                 });
+            expect(this.confirmService.confirm).toHaveBeenCalledWith(
+                jasmine.any(String),
+                'adminUserLockouts.unlock',
+                undefined,
+                'adminUserLockouts.confirm.titleSingular'
+            );
         });
 
-        it('should use the plural confirm message when several users are selected', function() {
+        it('should use the plural confirm message and title for several users', function() {
             this.userLockoutSelectionService.getSelected.andReturn([this.users[0], this.users[1]]);
 
             this.vm.save();
@@ -211,6 +223,12 @@ describe('UserLockoutsController', function() {
                 .toHaveBeenCalledWith('adminUserLockouts.confirm.message', {
                     count: 2
                 });
+            expect(this.confirmService.confirm).toHaveBeenCalledWith(
+                jasmine.any(String),
+                'adminUserLockouts.unlock',
+                undefined,
+                'adminUserLockouts.confirm.title'
+            );
         });
 
         it('should unlock the selected ids and open the summary modal after confirmation', function() {
@@ -250,7 +268,7 @@ describe('UserLockoutsController', function() {
             this.$rootScope.$apply();
 
             expect(this.loadingModalService.close).toHaveBeenCalled();
-            expect(this.notificationService.error).toHaveBeenCalledWith('adminUserLockouts.unlock.failed');
+            expect(this.notificationService.error).toHaveBeenCalledWith('adminUserLockouts.error.unlockFailed');
             expect(this.openlmisModalService.createDialog).not.toHaveBeenCalled();
         });
     });
