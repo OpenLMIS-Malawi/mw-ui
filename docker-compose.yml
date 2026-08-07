@@ -46,7 +46,7 @@ services:
       - '/openlmis-fulfillment-ui'
 
   referencedata-ui:
-    image: openlmis/referencedata-ui:5.6.19
+    image: openlmis/referencedata-ui:5.6.20-SNAPSHOT
     volumes:
       - '/openlmis-referencedata-ui'
 
