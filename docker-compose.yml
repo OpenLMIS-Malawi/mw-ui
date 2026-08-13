@@ -46,7 +46,7 @@ services:
       - '/openlmis-fulfillment-ui'
 
   referencedata-ui:
-    image: openlmis/referencedata-ui:5.6.20-SNAPSHOT
+    image: openlmis/referencedata-ui:5.6.19
     volumes:
       - '/openlmis-referencedata-ui'
 
@@ -61,7 +61,7 @@ services:
       - '/openlmis-cce-ui'
 
   report-ui:
-    image: openlmis/report-ui:5.2.16-SNAPSHOT
+    image: openlmis/report-ui:5.2.14
     volumes:
       - '/openlmis-report-ui'
 
@@ -76,7 +76,7 @@ services:
       - '/openlmis-ui-components'
 
   ui-layout:
-    image: openlmis/ui-layout:5.2.11-SNAPSHOT
+    image: openlmis/ui-layout:5.2.10
     volumes:
       - '/openlmis-ui-layout'
 
