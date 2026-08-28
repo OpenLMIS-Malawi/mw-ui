@@ -1,0 +1,5 @@
+{
+    "openlmisHomePageReport.embed.containerNotFound": "Embed container not found.",
+    "openlmisHomePageReport.embed.failed": "Failed to embed dashboard: ${error}",
+    "openlmisHomePageReport.sdk.failed": "Failed to load Superset SDK: ${error}"
+}

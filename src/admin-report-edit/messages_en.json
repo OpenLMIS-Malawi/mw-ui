@@ -1,0 +1,21 @@
+{
+    "adminReportEdit.titleAdd": "Add Dashboard Report",
+    "adminReportEdit.titleEdit": "Edit Dashboard Report",
+    "adminReportEdit.URL": "URL",
+    "adminReportEdit.name": "Name",
+    "adminReportEdit.category": "Category",
+    "adminReportEdit.enabled": "Enabled",
+    "adminReportEdit.edit": "Edit",
+    "adminReportEdit.cancel": "Cancel",
+    "adminReportEdit.save": "Save",
+    "adminReportEdit.fieldRequired": "This field is required",
+    "adminReportEdit.success": "Dashboard report edited successfully",
+    "adminReportEdit.error": "Failed to edit dashboard report",
+    "adminReportEdit.showOnHomePage": "Show on home page",
+    "adminReportEdit.type": "Type",
+    "adminReportEdit.embeddedUuid": "Embedded UUID",
+    "adminReportEdit.supersetFieldRequired": "Provide either a URL or an Embedded UUID.",
+    "adminReportEdit.supersetFieldHint": "Provide either a URL or an Embedded UUID - at least one is required.",
+    "adminReportEdit.embeddedUuidInvalid": "Embedded UUID must be a valid UUID (e.g. 123e4567-e89b-12d3-a456-426614174000).",
+    "adminReportEdit.confirmChangeOfHomePageReport": "Are you sure you want ${newReport} report to replace the ${actualReport} report on the home page?"
+}
