@@ -16,14 +16,13 @@
 /*
  * MALAWISUP-7386 — TEMPORARY OVERRIDE of openlmis-ui-layout.
  *
- * Copied verbatim from openlmis/ui-layout:5.2.10 (the version pinned in
- * docker-compose.yml) with a single change: `data:` added to the CSP img-src
- * directive.
+ * Copied verbatim from openlmis/ui-layout:5.2.10 with a single change:
+ * `data:` added to the CSP img-src directive.
  *
  * Why: dev-ui's webpack url-loader runs with `limit: 8192`, so any SCSS-referenced
  * image under 8 KB is inlined as a data: URI at build time. The generated CSP did
  * not allow the data: scheme, so the Malawi header logo (logo-header.png, 4564 B)
- * was blocked. Upstream fix: openlmis-ui-layout PR #33.
+ * was blocked.
  *
  * DELETE THIS FILE once docker-compose.yml pins openlmis/ui-layout >= 5.2.11,
  * which contains the same change. Keeping it after that point would silently
