@@ -1,19 +1,13 @@
-<!--
-  MALAWISUP-7386 - TEMPORARY OVERRIDE of openlmis-referencedata-ui.
-  
-  Copied verbatim from openlmis/referencedata-ui:5.6.20-SNAPSHOT.
-  Upstream fix: MW-1449 (2248c7ba).
-  
-  Completes MW-1449 Superset embedded dashboards: adds the Embedded SDK /
-  guest-token render path and the embeddedUuid field on the report admin screen.
-  Without it every Superset report falls back to /oauth-init/openlmis.
-  
-  DELETE THIS FILE once docker-compose.yml pins openlmis/referencedata-ui >= 5.6.20,
-  which contains the same change. Keeping it after that point would silently
-  shadow newer core changes to this file.
--->
-
 <div class="home-page-report-panel">
+    <!--
+      MALAWISUP-7386 - TEMPORARY OVERRIDE of openlmis-referencedata-ui.
+      Copied verbatim from openlmis/referencedata-ui:5.6.20-SNAPSHOT; mw-ui stays pinned to the released 5.6.19.
+      Upstream fix: MW-1449 (2248c7ba).
+      DELETE THIS FILE once docker-compose.yml pins openlmis/referencedata-ui >= 5.6.20.
+      NOTE: keep this comment inside the root element - a leading comment makes node [0]
+      of the compiled template a comment node, so openlmisModalService finds no scope
+      and $onInit never runs.
+    -->
     <p ng-if="vm.error" class="alert alert-danger">{{ vm.error }}</p>
 
     <!-- ng-show, not ng-if: keep the SDK mount point in the DOM before embedDashboard() runs. -->
