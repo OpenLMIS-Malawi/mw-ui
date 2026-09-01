@@ -1,0 +1,30 @@
+/*
+ * MALAWISUP-7386 - TEMPORARY OVERRIDE of openlmis-referencedata-ui.
+ *
+ * Copied verbatim from openlmis/referencedata-ui:5.6.20-SNAPSHOT.
+ * Upstream fix: MW-1449 (2248c7ba).
+ *
+ * Completes MW-1449 Superset embedded dashboards: adds the Embedded SDK /
+ * guest-token render path and the embeddedUuid field on the report admin screen.
+ * Without it every Superset report falls back to /oauth-init/openlmis.
+ *
+ * DELETE THIS FILE once docker-compose.yml pins openlmis/referencedata-ui >= 5.6.20,
+ * which contains the same change. Keeping it after that point would silently
+ * shadow newer core changes to this file.
+ */
+
+.home-page-report-panel {
+    margin-top: 4rem;
+}
+
+.home-page-superset-embed-container {
+    width: 95vw;
+    height: 90vh;
+}
+
+// Stretch the iframe the Superset SDK injects (defaults to ~300x150).
+.home-page-superset-embed-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}

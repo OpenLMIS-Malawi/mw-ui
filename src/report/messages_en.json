@@ -21,5 +21,9 @@
   "report.boolean.true": "Yes",
   "report.boolean.false": "No",
   "report.superset.auth.pageRequiresAuthorization": "This page requires authorization in the reporting stack. If nothing shows up, you still can authorize manually by",
-  "report.superset.auth.clickingHere": "clicking here"
+  "report.superset.auth.clickingHere": "clicking here",
+  "report.superset.embed.containerNotFound": "Embed container not found.",
+  "report.superset.embed.failed": "Failed to embed dashboard: ${error}",
+  "report.superset.loading": "Loading dashboard...",
+  "report.superset.sdk.failed": "Failed to load Superset SDK: ${error}"
 }

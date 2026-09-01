@@ -1,0 +1,30 @@
+/*
+ * MALAWISUP-7386 - TEMPORARY OVERRIDE of openlmis-report-ui.
+ *
+ * Copied verbatim from openlmis/report-ui:5.2.16-SNAPSHOT.
+ * Upstream fix: MW-1449 (7a82ae9f).
+ *
+ * Completes MW-1449 on the Reports page: a report with an embeddedUuid renders
+ * through the Superset Embedded SDK. Without this controller the route resolves
+ * reportUrl to null and the page shows a blank iframe.
+ *
+ * DELETE THIS FILE once docker-compose.yml pins openlmis/report-ui >= 5.2.16,
+ * which contains the same change. Keeping it after that point would silently
+ * shadow newer core changes to this file.
+ */
+
+iframe {
+    flex: 1 0 auto;
+}
+
+.superset-embed-container {
+    width: 100%;
+    height: calc(100vh - 200px);
+    min-height: 600px;
+}
+
+.superset-embed-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}

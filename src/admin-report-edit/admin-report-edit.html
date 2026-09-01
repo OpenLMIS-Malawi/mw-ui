@@ -1,0 +1,108 @@
+<!--
+  MALAWISUP-7386 - TEMPORARY OVERRIDE of openlmis-referencedata-ui.
+  
+  Copied verbatim from openlmis/referencedata-ui:5.6.20-SNAPSHOT.
+  Upstream fix: MW-1449 (2248c7ba).
+  
+  Completes MW-1449 Superset embedded dashboards: adds the Embedded SDK /
+  guest-token render path and the embeddedUuid field on the report admin screen.
+  Without it every Superset report falls back to /oauth-init/openlmis.
+  
+  DELETE THIS FILE once docker-compose.yml pins openlmis/referencedata-ui >= 5.6.20,
+  which contains the same change. Keeping it after that point would silently
+  shadow newer core changes to this file.
+-->
+
+<div class="modal" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 ng-if="!vm.editMode">{{:: 'adminReportEdit.titleAdd' | message}}</h2>
+        <h2 ng-if="vm.editMode">{{:: 'adminReportEdit.titleEdit' | message}}</h2>
+      </div>
+      <div class="modal-body">
+        <form id="editReport">
+          <fieldset class="form-group">
+            <label for="name" class="is-required">{{:: 'adminReportEdit.name' | message}}</label>
+            <div class="input-control" ng-class="{'is-invalid': vm.invalidFields.has('name')}">
+              <input type="text" id="name" style="width: 100%" ng-model="vm.report.name"
+                ng-change="vm.validateField(vm.report.name, 'name')" required />
+            </div>
+            <ul class="openlmis-invalid" ng-if="vm.invalidFields.has('name')">
+              <li>{{'adminReportEdit.fieldRequired' | message}}</li>
+            </ul>
+          </fieldset>
+          <fieldset class="form-group">
+            <label for="category" class="is-required">{{:: 'adminReportEdit.category' | message}}</label>
+            <div class="input-control" ng-class="{'is-invalid': vm.invalidFields.has('category')}">
+              <select id="category" ng-change="vm.validateField(vm.report.category, 'category')"
+                ng-model="vm.report.category" ng-options="category.name for category in vm.categories"
+                required></select>
+            </div>
+            <ul class="openlmis-invalid" ng-if="vm.invalidFields.has('category')">
+              <li>{{'adminReportEdit.fieldRequired' | message}}</li>
+            </ul>
+          </fieldset>
+          <fieldset class="form-group">
+            <label for="type" class="is-required">{{:: 'adminReportEdit.type' | message}}</label>
+            <div class="input-control" ng-class="{'is-invalid': vm.invalidFields.has('type')}">
+              <select id="type" ng-change="vm.onTypeChange()"
+                ng-model="vm.report.type" ng-options="type for type in vm.types"
+                required></select>
+            </div>
+            <ul class="openlmis-invalid" ng-if="vm.invalidFields.has('type')">
+              <li>{{'adminReportEdit.fieldRequired' | message}}</li>
+            </ul>
+          </fieldset>
+          <fieldset class="form-group" ng-if="vm.report.type === vm.REPORT_TYPES.SUPERSET">
+            <label for="embeddedUuid">{{:: 'adminReportEdit.embeddedUuid' | message}}</label>
+            <div class="input-control" ng-class="{'is-invalid': vm.invalidFields.has('supersetField') || vm.invalidFields.has('embeddedUuidFormat')}">
+              <input type="text" id="embeddedUuid" style="width: 100%" ng-model="vm.report.embeddedUuid"
+                ng-change="vm.validateSupersetFields()" />
+            </div>
+            <ul class="openlmis-invalid" ng-if="vm.invalidFields.has('embeddedUuidFormat')">
+              <li>{{'adminReportEdit.embeddedUuidInvalid' | message}}</li>
+            </ul>
+          </fieldset>
+          <fieldset class="form-group">
+            <label for="URL" ng-class="{'is-required': vm.report.type !== vm.REPORT_TYPES.SUPERSET}">{{:: 'adminReportEdit.URL' | message}}</label>
+            <div class="input-control" ng-class="{'is-invalid': vm.invalidFields.has('url') || vm.invalidFields.has('supersetField')}">
+              <input type="text" id="URL" style="width: 100%" ng-model="vm.report.url"
+                ng-change="vm.validateField(vm.report.url, 'url'); vm.validateSupersetFields()" />
+            </div>
+            <ul class="openlmis-invalid" ng-if="vm.invalidFields.has('url')">
+              <li>{{'adminReportEdit.fieldRequired' | message}}</li>
+            </ul>
+          </fieldset>
+          <p class="superset-field-hint"
+             ng-if="vm.report.type === vm.REPORT_TYPES.SUPERSET && !vm.invalidFields.has('supersetField')">
+            {{:: 'adminReportEdit.supersetFieldHint' | message}}
+          </p>
+          <ul class="openlmis-invalid" ng-if="vm.invalidFields.has('supersetField')">
+            <li>{{'adminReportEdit.supersetFieldRequired' | message}}</li>
+          </ul>
+          <fieldset class="form-group">
+            <label for="enabled">
+              <input id="enabled" type="checkbox" ng-model="vm.report.enabled" />
+              {{:: 'adminReportEdit.enabled' | message}}
+            </label>
+          </fieldset>
+          <fieldset class="form-group">
+            <label for="showOnHomePage">
+              <input id="showOnHomePage" type="checkbox" ng-model="vm.report.showOnHomePage" />
+              {{:: 'adminReportEdit.showOnHomePage' | message}}
+            </label>
+          </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="cancel" ng-click="vm.goToPreviousState()">
+          {{:: 'adminReportEdit.cancel' | message}}
+        </button>
+        <button class="primary" ng-click="vm.confirmEdit()">
+          {{vm.editMode ? 'adminReportEdit.edit' : 'adminReportEdit.save' | message}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

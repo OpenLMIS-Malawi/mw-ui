@@ -1,0 +1,28 @@
+<!--
+  MALAWISUP-7386 - TEMPORARY OVERRIDE of openlmis-report-ui.
+  
+  Copied verbatim from openlmis/report-ui:5.2.16-SNAPSHOT.
+  Upstream fix: MW-1449 (7a82ae9f).
+  
+  Completes MW-1449 Superset embedded dashboards: the report route now skips
+  the legacy OAuth modal when the report has an embeddedUuid. Without it every
+  Superset report calls /oauth-init/openlmis, which no deployed Superset serves.
+  
+  DELETE THIS FILE once docker-compose.yml pins openlmis/report-ui >= 5.2.16,
+  which contains the same change. Keeping it after that point would silently
+  shadow newer core changes to this file.
+-->
+
+<h2>{{vm.reportName}}</h2>
+<p ng-if="vm.error" class="alert alert-danger">{{vm.error}}</p>
+<p ng-if="vm.isSupersetReport && vm.authUrl">
+    {{ 'report.superset.auth.pageRequiresAuthorization' | message }}
+    <a href="{{vm.authUrl}}">{{ 'report.superset.auth.clickingHere' | message }}</a>
+</p>
+<iframe ng-if="vm.isSupersetReport && vm.authUrl && vm.isReady" seamless frameBorder="0" scrolling="auto" ng-src="{{vm.reportUrl}}"></iframe>
+<p ng-if="vm.isSupersetReport && !vm.authUrl && !vm.isReady && !vm.error" class="loading">
+    {{ 'report.superset.loading' | message }}
+</p>
+<!-- ng-show, not ng-if: keep the SDK mount point in the DOM before embedDashboard() runs. -->
+<div ng-show="vm.isSupersetReport && !vm.authUrl && vm.isReady" id="superset-embed-container" class="superset-embed-container"></div>
+<iframe ng-if="!vm.isSupersetReport" seamless allowFullScreen="true" title="{{vm.reportName}}" ng-src="{{vm.reportUrl}}"></iframe>
