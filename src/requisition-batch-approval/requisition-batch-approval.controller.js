@@ -136,6 +136,25 @@
          * setting data to be available on the view.
          */
         function onInit() {
+            // MALAWISUP-7421: Requisitions awaiting approval at another level are dropped in the state resolve
+            if (!requisitions.length) {
+                var goBack = function() {
+                    stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
+                };
+
+                prepareDataToDisplay([]);
+                alertService.error('requisitionBatchApproval.noRequisitionsAvailableForApproval')
+                    .then(goBack, goBack);
+                return;
+            }
+
+            var requestedCount = $stateParams.ids ? $stateParams.ids.split(',').length : 0;
+
+            if (requisitions.length < requestedCount) {
+                notificationService.error('requisitionBatchApproval.someRequisitionsNotAvailableForApproval');
+            }
+            // MALAWISUP-7421: Ends here
+
             prepareDataToDisplay(requisitions);
         }
 
