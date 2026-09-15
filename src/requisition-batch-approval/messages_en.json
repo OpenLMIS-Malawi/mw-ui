@@ -8,5 +8,7 @@
   "requisitionBatchApproval.approvalSuccess": "${successCount} LMIS Forms were approved",
   "requisitionBatchApproval.approvalConfirm": "Are you sure you want to approve these LMIS Forms?",
   "requisitionBatchApproval.pricesAreIndicative": "The prices used in the OpenLMIS are only indicative. Actual prices can only be viewed at the completion of CMST's procurement processes.",
-  "requisitionBatchApproval.setAllToZero": "Set all to 0"
+  "requisitionBatchApproval.setAllToZero": "Set all to 0",
+  "requisitionBatchApproval.noRequisitionsAvailableForApproval": "None of the selected LMIS Forms are available for your approval. They may have already been approved or they are awaiting approval at a different level.",
+  "requisitionBatchApproval.someRequisitionsNotAvailableForApproval": "Some LMIS Forms were removed from this screen because they are not available for your approval."
 }
