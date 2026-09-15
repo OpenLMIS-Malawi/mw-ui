@@ -18,7 +18,8 @@
     'use strict';
 
     // MALAWISUP-7421: Only let the user batch approve requisitions awaiting them at their approval level
-    var APPROVABLE_PAGE_SIZE = 2000;
+    var APPROVABLE_PAGE_SIZE = 2000,
+        APPROVABLE_SORT = 'id';
     // MALAWISUP-7421: Ends here
 
     angular
@@ -76,7 +77,8 @@
     function getApprovableRequisitionIds($q, requisitionService) {
         return requisitionService.forApproval({
             page: 0,
-            size: APPROVABLE_PAGE_SIZE
+            size: APPROVABLE_PAGE_SIZE,
+            sort: APPROVABLE_SORT
         })
             .then(function(firstPage) {
                 var ids = toIds(firstPage.content),
@@ -85,7 +87,8 @@
                 for (var pageNumber = 1; pageNumber < firstPage.totalPages; pageNumber += 1) {
                     pagePromises.push(requisitionService.forApproval({
                         page: pageNumber,
-                        size: APPROVABLE_PAGE_SIZE
+                        size: APPROVABLE_PAGE_SIZE,
+                        sort: APPROVABLE_SORT
                     }));
                 }
 

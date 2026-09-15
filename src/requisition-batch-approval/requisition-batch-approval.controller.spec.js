@@ -469,7 +469,9 @@ describe('RequisitionBatchApprovalController', function() {
             expect(this.stateTrackerService.goToPreviousState)
                 .toHaveBeenCalledWith('openlmis.requisitions.approvalList');
 
-            expect(vm.requisitions).toBeUndefined();
+            expect(vm.requisitions).toEqual([]);
+
+            expect(vm.totalCost).toBe(0);
         });
 
         it('should return to the approval list even if the alert is dismissed', function() {

@@ -38,6 +38,16 @@ describe('openlmis.requisitions.batchApproval state', function() {
         expect(requisitionBatchApprovalService.get).toHaveBeenCalledWith(['1', '2']);
     });
 
+    it('should sort requisitions awaiting approval so that paging is deterministic', function() {
+        resolveRequisitions();
+
+        expect(requisitionService.forApproval).toHaveBeenCalledWith({
+            page: 0,
+            size: 2000,
+            sort: 'id'
+        });
+    });
+
     it('should filter out requisitions the user is not the approver for', function() {
         requisitionService.forApproval.andReturn($q.resolve(pageOf([{
             id: 2
@@ -67,7 +77,14 @@ describe('openlmis.requisitions.batchApproval state', function() {
         });
 
         expect(resolveRequisitions()).toEqual(requisitions);
+
         expect(requisitionService.forApproval.calls.length).toBe(2);
+
+        expect(requisitionService.forApproval.calls[1].args[0]).toEqual({
+            page: 1,
+            size: 2000,
+            sort: 'id'
+        });
     });
 
     it('should not filter requisitions while offline', function() {

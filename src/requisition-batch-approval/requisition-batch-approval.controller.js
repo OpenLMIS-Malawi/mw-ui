@@ -142,6 +142,7 @@
                     stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
                 };
 
+                prepareDataToDisplay([]);
                 alertService.error('requisitionBatchApproval.noRequisitionsAvailableForApproval')
                     .then(goBack, goBack);
                 return;
