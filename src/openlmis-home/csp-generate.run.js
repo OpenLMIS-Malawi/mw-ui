@@ -16,13 +16,15 @@
 /*
  * MALAWISUP-7386 — TEMPORARY OVERRIDE of openlmis-ui-layout.
  *
- * Copied verbatim from openlmis/ui-layout:5.2.10 with a single change:
- * `data:` added to the CSP img-src directive.
+ * Copied verbatim from openlmis/ui-layout:5.2.10 with two changes:
+ * - `data:` added to the CSP img-src directive.
+ * - Google Tag Manager and GA4 hosts allowed (img-src, script-src, connect-src).
  *
  * Why: dev-ui's webpack url-loader runs with `limit: 8192`, so any SCSS-referenced
  * image under 8 KB is inlined as a data: URI at build time. The generated CSP did
  * not allow the data: scheme, so the Malawi header logo (logo-header.png, 4564 B)
- * was blocked.
+ * was blocked. analytics.js loads the connected GA4 tag from www.googletagmanager.com,
+ * which the CSP blocked as well, so no data reached GA4.
  *
  * DELETE THIS FILE once docker-compose.yml pins openlmis/ui-layout >= 5.2.11,
  * which contains the same change. Keeping it after that point would silently
@@ -41,6 +43,8 @@
 
     function run() {
         var GOOGLE_ANALYTICS_URL = 'www.google-analytics.com';
+        var GOOGLE_TAG_MANAGER_URL = 'www.googletagmanager.com';
+        var GA4_COLLECT_URLS = '*.google-analytics.com *.analytics.google.com';
         var SUPERSET_URL = '${SUPERSET_URL}';
 
         // Get external domains from the environment variable.
@@ -81,9 +85,11 @@
 
             var cspHeader =
                 'default-src \'self\' ' + joinedDomains + ' \'unsafe-inline\';\n' +
-                'img-src \'self\' data: ' + GOOGLE_ANALYTICS_URL + ';\n' +
-                'script-src \'self\' ' + GOOGLE_ANALYTICS_URL + ' \'unsafe-inline\' \'unsafe-eval\';\n' +
-                'connect-src \'self\' ' + GOOGLE_ANALYTICS_URL + ' ' + joinedDomains + ';\n' +
+                'img-src \'self\' data: ' + GOOGLE_ANALYTICS_URL + ' ' + GOOGLE_TAG_MANAGER_URL + ';\n' +
+                'script-src \'self\' ' + GOOGLE_ANALYTICS_URL + ' ' + GOOGLE_TAG_MANAGER_URL +
+                    ' \'unsafe-inline\' \'unsafe-eval\';\n' +
+                'connect-src \'self\' ' + GOOGLE_ANALYTICS_URL + ' ' + GA4_COLLECT_URLS + ' ' +
+                    GOOGLE_TAG_MANAGER_URL + ' ' + joinedDomains + ';\n' +
                 'frame-src \'self\' ' + joinedDomains + ';';
 
             return cspHeader;
