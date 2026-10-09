@@ -1,0 +1,11 @@
+<div class="home-page-report-panel">
+    <iframe
+        ng-if="vm.isAuthorized"
+        title="home_page_report"
+        style="width: 95vw; height: 90vh"
+        ng-src="{{ vm.report.url }}"
+        frameborder="0"
+        scrolling="auto"
+        allowFullScreen="true">
+    </iframe>
+</div>
