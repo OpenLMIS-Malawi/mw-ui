@@ -1,0 +1,208 @@
+/*
+ * This program is part of the OpenLMIS logistics management information system platform software.
+ * Copyright © 2017 VillageReach
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Affero General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *  
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * See the GNU Affero General Public License for more details. You should have received a copy of
+ * the GNU Affero General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
+ */
+
+/*
+ * MALAWISUP-7386 - TEMPORARY OVERRIDE of openlmis-ui-components.
+ *
+ * Copied verbatim from openlmis/ui-components:7.2.17-SNAPSHOT.
+ * Upstream fix: OLMIS-8257 (8c594543).
+ *
+ * Guards $window.applicationCache, which Chrome has removed. Without this,
+ * OpenlmisAppCacheController.$onInit throws "Cannot read properties of
+ * undefined (reading 'addEventListener')" on every page load.
+ *
+ * DELETE THIS FILE once docker-compose.yml pins openlmis/ui-components >= 7.2.17,
+ * which contains the same change. Keeping it after that point would silently
+ * shadow newer core changes to this file.
+ */
+
+describe('OpenlmisAppCacheController', function() {
+
+    beforeEach(function() {
+        module('openlmis-app-cache');
+
+        inject(function($injector) {
+            this.$window = $injector.get('$window');
+            this.confirmService = $injector.get('confirmService');
+            this.$rootScope = $injector.get('$rootScope');
+            this.$controller = $injector.get('$controller');
+            this.$q = $injector.get('$q');
+            this.OPENLMIS_BUILD_DATE = $injector.get('OPENLMIS_BUILD_DATE');
+        });
+
+        this.applicationCacheMock = jasmine.createSpyObj('applicationCache', [
+            'addEventListener', 'swapCache'
+        ]);
+        this.applicationCacheMock.UPDATEREADY = this.$window.applicationCache.UPDATEREADY;
+
+        this.locationMock = jasmine.createSpyObj('location', ['reload']);
+
+        spyOn(this.confirmService, 'confirm');
+
+        this.vm = this.$controller('OpenlmisAppCacheController', {
+            $window: {
+                applicationCache: this.applicationCacheMock,
+                location: this.locationMock
+            }
+        });
+    });
+
+    describe('$onInit', function() {
+
+        it('should set updateReady flag to true if update is ready', function() {
+            this.applicationCacheMock.status = this.$window.applicationCache.UPDATEREADY;
+
+            this.vm.$onInit();
+
+            expect(this.vm.updateReady).toBe(true);
+        });
+
+        it('should set updateReady flag to false if update is not ready', function() {
+            this.applicationCacheMock.status = this.$window.applicationCache.CHECKING;
+
+            this.vm.$onInit();
+
+            expect(this.vm.updateReady).toBe(false);
+        });
+
+        it('should set a listener for appCache.UPDATEREADY', function() {
+            var callback;
+            this.applicationCacheMock.addEventListener.andCallFake(function(event, handler) {
+                if (event === 'updateready') {
+                    callback = handler;
+                }
+            });
+
+            this.vm.$onInit();
+
+            expect(this.vm.updateReady).toBe(false);
+
+            this.applicationCacheMock.status = this.$window.applicationCache.UPDATEREADY;
+
+            callback();
+
+            expect(this.vm.updateReady).toBe(true);
+        });
+
+    });
+
+    describe('updateCache', function() {
+
+        beforeEach(function() {
+            this.vm.$onInit();
+        });
+
+        it('should do nothing if update is not ready', function() {
+            this.vm.updateReady = false;
+
+            this.vm.updateCache();
+            this.$rootScope.$apply();
+
+            expect(this.confirmService.confirm).not.toHaveBeenCalled();
+            expect(this.applicationCacheMock.swapCache).not.toHaveBeenCalled();
+            expect(this.locationMock.reload).not.toHaveBeenCalled();
+        });
+
+        it('should open confirmation modal before anything', function() {
+            this.vm.updateReady = true;
+            this.confirmService.confirm.andReturn(this.$q.resolve());
+
+            this.vm.updateCache();
+
+            expect(this.confirmService.confirm).toHaveBeenCalledWith(
+                'openlmisAppCache.cacheUpdate.message',
+                'openlmisAppCache.cacheUpdate.label',
+                'openlmisAppCache.cacheUpdate.cancel',
+                'openlmisAppCache.cacheUpdate.title'
+            );
+
+            expect(this.applicationCacheMock.swapCache).not.toHaveBeenCalled();
+            expect(this.locationMock.reload).not.toHaveBeenCalled();
+        });
+
+        it('should swap cache and reload after confirmation', function() {
+            this.vm.updateReady = true;
+            this.confirmService.confirm.andReturn(this.$q.resolve());
+
+            this.vm.updateCache();
+            this.$rootScope.$apply();
+
+            expect(this.confirmService.confirm).toHaveBeenCalled();
+            expect(this.applicationCacheMock.swapCache).toHaveBeenCalled();
+            expect(this.locationMock.reload).toHaveBeenCalled();
+        });
+
+        it('should swap cache and reload on logout after rejection', function() {
+            this.vm.updateReady = true;
+            this.confirmService.confirm.andReturn(this.$q.reject());
+
+            this.vm.updateCache();
+            this.$rootScope.$apply();
+
+            expect(this.confirmService.confirm).toHaveBeenCalled();
+            expect(this.applicationCacheMock.swapCache).toHaveBeenCalled();
+            expect(this.locationMock.reload).not.toHaveBeenCalled();
+
+            this.$rootScope.$emit('openlmis-auth.logout');
+
+            expect(this.locationMock.reload).toHaveBeenCalled();
+        });
+
+    });
+
+    // The deprecated window.applicationCache has been removed from modern browsers,
+    // so $window.applicationCache can be undefined. The controller must not crash.
+    describe('when applicationCache is not available', function() {
+
+        beforeEach(function() {
+            this.vm = this.$controller('OpenlmisAppCacheController', {
+                $window: {
+                    applicationCache: undefined,
+                    location: this.locationMock
+                }
+            });
+        });
+
+        it('should not throw on init', function() {
+            var vm = this.vm;
+
+            expect(function() {
+                vm.$onInit();
+            }).not.toThrow();
+        });
+
+        it('should still set the build date', function() {
+            this.vm.$onInit();
+
+            expect(this.vm.buildDate).toBe(this.OPENLMIS_BUILD_DATE);
+        });
+
+        it('should set updateReady flag to false', function() {
+            this.vm.$onInit();
+
+            expect(this.vm.updateReady).toBe(false);
+        });
+
+        it('should do nothing when updateCache is called', function() {
+            this.vm.$onInit();
+
+            this.vm.updateCache();
+
+            expect(this.confirmService.confirm).not.toHaveBeenCalled();
+        });
+
+    });
+
+});
